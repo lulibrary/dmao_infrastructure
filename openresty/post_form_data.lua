@@ -4,7 +4,7 @@ upload = require 'resty.upload'
 function tprint (tbl, indent)
     if not indent then indent = 4 end
     for k, v in pairs(tbl) do
-        formatting = string.rep('  ', indent) .. k .. ': '
+        local formatting = string.rep('  ', indent) .. k .. ': '
         if type(v) == 'table' then
             ngx.say(formatting)
             tprint(v, indent+1)
@@ -18,9 +18,17 @@ end
 
 function form_to_table()
     local form, err = upload:new(8192)
+    if not form then
+        ngx.log(ngx.ERR, "failed to new upload: ", err)
+        ngx.exit(500)
+    end
     form:set_timeout(2000) -- 2 seconds
     while true do
         local typ, res, err = form:read()
+        if not typ then
+            ngx.say("failed to read: ", err)
+            return
+        end
         if typ == 'body' then
             local j = cjson.decode(res)
             if type(j) == 'table' then
