@@ -19,14 +19,14 @@ end
 function form_to_table()
     local form, err = upload:new(8192)
     if not form then
-        ngx.log(ngx.ERR, "failed to new upload: ", err)
+        ngx.log(ngx.ERR, "failed to upload:new -  ", err)
         ngx.exit(500)
     end
     form:set_timeout(2000) -- 2 seconds
     while true do
         local typ, res, err = form:read()
         if not typ then
-            ngx.say("failed to read: ", err)
+            ngx.say("failed to form:read - ", err)
             return
         end
         if typ == 'body' then
