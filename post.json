@@ -1,0 +1,11 @@
+{
+    "inst_id": "demo",
+    "name": "Demo University",
+    "contact": "John Krug",
+    "contact_email": "j.krug@lancaster.ac.uk",
+    "contact_phone": "+44 1524 593099",
+    "cris_sys": "Pure",
+    "pub_sys": "Eprints",
+    "dataset_sys": "Fedora",
+    "archive_sys": "Archivematica"
+}
