@@ -54,5 +54,5 @@ local u = ngx.var['base_url'] ..
     '&pub_sys=' .. ngx.escape_uri(t['pub_sys']) ..
     '&dataset_sys=' .. ngx.escape_uri(t['dataset_sys']) ..
     '&archive_sys=' .. ngx.escape_uri(t['archive_sys'])
-res = ngx.location.capture(u, {method=ngx.HTTP_POST})
+local res = ngx.location.capture(u, {method=ngx.HTTP_POST})
 ngx.say(res.body)
