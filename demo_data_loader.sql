@@ -356,11 +356,12 @@ end
 $$ language plpgsql;
 
 create or replace function populate_dataset_accesses() returns void as $$
-  declare tp varchar(50);
-  declare a integer;
-  declare b integer;
-  declare c integer;
-  declare d integer;
+  declare
+    tp varchar(50);
+    a integer;
+    b integer;
+    c integer;
+    d integer;
 begin
   for tp in
     select m from (values ('metadata'), ('data_download')) s(m)
