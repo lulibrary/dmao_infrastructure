@@ -248,7 +248,9 @@
             <child column="inst_id" foreignKey="faculty_inst_id_fkey" implied="false" onDeleteCascade="true" table="faculty"/>
             <child column="inst_id" foreignKey="inst_ds_map_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_ds_map"/>
             <child column="inst_id" foreignKey="project_inst_id_fkey" implied="false" onDeleteCascade="true" table="project"/>
+            <child column="inst_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" table="project_expected_storage_costs"/>
             <child column="lead_inst_id" foreignKey="publication_lead_inst_id_fkey" implied="false" onDeleteCascade="true" table="publication"/>
+            <child column="inst_id" foreignKey="storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="storage_costs"/>
             <child column="inst_id" foreignKey="users_inst_id_fkey" implied="false" onDeleteCascade="true" table="users"/>
          </column>
          <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="256" type="varchar"/>
@@ -294,6 +296,9 @@
          <column autoUpdated="false" digits="0" id="12" name="project_awarded" nullable="true" remarks="" size="13" type="date"/>
          <column autoUpdated="false" digits="0" id="13" name="project_start" nullable="true" remarks="" size="13" type="date"/>
          <column autoUpdated="false" digits="0" id="14" name="project_end" nullable="true" remarks="" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="15" name="sc_id" nullable="true" remarks="" size="10" type="int4">
+            <parent column="sc_id" foreignKey="project_sc_id_fkey" implied="false" onDeleteCascade="false" table="storage_costs"/>
+         </column>
          <primaryKey column="project_id" sequenceNumberInPK="1"/>
          <index name="project_pkey" unique="true">
             <column ascending="true" name="project_id"/>
@@ -312,6 +317,16 @@
          <index name="project_ds_map_project_id_idx" unique="false">
             <column ascending="true" name="project_id"/>
          </index>
+      </table>
+      <table name="project_expected_storage_costs" numRows="0" remarks="" schema="public" type="VIEW">
+         <column autoUpdated="false" digits="0" id="0" name="inst_id" nullable="true" remarks="" size="256" type="varchar">
+            <parent column="inst_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" table="institution"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="project_id" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="2" name="sc_id" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="3" name="description" nullable="true" remarks="" size="1024" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="4" name="gb" nullable="true" remarks="" size="131089" type="numeric"/>
+         <column autoUpdated="false" digits="0" id="5" name="storage_cost" nullable="true" remarks="" size="131089" type="numeric"/>
       </table>
       <table name="project_pub_map" numRows="0" remarks="Maps projects to publications." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="project_id" nullable="false" remarks="" size="10" type="int4">
@@ -373,6 +388,23 @@
          <primaryKey column="publication_id" sequenceNumberInPK="1"/>
          <index name="publication_pkey" unique="true">
             <column ascending="true" name="publication_id"/>
+         </index>
+      </table>
+      <table name="storage_costs" numRows="3" remarks="Describes storage costs for institutional storage platforms" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('storage_costs_sc_id_seq'::regclass)" digits="0" id="0" name="sc_id" nullable="false" remarks="" size="10" type="serial">
+            <child column="sc_id" foreignKey="project_sc_id_fkey" implied="false" onDeleteCascade="false" table="project"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="inst_id" nullable="true" remarks="" size="256" type="varchar">
+            <parent column="inst_id" foreignKey="storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="inst_reference" nullable="true" remarks="" size="1024" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="3" name="cost_per_tb" nullable="true" remarks="" size="131089" type="numeric"/>
+         <primaryKey column="sc_id" sequenceNumberInPK="1"/>
+         <index name="storage_costs_pkey" unique="true">
+            <column ascending="true" name="sc_id"/>
+         </index>
+         <index name="storage_costs_inst_id_idx" unique="false">
+            <column ascending="true" name="inst_id"/>
          </index>
       </table>
       <table name="users" numRows="1" remarks="" schema="public" type="TABLE">

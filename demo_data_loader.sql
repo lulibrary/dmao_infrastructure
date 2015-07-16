@@ -70,6 +70,12 @@ insert into
     ('Word', '', 2, 'verified', 'orcid7')
 ;
 
+insert into storage_costs(inst_id, inst_reference, cost_per_tb)
+  values
+    ('lancaster', 'Hitachi Content Platform', 8.76),
+    ('lancaster', 'Box Cloud Storage', 2.89),
+    ('lancaster', 'Arkivum', 80)
+;
 
 insert into project
   (project_name,
@@ -83,7 +89,10 @@ insert into project
    has_dmp_been_reviewed,
    dmp_id,
    expected_storage,
-   project_awarded, project_start, project_end)
+   project_awarded,
+   project_start,
+   project_end,
+   sc_id)
   values
     ('Intractable Likelihood: New Challenges '
       'From Modern Applications (iLike)',
@@ -97,7 +106,7 @@ insert into project
      'no',
      null,
      2500,
-     '2012-12-01', '2013-01-01', '2017-12-31'),
+     '2012-12-01', '2013-01-01', '2017-12-31', 1),
     ('FST CASE Studentship: Design and testing of a Novel Neutron Meter',
      null,
      true,
@@ -109,7 +118,7 @@ insert into project
      'yes',
      1,
      2,
-     '2013-02-12', '2013-04-01', '2016-09-30'),
+     '2013-02-12', '2013-04-01', '2016-09-30', 1),
     ('ESRC studentship Blything',
      'EP/J019585/1',
      true,
@@ -121,7 +130,7 @@ insert into project
      'no',
      null,
      2,
-     '2013-02-12', '2011-10-01', '2015-09-30'),
+     '2013-02-12', '2011-10-01', '2015-09-30', 2),
     ('Orbit-based methods for Multielectron Systems in Strong Fields',
      'EP/J019585/1',
      true,
@@ -133,7 +142,7 @@ insert into project
      'no',
      null,
      2,
-     '2012-10-01', '2012-10-01', '2016-01-31'),
+     '2012-10-01', '2012-10-01', '2016-01-31', 1),
     ('GaInAsNSb quantum wells for GaAs-based Telecoms devices',
      'PYA7943',
      true,
@@ -145,7 +154,7 @@ insert into project
      'no',
      null,
      2,
-     null, '2010-10-01', '2014-03-31'),
+     null, '2010-10-01', '2014-03-31', 2),
     ('Quasiparticle imaging and superfluid flow experiments at '
      'ultralow temperatures',
      'EP/I028285/1',
@@ -158,7 +167,7 @@ insert into project
      'no',
       null,
       2,
-     '2011-05-24', '2011-10-01', '2015-09-30'),
+     '2011-05-24', '2011-10-01', '2015-09-30', 2),
     ('Superfluid 3He at UltraLow Temperatures',
      'EP/L000016/1',
      true,
@@ -169,7 +178,7 @@ insert into project
      false,
      'no',
      null, 2,
-     '2013-05-24', '2013-07-01', '2017-06-30'),
+     '2013-05-24', '2013-07-01', '2017-06-30', 2),
     ('Islam on campus',
      '',
      false,
@@ -181,7 +190,7 @@ insert into project
      'yes',
      5,
      0,
-     null, '2015-06-01', '2018-05-31'),
+     null, '2015-06-01', '2018-05-31', 2),
     ('The effects of age on temporal coding in the auditory system',
      'BB/M007243/1',
      true,
@@ -193,7 +202,7 @@ insert into project
      'yes',
      7,
      50,
-     '2015-01-08', '2015-05-01', '2018-04-30'),
+     '2015-01-08', '2015-05-01', '2018-04-30', 1),
     ('Elucidating the neural mechanisms by which evolutionarily '
      'conserved intracellular signalling pathway',
     null,
@@ -206,7 +215,7 @@ insert into project
     'yes',
     8,
     10000,
-    null, '2016-01-01', '2020-12-31'),
+    null, '2016-01-01', '2020-12-31', 3),
     ('Elucidating the functional brain networks underlying cognitive '
      'flexibility and attention through tas',
     null,
@@ -219,7 +228,7 @@ insert into project
     'yes',
     9,
     500,
-    null, '2015-12-07', '2018-12-06')
+    null, '2015-12-07', '2018-12-06', 3)
   ;
 
 
@@ -489,4 +498,5 @@ values
   ('lancaster', 12),
   ('lancaster', 13)
 ;
+
 

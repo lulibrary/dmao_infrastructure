@@ -14,6 +14,7 @@ dataset
 project
 dmp
 department
+storage_costs
 funder_dmp_states
 faculty
 funder

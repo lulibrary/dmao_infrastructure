@@ -36,6 +36,7 @@
 <table width='100%' border='0'>
 <tr valign='top'><td class='container' align='left' valign='top'>
 <form name='options' action=''>
+ <label for='implied'><input type=checkbox id='implied'>Implied relationships</label>
  <label for='showRelatedCols'><input type=checkbox id='showRelatedCols'>Related columns</label>
  <label for='showConstNames'><input type=checkbox id='showConstNames'>Constraints</label>
  <label for='showComments'><input type=checkbox checked id='showComments'>Comments</label>
@@ -102,7 +103,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </tr>
 </thead>
 <tbody valign='top'>
-<tr class='odd'>
+<tr class='even'>
  <td class='primaryKey' title='Primary Key'>project_id</td>
  <td class='detail'>serial</td>
  <td class='detail' align='right'>10</td>
@@ -111,31 +112,31 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail' align='right'>nextval('project_project_id_seq'::regclass)</td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="dataset.project_id refs project.project_id via dataset_project_id_fkey"><a href='dataset.html'>dataset</a><span class='relatedKey'>.project_id</span>
     </td>
     <td class='constraint detail'>dataset_project_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="funder_project_map.project_id refs project.project_id via funder_project_map_project_id_fkey"><a href='funder_project_map.html'>funder_project_map</a><span class='relatedKey'>.project_id</span>
     </td>
     <td class='constraint detail'>funder_project_map_project_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="project_ds_map.project_id refs project.project_id via project_ds_map_project_id_fkey"><a href='project_ds_map.html'>project_ds_map</a><span class='relatedKey'>.project_id</span>
     </td>
     <td class='constraint detail'>project_ds_map_project_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="project_pub_map.project_id refs project.project_id via project_pub_map_project_id_fkey"><a href='project_pub_map.html'>project_pub_map</a><span class='relatedKey'>.project_id</span>
     </td>
     <td class='constraint detail'>project_pub_map_project_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="publication.project_id refs project.project_id via publication_project_id_fkey"><a href='publication.html'>publication</a><span class='relatedKey'>.project_id</span>
     </td>
     <td class='constraint detail'>publication_project_id_fkey<span title='Cascade on delete:
@@ -146,7 +147,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>project_name</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>2048</td>
@@ -157,7 +158,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>funder_project_code</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -169,7 +170,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>A code assigned to the project by the funding body, it may be null<br>
   if the funding application is in process.</td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>is_awarded</td>
  <td class='detail'>bool</td>
  <td class='detail' align='right'>1</td>
@@ -181,7 +182,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>Is 'true' if funding has been succesfully applied<br>
   for, 'false' otherwise</td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>inst_id</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -191,7 +192,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="project.inst_id refs institution.inst_id via project_inst_id_fkey"><a href='institution.html'>institution</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>project_inst_id_fkey<span title='Cascade on delete:
@@ -201,7 +202,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>institution_project_code</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -212,7 +213,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>lead_faculty_id</td>
  <td class='detail'>int4</td>
  <td class='detail' align='right'>10</td>
@@ -222,7 +223,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="project.lead_faculty_id refs faculty.faculty_id via project_lead_faculty_id_fkey"><a href='faculty.html'>faculty</a><span class='relatedKey'>.faculty_id</span>
     </td>
     <td class='constraint detail'>project_lead_faculty_id_fkey<span title='Cascade on delete:
@@ -232,7 +233,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>lead_department_id</td>
  <td class='detail'>int4</td>
  <td class='detail' align='right'>10</td>
@@ -242,7 +243,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative even' valign='top'>
+   <tr class='relative odd' valign='top'>
     <td class='relatedTable detail' title="project.lead_department_id refs department.department_id via project_lead_department_id_fkey"><a href='department.html'>department</a><span class='relatedKey'>.department_id</span>
     </td>
     <td class='constraint detail'>project_lead_department_id_fkey<span title='Cascade on delete:
@@ -252,7 +253,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>has_dmp</td>
  <td class='detail'>bool</td>
  <td class='detail' align='right'>1</td>
@@ -263,7 +264,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'>Is 'true' if a DMP exists, 'false' otherwise.</td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>has_dmp_been_reviewed</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>50</td>
@@ -274,7 +275,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'>Is 'true' if a DMP exists and has been reviewed, 'false' otherwise.</td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>dmp_id</td>
  <td class='detail'>int4</td>
  <td class='detail' align='right'>10</td>
@@ -284,7 +285,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="project.dmp_id refs dmp.dmp_id via project_dmp_id_fkey"><a href='dmp.html'>dmp</a><span class='relatedKey'>.dmp_id</span>
     </td>
     <td class='constraint detail'>project_dmp_id_fkey<span title='Cascade on delete:
@@ -294,7 +295,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>expected_storage</td>
  <td class='detail'>numeric</td>
  <td class='detail' align='right'>131089</td>
@@ -305,7 +306,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'>The amount of storage in GB this project is expecting to need.</td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>project_awarded</td>
  <td class='detail'>date</td>
  <td class='detail' align='right'>13</td>
@@ -316,7 +317,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>project_start</td>
  <td class='detail'>date</td>
  <td class='detail' align='right'>13</td>
@@ -327,7 +328,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>project_end</td>
  <td class='detail'>date</td>
  <td class='detail' align='right'>13</td>
@@ -338,8 +339,28 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
+<tr class='odd'>
+ <td class='detail'>sc_id</td>
+ <td class='detail'>int4</td>
+ <td class='detail' align='right'>10</td>
+ <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
+ <td class='detail' align='center'></td>
+ <td class='detail' align='right'>null</td>
+ <td class='detail'></td>
+ <td class='detail'>
+  <table border='0' width='100%' cellspacing='0' cellpadding='0'>
+   <tr class='relative odd' valign='top'>
+    <td class='relatedTable detail' title="project.sc_id refs storage_costs.sc_id via project_sc_id_fkey"><a href='storage_costs.html'>storage_costs</a><span class='relatedKey'>.sc_id</span>
+    </td>
+    <td class='constraint detail'>project_sc_id_fkey<span title='Restrict delete:
+ Parent cannot be deleted if children exist'>&nbsp;R</span></td>
+   </tr>
+  </table>
+ </td>
+ <td class='comment detail'></td>
+</tr>
 </table>
-<p title='15 columns'>Table contained 11 rows at Thu Jul 09 16:37 BST 2015<p/>
+<p title='16 columns'>Table contained 11 rows at Thu Jul 16 15:23 BST 2015<p/>
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -365,39 +386,67 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <br><form action='get'><b>Close relationships</b><span class='degrees' id='degrees' title='Detail diminishes with increased separation from project'>
 &nbsp;within <label for='oneDegree'><input type='radio' name='degrees' id='oneDegree' checked>one</label>  <label for='twoDegrees'><input type='radio' name='degrees' id='twoDegrees'>two degrees</label> of separation</span><b>:</b></form>
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="935,207,1094,603">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="364,582,505,762">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="175,511,308,667">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="561,102,879,527">
-<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="5,594,131,870">
-<area shape="rect" id="node7" href="dmp.html" title="dmp" alt="" coords="353,323,517,527">
-<area shape="rect" id="node6" href="funder_project_map.html" title="funder_project_map" alt="" coords="935,45,1095,153">
-<area shape="rect" id="node8" href="project_ds_map.html" title="project_ds_map" alt="" coords="1156,79,1289,187">
-<area shape="rect" id="node9" href="project_pub_map.html" title="project_pub_map" alt="" coords="1151,349,1294,457">
-<area shape="rect" id="node10" href="publication.html" title="publication" alt="" coords="923,621,1106,945">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="935,206,1094,602">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="364,581,505,761">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="175,539,308,695">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="561,77,879,526">
+<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="5,563,131,839">
+<area shape="rect" id="node7" href="dmp.html" title="dmp" alt="" coords="353,286,517,490">
+<area shape="rect" id="node8" href="storage_costs.html" title="storage_costs" alt="" coords="175,366,308,522">
+<area shape="rect" id="node6" href="funder_project_map.html" title="funder_project_map" alt="" coords="935,43,1095,151">
+<area shape="rect" id="node9" href="project_ds_map.html" title="project_ds_map" alt="" coords="1156,78,1289,186">
+<area shape="rect" id="node10" href="project_pub_map.html" title="project_pub_map" alt="" coords="1151,347,1294,455">
+<area shape="rect" id="node11" href="publication.html" title="publication" alt="" coords="923,619,1106,943">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/project.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
+<map id="impliedTwoDegreesRelationshipsDiagram" name="impliedTwoDegreesRelationshipsDiagram">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="1045,619,1203,1015">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="473,885,615,1065">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="232,769,365,925">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="671,177,988,627">
+<area shape="rect" id="node6" href="institution.html" title="institution" alt="" coords="8,852,133,1128">
+<area shape="rect" id="node10" href="dmp.html" title="dmp" alt="" coords="462,337,626,541">
+<area shape="rect" id="node17" href="storage_costs.html" title="storage_costs" alt="" coords="477,559,611,715">
+<area shape="rect" id="node5" href="dataset_accesses.html" title="dataset_accesses" alt="" coords="1260,725,1409,809">
+<area shape="rect" id="node7" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1274,881,1395,965">
+<area shape="rect" id="node8" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1271,624,1399,708">
+<area shape="rect" id="node9" href="publication.html" title="publication" alt="" coords="1033,277,1215,601">
+<area shape="rect" id="node11" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="221,355,376,439">
+<area shape="rect" id="node12" href="funder.html" title="funder" alt="" coords="6,35,135,119">
+<area shape="rect" id="node13" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="1269,296,1401,380">
+<area shape="rect" id="node14" href="funder_project_map.html" title="funder_project_map" alt="" coords="1044,79,1204,187">
+<area shape="rect" id="node15" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1265,21,1405,105">
+<area shape="rect" id="node16" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1270,1093,1399,1177">
+<area shape="rect" id="node18" href="project_ds_map.html" title="project_ds_map" alt="" coords="1268,397,1401,505">
+<area shape="rect" id="node19" href="project_expected_storage_costs.html" title="project_expected_storage_costs" alt="" coords="180,1081,417,1165">
+<area shape="rect" id="node20" href="project_pub_map.html" title="project_pub_map" alt="" coords="1263,171,1406,279">
+<area shape="rect" id="node21" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1274,523,1395,607">
+<area shape="rect" id="node22" href="users.html" title="users" alt="" coords="241,980,356,1064">
+</map>
+
+  <a name='diagram'><img id='impliedTwoDegreesImg' src='../diagrams/project.implied2degrees.png' usemap='#impliedTwoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
 <area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="962,614,1121,1010">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="391,842,532,1022">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="191,726,324,882">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="588,246,905,671">
-<area shape="rect" id="node6" href="institution.html" title="institution" alt="" coords="8,809,133,1085">
-<area shape="rect" id="node10" href="dmp.html" title="dmp" alt="" coords="379,425,543,629">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="391,914,532,1094">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="191,806,324,962">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="588,185,905,634">
+<area shape="rect" id="node6" href="institution.html" title="institution" alt="" coords="8,830,133,1106">
+<area shape="rect" id="node10" href="dmp.html" title="dmp" alt="" coords="379,374,543,578">
+<area shape="rect" id="node17" href="storage_costs.html" title="storage_costs" alt="" coords="395,595,528,751">
 <area shape="rect" id="node5" href="dataset_accesses.html" title="dataset_accesses" alt="" coords="1177,721,1327,805">
-<area shape="rect" id="node7" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1191,858,1313,942">
+<area shape="rect" id="node7" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1191,861,1313,945">
 <area shape="rect" id="node8" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1188,619,1316,703">
 <area shape="rect" id="node9" href="publication.html" title="publication" alt="" coords="950,273,1133,597">
-<area shape="rect" id="node11" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="180,461,335,545">
+<area shape="rect" id="node11" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="180,391,335,475">
 <area shape="rect" id="node12" href="funder.html" title="funder" alt="" coords="6,30,135,114">
 <area shape="rect" id="node13" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="1186,291,1318,375">
 <area shape="rect" id="node14" href="funder_project_map.html" title="funder_project_map" alt="" coords="961,74,1121,182">
 <area shape="rect" id="node15" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1182,17,1322,101">
-<area shape="rect" id="node16" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1187,1030,1317,1114">
-<area shape="rect" id="node17" href="project_ds_map.html" title="project_ds_map" alt="" coords="1185,393,1319,501">
-<area shape="rect" id="node18" href="project_pub_map.html" title="project_pub_map" alt="" coords="1181,166,1323,274">
-<area shape="rect" id="node19" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1191,518,1313,602">
-<area shape="rect" id="node20" href="users.html" title="users" alt="" coords="200,937,315,1021">
+<area shape="rect" id="node16" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1187,1039,1317,1123">
+<area shape="rect" id="node18" href="project_ds_map.html" title="project_ds_map" alt="" coords="1185,393,1319,501">
+<area shape="rect" id="node19" href="project_pub_map.html" title="project_pub_map" alt="" coords="1181,166,1323,274">
+<area shape="rect" id="node20" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1191,518,1313,602">
+<area shape="rect" id="node21" href="users.html" title="users" alt="" coords="200,1149,315,1233">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/project.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

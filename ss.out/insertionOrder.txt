@@ -2,6 +2,7 @@ institution
 funder
 faculty
 funder_dmp_states
+storage_costs
 department
 dmp
 project

@@ -26,10 +26,12 @@ digraph "oneDegreeRelationshipsDiagram" {
   "project":"inst_id":w -> "institution":"inst_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "project":"sc_id":w -> "storage_costs":"sc_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_inst_id":w -> "institution":"inst_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "storage_costs":"inst_id":w -> "institution":"inst_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "users":"inst_id":w -> "institution":"inst_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "department" [
     label=<
@@ -82,7 +84,7 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="pub_sys" COLSPAN="2" ALIGN="LEFT">pub_sys</TD><TD PORT="pub_sys.type" ALIGN="LEFT">varchar[1024]</TD></TR>
       <TR><TD PORT="dataset_sys" COLSPAN="2" ALIGN="LEFT">dataset_sys</TD><TD PORT="dataset_sys.type" ALIGN="LEFT">varchar[1024]</TD></TR>
       <TR><TD PORT="archive_sys" COLSPAN="2" ALIGN="LEFT">archive_sys</TD><TD PORT="archive_sys.type" ALIGN="LEFT">varchar[1024]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 0</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 0</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
     tooltip="institution"
@@ -106,7 +108,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_awarded" COLSPAN="3" ALIGN="LEFT">project_awarded</TD></TR>
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD PORT="sc_id" COLSPAN="3" ALIGN="LEFT">sc_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
@@ -130,6 +133,19 @@ digraph "oneDegreeRelationshipsDiagram" {
     </TABLE>>
     URL="publication.html"
     tooltip="publication"
+  ];
+  "storage_costs" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">storage_costs</TD></TR>
+      <TR><TD PORT="sc_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">sc_id</TD></TR>
+      <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
+      <TR><TD PORT="inst_reference" COLSPAN="3" ALIGN="LEFT">inst_reference</TD></TR>
+      <TR><TD PORT="cost_per_tb" COLSPAN="3" ALIGN="LEFT">cost_per_tb</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="storage_costs.html"
+    tooltip="storage_costs"
   ];
   "users" [
     label=<

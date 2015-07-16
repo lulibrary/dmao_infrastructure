@@ -17,6 +17,7 @@ drop table if exists dmp cascade;
 drop table if exists publication cascade;
 drop table if exists dataset_accesses;
 drop table if exists dataset cascade;
+drop table if exists storage_costs cascade;
 drop table if exists department cascade;
 drop table if exists funder_dmp_states cascade;
 drop table if exists funder cascade;
@@ -139,6 +140,19 @@ comment on column dmp.dmp_status is
   ''none'', ''new'', ''in progress'', ''completed'', ''verified''.';
 
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+create table storage_costs (
+  sc_id serial primary key,
+  inst_id varchar(256) references institution(inst_id)
+    on delete cascade on update cascade,
+  inst_reference varchar(1024),
+  cost_per_tb numeric
+);
+create index on storage_costs(inst_id);
+comment on table storage_costs
+  is 'Describes storage costs for institutional storage platforms';
+
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -163,6 +177,8 @@ create table project (
   project_awarded date,
   project_start date,
   project_end date,
+  sc_id integer references storage_costs(sc_id)
+    on delete restrict,
   check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
 );
 comment on table project is 'Describes an institutions projects';
@@ -444,3 +460,22 @@ create or replace view dataset_faculty_map as
   from dataset d
   left outer join faculty f
   on d.lead_faculty_id = f.faculty_id;
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+create or replace view project_expected_storage_costs as
+  select
+    p.inst_id,
+    p.project_id,
+    s.sc_id,
+    s.inst_reference description,
+    p.expected_storage gb,
+    round(p.expected_storage/1024*s.cost_per_tb, 2) storage_cost
+  from
+    project p,
+    storage_costs s
+  where
+    p.sc_id = s.sc_id
+  order by p.inst_id, p.project_id asc;
+
