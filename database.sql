@@ -42,7 +42,9 @@ create table institution (
   cris_sys varchar(1024),
   pub_sys varchar(1024),
   dataset_sys varchar(1024),
-  archive_sys varchar(1024)
+  archive_sys varchar(1024),
+  currency varchar(3),
+  currency_symbol varchar(32)
 );
 comment on table institution is 'Describes an institution.';
 comment on column institution.cris_sys is

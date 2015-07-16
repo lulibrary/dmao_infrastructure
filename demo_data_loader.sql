@@ -2,7 +2,7 @@ insert into institution values
   (
     'lancaster', 'Lancaster University', 'John Krug',
     'j.krug@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
-    'Fedora', 'Archivematica'
+    'Fedora', 'Archivematica', 'GBP', '£'
   )
 ;
 
@@ -74,7 +74,7 @@ insert into storage_costs(inst_id, inst_reference, cost_per_tb)
   values
     ('lancaster', 'Hitachi Content Platform', 8.76),
     ('lancaster', 'Box Cloud Storage', 2.89),
-    ('lancaster', 'Arkivum', 80)
+    ('lancaster', 'Arkivum', 80.00)
 ;
 
 insert into project
