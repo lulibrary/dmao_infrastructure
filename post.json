@@ -8,5 +8,7 @@
   "cris_sys": "Pure",
   "pub_sys": "Eprints",
   "dataset_sys": "Fedora",
-  "archive_sys": "Archivematica"
+  "archive_sys": "Archivematica",
+  "currency": "CNY",
+  "currency_symbol": "¥"
 }
