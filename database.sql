@@ -1,6 +1,6 @@
 
 
--- Postgres DDL for DMAOnline database
+-- Postgres DDL for DMAOnline database, v0.2
 
 drop table if exists inst_ds_map cascade;
 drop table if exists funder_project_map cascade;
