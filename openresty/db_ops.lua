@@ -141,6 +141,8 @@ function d_faculty(inst, operation, val)
     close_dmaonline_db(db)
 end
 
+-- TODO: http://stackoverflow.com/questions/19138974/does-lua-optimize-the-operator
+
 
 -- funder database operations
 function d_funder(inst, operation, val)
