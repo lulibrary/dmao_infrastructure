@@ -87,6 +87,7 @@ function db_operation(d, q)
     else
         local res = assert(d:query(q))
         ngx.say(cjson.encode(res[1]))
+        -- TODO: Make sure correct headers are being returned
     end
 end
 
