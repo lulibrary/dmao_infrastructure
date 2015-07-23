@@ -3,7 +3,8 @@ cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
 
-debug = 1
+debug = true
+debug = false
 
 -- TODO: Needs some work to make this generic
 
@@ -14,7 +15,7 @@ function tprint (tbl, indent)
         local formatting = string.rep('  ', indent) .. k .. ': '
         if type(v) == 'table' then
             ngx.say(formatting)
-            tprint(v, indent+1)
+            tprint(v, indent + 1)
         elseif type(v) == 'boolean' then
             ngx.say(formatting .. tostring(v))
         else
@@ -86,116 +87,128 @@ function db_operation(d, q)
         ngx.say(q)
     else
         local res = assert(d:query(q))
-        ngx.say(cjson.encode(res[1]))
-        -- TODO: Make sure correct headers are being returned
+        ngx.say(cjson.encode(res))
+        -- TODO: Make sure correct HTTP headers are being returned
     end
 end
 
 -- institution database operations
-function d_institution(inst, operation, values)
-    local d = open_dmaonline_db()
-    local q
-    local v = d:escape_literal(values['inst_id']) .. ', '
-    v = v .. d:escape_literal(values['name']) .. ', '
-    v = v .. d:escape_literal(values['contact']) .. ', '
-    v = v .. d:escape_literal(values['contact_phone']) .. ', '
-    v = v .. d:escape_literal(values['contact_email']) .. ', '
-    v = v .. d:escape_literal(values['cris_sys']) .. ', '
-    v = v .. d:escape_literal(values['pub_sys']) .. ', '
-    v = v .. d:escape_literal(values['dataset_sys']) .. ', '
-    v = v .. d:escape_literal(values['archive_sys']) .. ', '
-    v = v .. d:escape_literal(values['currency']) .. ', '
-    v = v .. d:escape_literal(values['currency_symbol'])
+function d_institution(inst, operation, val)
+    local db = open_dmaonline_db()
+    local query = ""
     if operation == "insert" then
-        q = "insert into institution values ("
-                  .. v .. ") returning *;"
+        local values = db:escape_literal(val['inst_id']) .. ', '
+        values = values .. db:escape_literal(val['name']) .. ', '
+        values = values .. db:escape_literal(val['contact']) .. ', '
+        values = values .. db:escape_literal(val['contact_phone']) .. ', '
+        values = values .. db:escape_literal(val['contact_email']) .. ', '
+        values = values .. db:escape_literal(val['cris_sys']) .. ', '
+        values = values .. db:escape_literal(val['pub_sys']) .. ', '
+        values = values .. db:escape_literal(val['dataset_sys']) .. ', '
+        values = values .. db:escape_literal(val['archive_sys']) .. ', '
+        values = values .. db:escape_literal(val['currency']) .. ', '
+        values = values .. db:escape_literal(val['currency_symbol'])
+        query = "insert into institution values ("
+                  .. values .. ") returning *;"
     elseif operation == "update" then
-        q = "update institution"
+        query = "update institution"
     elseif operation == "delete" then
-        q = "delete institution where inst_id = "
-            .. d:escape_literal(inst) .. ";"
+        query = "delete from institution where inst_id = "
+            .. db:escape_literal(inst) .. ";"
     else
         ngx.say("Invalid operation, " .. operation .. " on institution")
     end
-    db_operation(d, q)
-    close_dmaonline_db(d)
+    db_operation(db, query)
+    close_dmaonline_db(db)
 end
 
 
 -- faculty database operations
-function d_faculty(inst, operation, values)
+function d_faculty(inst, operation, val)
+    local db = open_dmaonline_db()
+    local values = ""
+    local query = ""
     ngx.say("d_faculty " .. operation .. " for " .. inst)
-    tprint(values)
+    for _, v in pairs(val) do
+        values = values .. "(" .. db:escape_literal(v['inst_id']) .. ', '
+        values = values .. db:escape_literal(v['name']) .. ', '
+        values = values .. db:escape_literal(v['abbreviation']) .. "), "
+    end
+    values = string.gsub(values, ", $", "")
+    query = "insert into faculty(inst_id, name, abbreviation) values "
+            .. values .. " returning *;"
+    db_operation(db, query)
+    close_dmaonline_db(db)
 end
 
 
 -- funder database operations
-function d_funder(inst, values)
+function d_funder(inst, operation, val)
     ngx.say("d_funder " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- funder_dmp_states database operations
-function d_funder_dmp_states(inst, values)
+function d_funder_dmp_states(inst, operation, val)
     ngx.say("d_funder_dmp_states " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- department database operations
-function d_department(inst, values)
+function d_department(inst, operation, val)
     ngx.say("d_department " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- storage_costs database operations
-function d_storage_costs(inst, values)
+function d_storage_costs(inst, operation, val)
     ngx.say("d_storage_costs " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- dataset database operations
-function d_dataset(inst, values)
+function d_dataset(inst, operation, val)
     ngx.say("d_dataset " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- dataset_accesses database operations
-function d_dataset_accesses(inst, values)
+function d_dataset_accesses(inst, operation, val)
     ngx.say("d_dataset_accesses " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- publication database operations
-function d_publication(inst, values)
+function d_publication(inst, operation, val)
     ngx.say("d_publication " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- project database operations
-function d_project(inst, values)
+function d_project(inst, operation, val)
     ngx.say("d_project " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- users database operations
-function d_users(inst, values)
+function d_users(inst, operation, val)
     ngx.say("d_users " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 
 -- funder_ds_map database operations
-function d_funder_ds_map(inst, values)
+function d_funder_ds_map(inst, operation, val)
     ngx.say("d_funder_ds_map " .. operation .. " for " .. inst)
-    tprint(values)
+    tprint(val)
 end
 
 

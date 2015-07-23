@@ -1,7 +1,6 @@
 {
-  "_comment" : "Used to test POST update to institutions table",
-  "inst_id": "demo",
-  "name": "Demo University",
+  "inst_id": "hogwash",
+  "name": "Hogwash University",
   "contact": "John Krug",
   "contact_email": "j.krug@lancaster.ac.uk",
   "contact_phone": "+44 1524 593099",
