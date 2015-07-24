@@ -52,7 +52,6 @@ function form_to_table()
 end
 
 
--- get the database username and password
 function get_connection_details()
     local f = "/usr/local/openresty/lualib/connection.conf"
     dofile(f)
@@ -60,7 +59,6 @@ function get_connection_details()
 end
 
 
--- open a database connection
 function open_dmaonline_db()
     local u, p = get_connection_details()
     local d = pg.new(
@@ -76,10 +74,10 @@ function open_dmaonline_db()
 end
 
 
--- close the database connection
 function close_dmaonline_db(c)
     assert(c:disconnect())
 end
+
 
 function do_db_operation(d, q)
     if debug then
@@ -87,18 +85,26 @@ function do_db_operation(d, q)
     else
         local res = assert(d:query(q))
         ngx.say(cjson.encode(res))
-        -- TODO: Make sure correct HTTP headers are being returned
     end
 end
 
 
+-- construct a list of columns to be operated on, the values to use and
+-- optionally the primary key and it's value
 function columns_rows_maker(d, t_data)
+    local pkey=""
+    local pkey_val=""
     local a = {"(" }
     local b = {}
     for i, row in pairs(t_data) do
         b[#b + 1] = "("
         for column, value in pairs(row) do
             if i == 1 then
+                if string.match(column, "^pkey:") then
+                    column = string.gsub(column, "^pkey:", "")
+                    pkey = column
+                    pkey_val = d:escape_literal(value)
+                end
                 a[#a + 1] = column
                 a[#a + 1] = ", "
             end
@@ -112,14 +118,15 @@ function columns_rows_maker(d, t_data)
     local val_list = table.concat(b)
     val_list = string.gsub(val_list, ", %)", ")")
     val_list = string.gsub(val_list, ", $", "")
-    return col_list, val_list
+    return col_list, val_list, pkey, pkey_val
 end
 
 
 function db_operation(object, operation, inst, data_table)
     local db = open_dmaonline_db()
     local t_query = {}
-    local columns, values = columns_rows_maker(db, data_table)
+    local columns, values, pkey, pkey_val =
+        columns_rows_maker(db, data_table)
     if operation == "insert" then
         t_query[#t_query + 1] = "insert into "
         t_query[#t_query + 1] = object
@@ -128,7 +135,19 @@ function db_operation(object, operation, inst, data_table)
         t_query[#t_query + 1] = values
         t_query[#t_query + 1] = " returning *;"
     elseif operation == "update" then
-        ngx.say("update on " .. object)
+        t_query[#t_query + 1] = "update "
+        t_query[#t_query + 1] = object
+        t_query[#t_query + 1] = " set "
+        t_query[#t_query + 1] = columns
+        t_query[#t_query + 1] = " = "
+        t_query[#t_query + 1] = values
+        t_query[#t_query + 1] = " where inst_id = "
+        t_query[#t_query + 1] = db:escape_literal(inst)
+        t_query[#t_query + 1] = " and "
+        t_query[#t_query + 1] = pkey
+        t_query[#t_query + 1] = " = "
+        t_query[#t_query + 1] = pkey_val
+        t_query[#t_query + 1] = " returning *;"
     elseif operation == "delete" then
         t_query[#t_query + 1] = "delete from "
         t_query[#t_query + 1] = object
