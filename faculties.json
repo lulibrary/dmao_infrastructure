@@ -6,6 +6,11 @@
  },
  {
   "inst_id": "hogwash",
+  "name": "Faculty of Conspiracy Theory",
+  "abbreviation": "911"
+ },
+ {
+  "inst_id": "hogwash",
   "name": "Centre for the study of Paranormal Activity",
   "abbreviation": "BOO"
  }

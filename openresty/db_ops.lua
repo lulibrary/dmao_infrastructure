@@ -3,10 +3,9 @@ cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
 
-debug = true
 debug = false
+debug = true
 
--- TODO: Needs some work to make this generic
 
 -- iterate through a lua table to print via nginx, for debugging purposes.
 function tprint (tbl, indent)
@@ -82,7 +81,7 @@ function close_dmaonline_db(c)
     assert(c:disconnect())
 end
 
-function db_operation(d, q)
+function do_db_operation(d, q)
     if debug then
         ngx.say(q)
     else
@@ -92,125 +91,60 @@ function db_operation(d, q)
     end
 end
 
--- institution database operations
-function d_institution(inst, operation, val)
+
+function columns_rows_maker(d, t_data)
+    local a = {"(" }
+    local b = {}
+    for i, row in pairs(t_data) do
+        b[#b + 1] = "("
+        for column, value in pairs(row) do
+            if i == 1 then
+                a[#a + 1] = column
+                a[#a + 1] = ", "
+            end
+            b[#b + 1] = d:escape_literal(value)
+            b[#b + 1] = ", "
+        end
+        b[#b + 1] = "), "
+    end
+    local col_list = table.concat(a)
+    col_list = string.gsub(col_list, ", $", ")")
+    local val_list = table.concat(b)
+    val_list = string.gsub(val_list, ", %)", ")")
+    val_list = string.gsub(val_list, ", $", "")
+    return col_list, val_list
+end
+
+
+function db_operation(object, operation, inst, data_table)
     local db = open_dmaonline_db()
-    local query = ""
+    local t_query = {}
+    local columns, values = columns_rows_maker(db, data_table)
     if operation == "insert" then
-        local values = db:escape_literal(val['inst_id']) .. ', '
-        values = values .. db:escape_literal(val['name']) .. ', '
-        values = values .. db:escape_literal(val['contact']) .. ', '
-        values = values .. db:escape_literal(val['contact_phone']) .. ', '
-        values = values .. db:escape_literal(val['contact_email']) .. ', '
-        values = values .. db:escape_literal(val['cris_sys']) .. ', '
-        values = values .. db:escape_literal(val['pub_sys']) .. ', '
-        values = values .. db:escape_literal(val['dataset_sys']) .. ', '
-        values = values .. db:escape_literal(val['archive_sys']) .. ', '
-        values = values .. db:escape_literal(val['currency']) .. ', '
-        values = values .. db:escape_literal(val['currency_symbol'])
-        query = "insert into institution values ("
-                  .. values .. ") returning *;"
+        t_query[#t_query + 1] = "insert into "
+        t_query[#t_query + 1] = object
+        t_query[#t_query + 1] = columns
+        t_query[#t_query + 1] = " values "
+        t_query[#t_query + 1] = values
+        t_query[#t_query + 1] = " returning *;"
     elseif operation == "update" then
-        query = "update institution"
+        ngx.say("update on " .. object)
     elseif operation == "delete" then
-        query = "delete from institution where inst_id = "
-            .. db:escape_literal(inst) .. ";"
+        t_query[#t_query + 1] = "delete from "
+        t_query[#t_query + 1] = object
+        t_query[#t_query + 1] = " where inst_id = "
+        t_query[#t_query + 1] = db:escape_literal(inst)
+        t_query[#t_query + 1] = " and "
+        t_query[#t_query + 1] = string.gsub(columns, "[%(%)]", "")
+        t_query[#t_query + 1] = " = "
+        t_query[#t_query + 1] = string.gsub(values, "[%(%)]", "")
+        t_query[#t_query + 1] = " returning *;"
     else
-        ngx.say("Invalid operation, " .. operation .. " on institution")
+        ngx.say("unknown operation - " .. operation)
     end
-    db_operation(db, query)
+    local query = table.concat(t_query)
+    do_db_operation(db, query)
     close_dmaonline_db(db)
-end
-
-
--- faculty database operations
-function d_faculty(inst, operation, val)
-    local db = open_dmaonline_db()
-    local values = ""
-    local query = ""
-    ngx.say("d_faculty " .. operation .. " for " .. inst)
-    for _, v in pairs(val) do
-        values = values .. "(" .. db:escape_literal(v['inst_id']) .. ', '
-        values = values .. db:escape_literal(v['name']) .. ', '
-        values = values .. db:escape_literal(v['abbreviation']) .. "), "
-    end
-    values = string.gsub(values, ", $", "")
-    query = "insert into faculty(inst_id, name, abbreviation) values "
-            .. values .. " returning *;"
-    db_operation(db, query)
-    close_dmaonline_db(db)
-end
-
--- TODO: http://stackoverflow.com/questions/19138974/does-lua-optimize-the-operator
-
-
--- funder database operations
-function d_funder(inst, operation, val)
-    ngx.say("d_funder " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- funder_dmp_states database operations
-function d_funder_dmp_states(inst, operation, val)
-    ngx.say("d_funder_dmp_states " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- department database operations
-function d_department(inst, operation, val)
-    ngx.say("d_department " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- storage_costs database operations
-function d_storage_costs(inst, operation, val)
-    ngx.say("d_storage_costs " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- dataset database operations
-function d_dataset(inst, operation, val)
-    ngx.say("d_dataset " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- dataset_accesses database operations
-function d_dataset_accesses(inst, operation, val)
-    ngx.say("d_dataset_accesses " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- publication database operations
-function d_publication(inst, operation, val)
-    ngx.say("d_publication " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- project database operations
-function d_project(inst, operation, val)
-    ngx.say("d_project " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- users database operations
-function d_users(inst, operation, val)
-    ngx.say("d_users " .. operation .. " for " .. inst)
-    tprint(val)
-end
-
-
--- funder_ds_map database operations
-function d_funder_ds_map(inst, operation, val)
-    ngx.say("d_funder_ds_map " .. operation .. " for " .. inst)
-    tprint(val)
 end
 
 
@@ -218,32 +152,7 @@ end
 local inst = ngx.var.inst_id
 local object = ngx.var.object
 local operation = ngx.var.operation
-local object_function_map = {
-    institution = d_institution,
-    faculty = d_faculty,
-    funder = d_funder,
-    funder_dmp_states = d_funder_dmp_states,
-    department = d_department,
-    storage_costs = d_storage_costs,
-    dataset = d_dataset,
-    dataset_accesses = d_dataset_accesses,
-    publication = d_publication,
-    project = d_project,
-    users = d_users,
-    funder_ds_map = d_funder_ds_map,
-    funder_pub_map = d_funder_pub_map,
-    pub_ds_map = d_pub_ds_map,
-    dept_ds_map = d_dept_ds_map,
-    dept_pub_map = d_dept_pub_map,
-    project_pub_map = d_project_pub_map,
-    project_ds_map = d_project_ds_map,
-    funder_project_map = d_funder_project_map,
-    inst_ds_map = d_inst_ds_map
-}
 
-if object_function_map[object] then
-    object_function_map[object](inst, operation, form_to_table())
-else
-    ngx.say("No function found in object_function_map for "
-            .. operation .. " on " .. object)
-end
+local data = form_to_table()
+db_operation(object, operation, inst, data)
+
