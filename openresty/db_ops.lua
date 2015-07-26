@@ -139,7 +139,6 @@ function db_operation(object, operation, inst, data_table)
         columns_rows_maker(db, data_table)
     local query = ""
     if operation == "insert" then
-        --noinspection UnusedDef
         query = make_sql(
             "insert into ",
             object,
@@ -149,7 +148,6 @@ function db_operation(object, operation, inst, data_table)
             " returning *;"
         )
     elseif operation == "update" then
-        --noinspection UnusedDef
         query = make_sql(
             "update ",
             object,
@@ -165,7 +163,6 @@ function db_operation(object, operation, inst, data_table)
             " returning *;"
         )
     elseif operation == "delete" then
-        --noinspection UnusedDef
         query = make_sql(
             "delete from ",
             object,
