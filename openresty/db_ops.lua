@@ -123,6 +123,7 @@ function columns_rows_maker(d, t_data)
 end
 
 
+--noinspection UnusedDef
 function make_sql(...)
     local t = {}
     for _, v in ipairs(arg) do
@@ -131,13 +132,6 @@ function make_sql(...)
     return(table.concat(t))
 end
 
-function _test(b)
-    local a
-    if b == "a" then
-        a = "v"
-    end
-    return(a)
-end
 
 function db_operation(object, operation, inst, data_table)
     local db = open_dmaonline_db()
@@ -145,6 +139,7 @@ function db_operation(object, operation, inst, data_table)
         columns_rows_maker(db, data_table)
     local query = ""
     if operation == "insert" then
+        --noinspection UnusedDef
         query = make_sql(
             "insert into ",
             object,
@@ -154,6 +149,7 @@ function db_operation(object, operation, inst, data_table)
             " returning *;"
         )
     elseif operation == "update" then
+        --noinspection UnusedDef
         query = make_sql(
             "update ",
             object,
@@ -169,6 +165,7 @@ function db_operation(object, operation, inst, data_table)
             " returning *;"
         )
     elseif operation == "delete" then
+        --noinspection UnusedDef
         query = make_sql(
             "delete from ",
             object,
