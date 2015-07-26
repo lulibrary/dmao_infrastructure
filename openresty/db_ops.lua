@@ -1,4 +1,5 @@
 
+strict = require 'strict'
 cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
