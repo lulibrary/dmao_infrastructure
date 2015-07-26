@@ -122,47 +122,72 @@ function columns_rows_maker(d, t_data)
 end
 
 
+function make_sql(...)
+    local t = {}
+    for _, v in ipairs(arg) do
+        t[#t + 1] = v
+    end
+    return(table.concat(t))
+end
+
+function _test(b)
+    local a
+    if b == "a" then
+        a = "v"
+    end
+    return(a)
+end
+
 function db_operation(object, operation, inst, data_table)
     local db = open_dmaonline_db()
-    local t_query = {}
     local columns, values, pkey, pkey_val =
         columns_rows_maker(db, data_table)
+    local query = ""
     if operation == "insert" then
-        t_query[#t_query + 1] = "insert into "
-        t_query[#t_query + 1] = object
-        t_query[#t_query + 1] = columns
-        t_query[#t_query + 1] = " values "
-        t_query[#t_query + 1] = values
-        t_query[#t_query + 1] = " returning *;"
+        query = make_sql(
+            "insert into ",
+            object,
+            columns,
+            " values ",
+            values,
+            " returning *;"
+        )
     elseif operation == "update" then
-        t_query[#t_query + 1] = "update "
-        t_query[#t_query + 1] = object
-        t_query[#t_query + 1] = " set "
-        t_query[#t_query + 1] = columns
-        t_query[#t_query + 1] = " = "
-        t_query[#t_query + 1] = values
-        t_query[#t_query + 1] = " where inst_id = "
-        t_query[#t_query + 1] = db:escape_literal(inst)
-        t_query[#t_query + 1] = " and "
-        t_query[#t_query + 1] = pkey
-        t_query[#t_query + 1] = " = "
-        t_query[#t_query + 1] = pkey_val
-        t_query[#t_query + 1] = " returning *;"
+        query = make_sql(
+            "update ",
+            object,
+            " set ",
+            columns,
+            " = ",
+            values,
+            " where inst_id = ",
+            db:escape_literal(inst),
+            " and ",
+            pkey, " = ",
+            pkey_val,
+            " returning *;"
+        )
     elseif operation == "delete" then
-        t_query[#t_query + 1] = "delete from "
-        t_query[#t_query + 1] = object
-        t_query[#t_query + 1] = " where inst_id = "
-        t_query[#t_query + 1] = db:escape_literal(inst)
-        t_query[#t_query + 1] = " and "
-        t_query[#t_query + 1] = string.gsub(columns, "[%(%)]", "")
-        t_query[#t_query + 1] = " = "
-        t_query[#t_query + 1] = string.gsub(values, "[%(%)]", "")
-        t_query[#t_query + 1] = " returning *;"
+        query = make_sql(
+            "delete from ",
+            object,
+            " where inst_id = ",
+            db:escape_literal(inst),
+            " and ",
+            string.gsub(columns, "[%(%)]", ""),
+            " = ",
+            string.gsub(values, "[%(%)]", ""),
+            " returning *;"
+        )
     else
+        query = ""
         ngx.say("unknown operation - " .. operation)
     end
-    local query = table.concat(t_query)
-    do_db_operation(db, query)
+    if operation == "update" and pkey == "" then
+        ngx.say("Incorrect data specification for update (no pkey specified)")
+    else
+        do_db_operation(db, query)
+    end
     close_dmaonline_db(db)
 end
 
