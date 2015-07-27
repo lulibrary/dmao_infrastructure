@@ -80,22 +80,25 @@ end
 
 
 local function error_to_json(e)
-    return('[{"error": ' .. cjson.encode(e) .. '}]')
+    return '[{"error": ' .. cjson.encode(e) .. '}]'
 end
 
 
 local function do_db_operation(d, q)
     if debug then
-        return('[{"query": ' .. cjson.encode(q) .. '}]')
+        return 200, '[{"query": ' .. cjson.encode(q) .. '}]'
     else
-        local res = assert(d:query(q))
-        return(cjson.encode(res))
+        local res, err = d:query(q)
+        if not res then
+            return 500, '[{"error": ' .. cjson.encode(err) .. '}]'
+        end
+        return 200, cjson.encode(res)
     end
 end
 
 
 -- construct a list of columns to be operated on, the values to use and
--- optionally the primary key and it's value
+-- optionally the primary key and it's value (for updates)
 local function columns_rows_maker(d, t_data)
     local pkey=""
     local pkey_val=""
@@ -127,13 +130,12 @@ local function columns_rows_maker(d, t_data)
 end
 
 
---noinspection UnusedDef
 local function make_sql(...)
     local t = {}
     for _, v in ipairs({...}) do
         t[#t + 1] = v
     end
-    return(table.concat(t))
+    return table.concat(t)
 end
 
 
@@ -179,13 +181,13 @@ local function db_operation(object, operation, inst, data_table)
             " returning *;"
         )
     else
-        return(error_to_json("unknown operation - " .. operation))
+        return 406, error_to_json("unknown operation - " .. operation)
     end
     if operation == "update" and pkey == "" then
-        return(error_to_json("Incorrect data specification for update " ..
-                " (no pkey specified)"))
+        return 406, error_to_json("Incorrect data specification for update " ..
+                " (no pkey specified)")
     else
-        return(do_db_operation(db, query))
+        return do_db_operation(db, query)
     end
     close_dmaonline_db(db)
 end
@@ -197,6 +199,6 @@ local object = ngx.var.object
 local operation = ngx.var.operation
 
 local data = form_to_table()
-local result = db_operation(object, operation, inst, data)
+local status, result = db_operation(object, operation, inst, data)
+ngx.status = status
 ngx.say(result)
-
