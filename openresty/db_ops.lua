@@ -3,8 +3,8 @@ cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
 
-debug = false
 debug = true
+debug = false
 
 
 -- iterate through a lua table to print via nginx, for debugging purposes.
@@ -21,6 +21,16 @@ local function tprint (tbl, indent)
             ngx.say(formatting .. v)
         end
     end
+end
+
+--[[
+Apologies, this is here to swallow Pycharm warnings about 'unused
+assigment' in the cases where I'm convinced that the code inspector has
+got it wrong. It enables me to see a green tick, which, sadly, I like to
+see before I deploy. Hopefully, it's mostly optimised away.
+--]]
+local function swallow(v)
+    if v then end
 end
 
 
@@ -86,6 +96,7 @@ end
 
 local function do_db_operation(d, q)
     if debug then
+        swallow(d)
         return 200, '[{"query": ' .. cjson.encode(q) .. '}]'
     else
         local res, err = d:query(q)
@@ -97,8 +108,10 @@ local function do_db_operation(d, q)
 end
 
 
--- construct a list of columns to be operated on, the values to use and
--- optionally the primary key and it's value (for updates)
+--[[
+construct a list of columns to be operated on, the values to use and
+optionally the primary key and it's value (for updates)
+--]]
 local function columns_rows_maker(d, t_data)
     local pkey=""
     local pkey_val=""
@@ -139,8 +152,7 @@ local function make_sql(...)
 end
 
 
-local function db_operation(object, operation, inst, data_table)
-    local db = open_dmaonline_db()
+local function db_operation(db, object, operation, inst, data_table)
     local columns, values, pkey, pkey_val =
         columns_rows_maker(db, data_table)
     local query
@@ -153,6 +165,7 @@ local function db_operation(object, operation, inst, data_table)
             values,
             " returning *;"
         )
+        swallow(query)
     elseif operation == "update" then
         query = make_sql(
             "update ",
@@ -168,6 +181,7 @@ local function db_operation(object, operation, inst, data_table)
             pkey_val,
             " returning *;"
         )
+        swallow(query)
     elseif operation == "delete" then
         query = make_sql(
             "delete from ",
@@ -180,6 +194,7 @@ local function db_operation(object, operation, inst, data_table)
             string.gsub(values, "[%(%)]", ""),
             " returning *;"
         )
+        swallow(query)
     else
         return 406, error_to_json("unknown operation - " .. operation)
     end
@@ -189,7 +204,6 @@ local function db_operation(object, operation, inst, data_table)
     else
         return do_db_operation(db, query)
     end
-    close_dmaonline_db(db)
 end
 
 
@@ -199,6 +213,8 @@ local object = ngx.var.object
 local operation = ngx.var.operation
 
 local data = form_to_table()
-local status, result = db_operation(object, operation, inst, data)
+local db = open_dmaonline_db()
+local status, result = db_operation(db, object, operation, inst, data)
+close_dmaonline_db(db)
 ngx.status = status
 ngx.say(result)
