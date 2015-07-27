@@ -1,5 +1,4 @@
 
-strict = require 'strict'
 cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
@@ -9,7 +8,7 @@ debug = true
 
 
 -- iterate through a lua table to print via nginx, for debugging purposes.
-function tprint (tbl, indent)
+local function tprint (tbl, indent)
     if not indent then indent = 4 end
     for k, v in pairs(tbl) do
         local formatting = string.rep('  ', indent) .. k .. ': '
@@ -26,7 +25,7 @@ end
 
 
 -- put json data from form into lua table
-function form_to_table()
+local function form_to_table()
     local form, err = upload:new(8192)
     if not form then
         ngx.log(ngx.ERR, "failed to upload:new -  ", err)
@@ -53,14 +52,14 @@ function form_to_table()
 end
 
 
-function get_connection_details()
+local function get_connection_details()
     local f = "/usr/local/openresty/lualib/connection.conf"
     dofile(f)
     return user, passwd
 end
 
 
-function open_dmaonline_db()
+local function open_dmaonline_db()
     local u, p = get_connection_details()
     local d = pg.new(
         {
@@ -75,24 +74,29 @@ function open_dmaonline_db()
 end
 
 
-function close_dmaonline_db(c)
+local function close_dmaonline_db(c)
     assert(c:disconnect())
 end
 
 
-function do_db_operation(d, q)
+local function error_to_json(e)
+    return('[{"error": ' .. cjson.encode(e) .. '}]')
+end
+
+
+local function do_db_operation(d, q)
     if debug then
-        ngx.say(q)
+        return('[{"query": ' .. cjson.encode(q) .. '}]')
     else
         local res = assert(d:query(q))
-        ngx.say(cjson.encode(res))
+        return(cjson.encode(res))
     end
 end
 
 
 -- construct a list of columns to be operated on, the values to use and
 -- optionally the primary key and it's value
-function columns_rows_maker(d, t_data)
+local function columns_rows_maker(d, t_data)
     local pkey=""
     local pkey_val=""
     local a = {"(" }
@@ -124,20 +128,20 @@ end
 
 
 --noinspection UnusedDef
-function make_sql(...)
+local function make_sql(...)
     local t = {}
-    for _, v in ipairs(arg) do
+    for _, v in ipairs({...}) do
         t[#t + 1] = v
     end
     return(table.concat(t))
 end
 
 
-function db_operation(object, operation, inst, data_table)
+local function db_operation(object, operation, inst, data_table)
     local db = open_dmaonline_db()
     local columns, values, pkey, pkey_val =
         columns_rows_maker(db, data_table)
-    local query = ""
+    local query
     if operation == "insert" then
         query = make_sql(
             "insert into ",
@@ -175,13 +179,13 @@ function db_operation(object, operation, inst, data_table)
             " returning *;"
         )
     else
-        query = ""
-        ngx.say("unknown operation - " .. operation)
+        return(error_to_json("unknown operation - " .. operation))
     end
     if operation == "update" and pkey == "" then
-        ngx.say("Incorrect data specification for update (no pkey specified)")
+        return(error_to_json("Incorrect data specification for update " ..
+                " (no pkey specified)"))
     else
-        do_db_operation(db, query)
+        return(do_db_operation(db, query))
     end
     close_dmaonline_db(db)
 end
@@ -193,5 +197,6 @@ local object = ngx.var.object
 local operation = ngx.var.operation
 
 local data = form_to_table()
-db_operation(object, operation, inst, data)
+local result = db_operation(object, operation, inst, data)
+ngx.say(result)
 
