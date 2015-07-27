@@ -3,8 +3,8 @@ cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
 
-debug = true
 debug = false
+debug = true
 
 
 -- iterate through a lua table to print via nginx, for debugging purposes.
@@ -38,14 +38,14 @@ end
 local function form_to_table()
     local form, err = upload:new(8192)
     if not form then
-        ngx.log(ngx.ERR, "failed to upload:new -  ", err)
+        ngx.log(ngx.ERR, 'failed to upload:new -  ', err)
         ngx.exit(500)
     end
     form:set_timeout(2000) -- 2 seconds
     while true do
         local typ, res, err = form:read()
         if not typ then
-            ngx.say("failed to form:read - ", err)
+            ngx.say('failed to form:read - ', err)
             return
         end
         if typ == 'body' then
@@ -63,7 +63,7 @@ end
 
 
 local function get_connection_details()
-    local f = "/usr/local/openresty/lualib/connection.conf"
+    local f = '/usr/local/openresty/lualib/connection.conf'
     dofile(f)
     return user, passwd
 end
@@ -73,9 +73,9 @@ local function open_dmaonline_db()
     local u, p = get_connection_details()
     local d = pg.new(
         {
-            host="127.0.0.1",
-            port="5432",
-            database="DMAonline",
+            host='127.0.0.1',
+            port='5432',
+            database='DMAonline',
             user=u, password=p
         }
     )
@@ -113,32 +113,32 @@ construct a list of columns to be operated on, the values to use and
 optionally the primary key and it's value (for updates)
 --]]
 local function columns_rows_maker(d, t_data)
-    local pkey=""
-    local pkey_val=""
-    local a = {"(" }
+    local pkey
+    local pkey_val
+    local a = {'(' }
     local b = {}
     for i, row in pairs(t_data) do
-        b[#b + 1] = "("
+        b[#b + 1] = '('
         for column, value in pairs(row) do
             if i == 1 then
-                if string.match(column, "^pkey:") then
-                    column = string.gsub(column, "^pkey:", "")
+                if string.match(column, '^pkey:') then
+                    column = string.gsub(column, '^pkey:', '')
                     pkey = column
                     pkey_val = d:escape_literal(value)
                 end
                 a[#a + 1] = column
-                a[#a + 1] = ", "
+                a[#a + 1] = ', '
             end
             b[#b + 1] = d:escape_literal(value)
-            b[#b + 1] = ", "
+            b[#b + 1] = ', '
         end
-        b[#b + 1] = "), "
+        b[#b + 1] = '), '
     end
     local col_list = table.concat(a)
-    col_list = string.gsub(col_list, ", $", ")")
+    col_list = string.gsub(col_list, ', $', ')')
     local val_list = table.concat(b)
-    val_list = string.gsub(val_list, ", %)", ")")
-    val_list = string.gsub(val_list, ", $", "")
+    val_list = string.gsub(val_list, ', %)', ')')
+    val_list = string.gsub(val_list, ', $', '')
     return col_list, val_list, pkey, pkey_val
 end
 
@@ -156,51 +156,51 @@ local function db_operation(db, object, operation, inst, data_table)
     local columns, values, pkey, pkey_val =
         columns_rows_maker(db, data_table)
     local query
-    if operation == "insert" then
+    if operation == 'insert' then
         query = make_sql(
-            "insert into ",
+            'insert into ',
             object,
             columns,
-            " values ",
+            ' values ',
             values,
-            " returning *;"
+            ' returning *;'
         )
         swallow(query)
-    elseif operation == "update" then
+    elseif operation == 'update' then
         query = make_sql(
-            "update ",
+            'update ',
             object,
-            " set ",
+            ' set ',
             columns,
-            " = ",
+            ' = ',
             values,
-            " where inst_id = ",
+            ' where inst_id = ',
             db:escape_literal(inst),
-            " and ",
-            pkey, " = ",
+            ' and ',
+            pkey, ' = ',
             pkey_val,
-            " returning *;"
+            ' returning *;'
         )
         swallow(query)
-    elseif operation == "delete" then
+    elseif operation == 'delete' then
         query = make_sql(
-            "delete from ",
+            'delete from ',
             object,
-            " where inst_id = ",
+            ' where inst_id = ',
             db:escape_literal(inst),
-            " and ",
-            string.gsub(columns, "[%(%)]", ""),
-            " = ",
-            string.gsub(values, "[%(%)]", ""),
-            " returning *;"
+            ' and ',
+            string.gsub(columns, '[%(%)]', ''),
+            ' = ',
+            string.gsub(values, '[%(%)]', ''),
+            ' returning *;'
         )
         swallow(query)
     else
-        return 406, error_to_json("unknown operation - " .. operation)
+        return 406, error_to_json('unknown operation - ' .. operation)
     end
-    if operation == "update" and pkey == "" then
-        return 406, error_to_json("Incorrect data specification for update " ..
-                " (no pkey specified)")
+    if operation == 'update' and not pkey then
+        return 406, error_to_json('Incorrect data specification ' ..
+                'for update (no pkey specified)')
     else
         return do_db_operation(db, query)
     end
