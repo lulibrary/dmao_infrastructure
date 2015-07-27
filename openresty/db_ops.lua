@@ -178,7 +178,8 @@ local function db_operation(db, object, operation, inst, data_table)
             ' where inst_id = ',
             db:escape_literal(inst),
             ' and ',
-            pkey, ' = ',
+            pkey,
+            ' = ',
             pkey_val,
             ' returning *;'
         )
