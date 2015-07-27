@@ -27,7 +27,8 @@ end
 Apologies, this is here to swallow Pycharm warnings about 'unused
 assigment' in the cases where I'm convinced that the code inspector has
 got it wrong. It enables me to see a green tick, which, sadly, I like to
-see before I deploy. Hopefully, it's mostly optimised away.
+see before I deploy. Hopefully, it's mostly optimised away. It's an
+open case for the lua plugin, maybe it will get fixed.
 --]]
 local function swallow(v)
     if v then end
