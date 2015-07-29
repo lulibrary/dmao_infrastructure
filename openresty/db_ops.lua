@@ -198,13 +198,15 @@ local function db_operation(db, object, operation, inst, data_table)
         )
         swallow(query)
     else
-        local e = 'unknown operation - ' .. operation
+        local e = 'unknown operation - ' .. operation .. ' on '
+                .. object .. ' for institution ' .. inst
         ngx.log(ngx.ERR, e)
         return 406, error_to_json(e)
     end
     if operation == 'update' and not pkey then
         local e = 'Incorrect data specification ' ..
-                'for update (no pkey specified)'
+                'for update (no pkey specified) on ' .. object
+                .. ' for institution ' .. inst
         ngx.log(ngx.ERR, e)
         return 406, error_to_json(e)
     else
