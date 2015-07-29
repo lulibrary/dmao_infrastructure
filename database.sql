@@ -204,7 +204,8 @@ create table project_storage_costs (
     check (expected_storage >= 0) default 0
 );
 comment on column project_storage_costs.expected_storage is
-'The amount of storage in GB this project is expecting to need.';
+'The amount of storage in GB this project is expecting to need to '
+'use on storage platform <sc_id>.';
 
 
 -------------------------------------------------------------------
