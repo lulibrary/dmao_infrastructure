@@ -174,13 +174,9 @@ create table project (
   has_dmp_been_reviewed varchar(50),
   dmp_id integer references dmp(dmp_id)
     on delete cascade on update cascade,
-  expected_storage numeric not null
-      check (expected_storage >= 0) default 0,
   project_awarded date,
   project_start date,
   project_end date,
-  sc_id integer references storage_costs(sc_id)
-    on delete restrict,
   check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
 );
 comment on table project is 'Describes an institutions projects';
@@ -198,25 +194,16 @@ comment on column project.expected_storage is
   'The amount of storage in GB this project is expecting to need.';
 
 
-
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create or replace view project_status as
-  select
-    project_id,
-    (
-      case when
-        project.project_end > now()
-      then
-        'active'
-      else
-        'inactive'
-      end
-    ) status
-  from
-    project
-;
-
+create table project_storage_costs (
+  psc_id serial primary key,
+  project_id integer references project(project_id),
+  sc_id integer references storage_costs(sc_id)
+    on delete restrict,
+  expected_storage numeric not null
+    check (expected_storage >= 0) default 0
+);
 
 
 -------------------------------------------------------------------
@@ -480,4 +467,24 @@ create or replace view project_expected_storage_costs as
   where
     p.sc_id = s.sc_id
   order by p.inst_id, p.project_id asc;
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+create or replace view project_status as
+  select
+    project_id,
+    (
+      case when
+        project.project_end > now()
+        then
+          'active'
+      else
+        'inactive'
+      end
+    ) status
+  from
+    project
+;
+
 
