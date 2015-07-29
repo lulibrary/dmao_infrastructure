@@ -57,7 +57,7 @@ values
 
 
 insert into
-  dmp (dmp_source_system, dmp_ss_pid, dmp_stage, dmp_status, author_orcid)
+  dmp (dmp_source_system, dmp_ss_pid, dmp_state, dmp_status, author_orcid)
   values
     ('DMPonline', 'gasfdasg5', 1, 'verified', 'orcid1'),
     ('Word', '', 7, 'verified', 'orcid3'),

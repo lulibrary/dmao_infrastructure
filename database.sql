@@ -119,7 +119,7 @@ create table dmp (
   dmp_id serial primary key,
   dmp_source_system varchar(256),
   dmp_ss_pid varchar(256),
-  dmp_stage integer references funder_dmp_states(dmp_state_id)
+  dmp_state integer references funder_dmp_states(dmp_state_id)
     on delete cascade on update cascade,
   dmp_status varchar(50),
   author_orcid varchar(256)
@@ -134,9 +134,9 @@ comment on column dmp.dmp_source_system is
 comment on column dmp.dmp_ss_pid is
   'The DMP source system persistent identifier for this data management
   plan.';
-comment on column dmp.dmp_stage is
+comment on column dmp.dmp_state is
   'Some funders require multiple iterations of data management plan
-  development, this integer field is used to identify the stage.';
+  development, this integer field is used to identify the state.';
 comment on column dmp.dmp_status is
   'The DMP status, can be one of
   ''none'', ''new'', ''in progress'', ''completed'', ''verified''.';
