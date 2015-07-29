@@ -12,6 +12,7 @@ drop table if exists pub_ds_map cascade;
 drop table if exists funder_pub_map cascade;
 drop table if exists funder_ds_map cascade;
 drop table if exists users cascade;
+drop table if exists project_storage_costs cascade;
 drop table if exists project cascade;
 drop table if exists dmp cascade;
 drop table if exists publication cascade;
@@ -190,8 +191,6 @@ comment on column project.has_dmp is
   'Is ''true'' if a DMP exists, ''false'' otherwise.';
 comment on column project.has_dmp_been_reviewed is
   'Is ''true'' if a DMP exists and has been reviewed, ''false'' otherwise.';
-comment on column project.expected_storage is
-  'The amount of storage in GB this project is expecting to need.';
 
 
 -------------------------------------------------------------------
@@ -204,6 +203,8 @@ create table project_storage_costs (
   expected_storage numeric not null
     check (expected_storage >= 0) default 0
 );
+comment on column project_storage_costs.expected_storage is
+'The amount of storage in GB this project is expecting to need.';
 
 
 -------------------------------------------------------------------
@@ -453,20 +454,20 @@ create or replace view dataset_faculty_map as
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create or replace view project_expected_storage_costs as
-  select
-    p.inst_id,
-    p.project_id,
-    s.sc_id,
-    s.inst_reference description,
-    p.expected_storage gb,
-    round(p.expected_storage/1024*s.cost_per_tb, 2) storage_cost
-  from
-    project p,
-    storage_costs s
-  where
-    p.sc_id = s.sc_id
-  order by p.inst_id, p.project_id asc;
+-- create or replace view project_expected_storage_costs as
+--   select
+--     p.inst_id,
+--     p.project_id,
+--     s.sc_id,
+--     s.inst_reference description,
+--     p.expected_storage gb,
+--     round(p.expected_storage/1024*s.cost_per_tb, 2) storage_cost
+--   from
+--     project p,
+--     storage_costs s
+--   where
+--     p.sc_id = s.sc_id
+--   order by p.inst_id, p.project_id asc;
 
 
 -------------------------------------------------------------------

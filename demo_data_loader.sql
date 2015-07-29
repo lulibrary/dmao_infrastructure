@@ -218,10 +218,6 @@ insert into project
     null, '2015-12-07', '2018-12-06')
   ;
 
-  project_id integer references project(project_id),
-  sc_id integer references storage_costs(sc_id)
-    on delete restrict,
-  expected_storage numeric not null
 insert into project_storage_costs
   (
     project_id,
