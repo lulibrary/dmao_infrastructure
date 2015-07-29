@@ -113,6 +113,7 @@ insert into project
      'EGA7804',
      true,
      'yes',
+     null,
      '2013-02-12', '2013-04-01', '2016-09-30'),
     ('ESRC studentship Blything',
      'EP/J019585/1',
