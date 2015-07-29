@@ -2,7 +2,7 @@
 
 debug=1
 
-home_dir=/home/krug/PycharmProjects/DMAonline
+home_dir=/home/krug/PycharmProjects/dmao_infrastructure
 
 psql -h lib-ldiv.lancs.ac.uk DMAonline -f $home_dir/database.sql
 
