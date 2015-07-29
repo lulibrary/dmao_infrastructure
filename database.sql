@@ -196,12 +196,13 @@ comment on column project.has_dmp_been_reviewed is
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table project_storage_costs (
-  psc_id serial primary key,
-  project_id integer references project(project_id),
+  project_id integer references project(project_id)
+    on delete cascade on update cascade not null,
   sc_id integer references storage_costs(sc_id)
     on delete restrict,
   expected_storage numeric not null
-    check (expected_storage >= 0) default 0
+    check (expected_storage >= 0) default 0,
+  unique(project_id, sc_id)
 );
 comment on column project_storage_costs.expected_storage is
 'The amount of storage in GB this project is expecting to need to '
@@ -455,23 +456,66 @@ create or replace view dataset_faculty_map as
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
--- create or replace view project_expected_storage_costs as
---   select
---     p.inst_id,
---     p.project_id,
---     s.sc_id,
---     s.inst_reference description,
---     p.expected_storage gb,
---     round(p.expected_storage/1024*s.cost_per_tb, 2) storage_cost
---   from
---     project p,
---     storage_costs s
---   where
---     p.sc_id = s.sc_id
---   order by p.inst_id, p.project_id asc;
+create or replace view project_storage_costs_breakdown as
+  select
+    p.inst_id,
+    p.project_id,
+    psc.sc_id,
+    psc.expected_storage,
+    sc.inst_reference,
+    sc.cost_per_tb,
+    round(psc.expected_storage / 1024 * sc.cost_per_tb, 2) storage_cost
+  from
+    project p
+  join
+    project_storage_costs psc
+  on
+    (p.project_id = psc.project_id)
+  join
+    storage_costs sc
+  on
+    (psc.sc_id = sc.sc_id)
+  order by
+    p.inst_id asc,
+    p.project_id asc,
+    psc.sc_id asc
+;
 
 
 -------------------------------------------------------------------
+-------------------------------------------------------------------
+create or replace view project_storage_costs_aggregated as
+  select
+    pscb.inst_id,
+    pscb.project_id,
+    sum(pscb.storage_cost) storage_cost
+  from
+    project_storage_costs_breakdown pscb
+  group by
+    pscb.inst_id,
+    pscb.project_id
+  order by
+    pscb.inst_id,
+    pscb.project_id
+;
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+create or replace view institution_storage_costs_aggregated as
+  select
+    psca.inst_id,
+    sum(psca.storage_cost) storage_cost
+  from
+    project_storage_costs_aggregated psca
+  group by
+    psca.inst_id
+  order by
+    psca.inst_id
+;
+
+
+--  -------------------------------------------------------------------
 -------------------------------------------------------------------
 create or replace view project_status as
   select

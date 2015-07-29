@@ -2,12 +2,12 @@ institution
 funder
 faculty
 funder_dmp_states
-storage_costs
 department
 dmp
 project
 dataset
 publication
+storage_costs
 dataset_accesses
 users
 dept_ds_map
@@ -18,4 +18,5 @@ funder_pub_map
 inst_ds_map
 project_ds_map
 project_pub_map
+project_storage_costs
 pub_ds_map
