@@ -70,12 +70,25 @@ insert into
     ('Word', '', 2, 'verified', 'orcid7')
 ;
 
-insert into storage_costs(inst_id, inst_reference, cost_per_tb)
+insert into inst_storage_platforms
+  (inst_id, inst_storage_platform_id, inst_notes)
   values
-    ('lancaster', 'Hitachi Content Platform', 8.76),
-    ('lancaster', 'Box Cloud Storage', 2.89),
-    ('lancaster', 'Arkivum', 80.00)
+    ('lancaster', 'hcp', 'Hitachi Content Platform'),
+    ('lancaster', 'box', 'Box Cloud Storage'),
+    ('lancaster', 'ark', 'Arkivum')
 ;
+
+
+insert into storage_costs
+  (inst_id, inst_storage_platform_id,
+   cost_per_tb, applicable_dates)
+  values
+    ('lancaster', 'hcp', 8.76, '[2000-01-01,)'),
+    ('lancaster', 'box', 2.89, '[2000-01-01,)'),
+    ('lancaster', 'ark', 100.00, '[2000-01-01, 2015-07-01)'),
+    ('lancaster', 'ark', 90.00, '[2015-08-01,)')
+;
+
 
 insert into project
   (project_name,
@@ -219,25 +232,29 @@ insert into project
     null, '2015-12-07', '2018-12-06')
   ;
 
-insert into project_storage_costs
+insert into project_storage_requirement
   (
+    inst_id,
     project_id,
-    sc_id,
-    expected_storage
+    inst_storage_platform_id,
+    expected_storage,
+    keep_after_end_date
   ) values
-    (1, 1, 2500),
-    (2, 1, 2),
-    (3, 2, 2),
-    (4, 1, 2),
-    (5, 2, 2),
-    (6, 2, 2),
-    (7, 2, 2),
-    (8, 2, 0),
-    (9, 1, 50),
-    (10, 3, 10000),
-    (10, 1, 500),
-    (10, 2, 20000),
-    (11, 3, 500)
+    ('lancaster', 1, 'hcp', 2500, false),
+    ('lancaster', 2, 'hcp', 2, false),
+    ('lancaster', 3, 'box', 2, true),
+    ('lancaster', 4, 'hcp', 2, false),
+    ('lancaster', 5, 'hcp', 200, false),
+    ('lancaster', 5, 'box', 2000, true),
+    ('lancaster', 5, 'ark', 5, true),
+    ('lancaster', 6, 'box', 2, true),
+    ('lancaster', 7, 'box', 2, true),
+    ('lancaster', 8, 'box', 0, true),
+    ('lancaster', 9, 'hcp', 50, false),
+    ('lancaster', 10, 'ark', 10000, true),
+    ('lancaster', 10, 'hcp', 500, false),
+    ('lancaster', 10, 'box', 20000, false),
+    ('lancaster', 11, 'ark', 500, true)
   ;
 
 
