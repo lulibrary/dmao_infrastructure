@@ -1,7 +1,8 @@
+project_storage_requirement
 pub_ds_map
-project_storage_costs
 project_pub_map
 project_ds_map
+inst_storage_costs
 inst_ds_map
 funder_pub_map
 funder_project_map
@@ -10,8 +11,8 @@ dept_pub_map
 dept_ds_map
 users
 dataset_accesses
-storage_costs
 publication
+inst_storage_platforms
 dataset
 project
 dmp

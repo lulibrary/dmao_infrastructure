@@ -79,14 +79,15 @@ insert into inst_storage_platforms
 ;
 
 
-insert into storage_costs
+insert into inst_storage_costs
   (inst_id, inst_storage_platform_id,
-   cost_per_tb, applicable_dates)
+   cost_per_tb_pa, applicable_dates)
   values
     ('lancaster', 'hcp', 8.76, '[2000-01-01,)'),
     ('lancaster', 'box', 2.89, '[2000-01-01,)'),
-    ('lancaster', 'ark', 100.00, '[2000-01-01, 2015-07-01)'),
-    ('lancaster', 'ark', 90.00, '[2015-08-01,)')
+    ('lancaster', 'ark', 100.00, '[2000-01-01,2015-07-01)'),
+    ('lancaster', 'ark', 90.00, '[2015-08-01,2017-06-30)'),
+    ('lancaster', 'ark', 85.00, '[2017-07-01,)')
 ;
 
 

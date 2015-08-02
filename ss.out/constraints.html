@@ -32,7 +32,7 @@
 <div class='indent'>
 <table width='100%'>
 <tr><td class='container' valign='bottom'><b>
-39 Foreign Key Constraints:</b>
+40 Foreign Key Constraints:</b>
 </td><td class='container' align='right'>
 <table>
   <tr><td class='container' align='right' valign='top'><a href='http://sourceforge.net' target='_blank'><img src='http://sourceforge.net/sflogo.php?group_id=137197&amp;type=1' alt='SourceForge.net' border='0' height='31' width='88'></a></td></tr>
@@ -219,6 +219,20 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
   <tr class='odd'>
+  <td class='detail'>inst_storage_costs_inst_id_fkey</td>
+  <td class='detail'><a href='tables/inst_storage_costs.html'>inst_storage_costs</a>.inst_id<br><a href='tables/inst_storage_costs.html'>inst_storage_costs</a>.inst_storage_platform_id</td>
+  <td class='detail'><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_id<br><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_storage_platform_id</td>
+  <td class='detail'><span title='Restrict delete:
+ Parent cannot be deleted if children exist'>Restrict delete&nbsp;</span></td>
+ </tr>
+  <tr class='even'>
+  <td class='detail'>inst_storage_platforms_inst_id_fkey</td>
+  <td class='detail'><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_id</td>
+  <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
+  <td class='detail'><span title='Cascade on delete:
+ Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
+ </tr>
+  <tr class='odd'>
   <td class='detail'>project_dmp_id_fkey</td>
   <td class='detail'><a href='tables/project.html'>project</a>.dmp_id</td>
   <td class='detail'><a href='tables/dmp.html'>dmp</a>.dmp_id</td>
@@ -275,18 +289,18 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
   <tr class='odd'>
-  <td class='detail'>project_storage_costs_project_id_fkey</td>
-  <td class='detail'><a href='tables/project_storage_costs.html'>project_storage_costs</a>.project_id</td>
+  <td class='detail'>project_storage_requirement_inst_id_fkey</td>
+  <td class='detail'><a href='tables/project_storage_requirement.html'>project_storage_requirement</a>.inst_id<br><a href='tables/project_storage_requirement.html'>project_storage_requirement</a>.inst_storage_platform_id</td>
+  <td class='detail'><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_id<br><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_storage_platform_id</td>
+  <td class='detail'><span title='Restrict delete:
+ Parent cannot be deleted if children exist'>Restrict delete&nbsp;</span></td>
+ </tr>
+  <tr class='even'>
+  <td class='detail'>project_storage_requirement_project_id_fkey</td>
+  <td class='detail'><a href='tables/project_storage_requirement.html'>project_storage_requirement</a>.project_id</td>
   <td class='detail'><a href='tables/project.html'>project</a>.project_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
- </tr>
-  <tr class='even'>
-  <td class='detail'>project_storage_costs_sc_id_fkey</td>
-  <td class='detail'><a href='tables/project_storage_costs.html'>project_storage_costs</a>.sc_id</td>
-  <td class='detail'><a href='tables/storage_costs.html'>storage_costs</a>.sc_id</td>
-  <td class='detail'><span title='Restrict delete:
- Parent cannot be deleted if children exist'>Restrict delete&nbsp;</span></td>
  </tr>
   <tr class='odd'>
   <td class='detail'>pub_ds_map_dataset_id_fkey</td>
@@ -331,13 +345,6 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
   <tr class='odd'>
-  <td class='detail'>storage_costs_inst_id_fkey</td>
-  <td class='detail'><a href='tables/storage_costs.html'>storage_costs</a>.inst_id</td>
-  <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
-  <td class='detail'><span title='Cascade on delete:
- Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
- </tr>
-  <tr class='even'>
   <td class='detail'>users_inst_id_fkey</td>
   <td class='detail'><a href='tables/users.html'>users</a>.inst_id</td>
   <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>

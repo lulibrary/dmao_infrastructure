@@ -18,7 +18,7 @@ drop table if exists dmp cascade;
 drop table if exists publication cascade;
 drop table if exists dataset_accesses;
 drop table if exists dataset cascade;
-drop table if exists storage_costs cascade;
+drop table if exists inst_storage_costs cascade;
 drop table if exists inst_storage_platforms cascade;
 drop table if exists department cascade;
 drop table if exists funder_dmp_states cascade;
@@ -157,19 +157,21 @@ create table inst_storage_platforms (
 create index on inst_storage_platforms(inst_id);
 create index on inst_storage_platforms(inst_storage_platform_id);
 
-create table storage_costs (
+create table inst_storage_costs (
   sc_id serial primary key,
   inst_id varchar(256),
   inst_storage_platform_id varchar(256),
-  cost_per_tb numeric,
+  cost_per_tb_pa numeric
+    check (cost_per_tb_pa >= 0) default 0,
   applicable_dates daterange,
   foreign key(inst_id, inst_storage_platform_id)
     references inst_storage_platforms(inst_id, inst_storage_platform_id)
+      on delete cascade on update cascade
 );
-create index on storage_costs(inst_id);
-create index on storage_costs(inst_storage_platform_id);
-create index on storage_costs(inst_id, inst_storage_platform_id);
-comment on table storage_costs
+create index on inst_storage_costs(inst_id);
+create index on inst_storage_costs(inst_storage_platform_id);
+create index on inst_storage_costs(inst_id, inst_storage_platform_id);
+comment on table inst_storage_costs
   is 'Describes storage costs for institutional storage platforms';
 
 
@@ -216,13 +218,18 @@ create table project_storage_requirement (
   inst_id varchar(256) not null,
   inst_storage_platform_id varchar(256),
   project_id integer references project(project_id)
-  on delete cascade on update cascade not null,
+    on delete cascade on update cascade not null,
   expected_storage numeric not null
     check (expected_storage >= 0) default 0,
   foreign key (inst_id, inst_storage_platform_id)
-    references inst_storage_platforms(inst_id, inst_storage_platform_id),
+    references inst_storage_platforms(inst_id, inst_storage_platform_id)
+    on delete restrict on update cascade,
   keep_after_end_date boolean
 );
+create index on project_storage_requirement(inst_id,
+                                            inst_storage_platform_id);
+create index on project_storage_requirement(inst_id);
+create index on project_storage_requirement(project_id);
 comment on column project_storage_requirement.expected_storage is
 'The amount of storage in GB this project is expecting to need to '
 'use on storage platform <sc_id>.';
@@ -467,15 +474,19 @@ create index on inst_ds_map(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create or replace view dataset_faculty_map as
-  select d.dataset_id, f.faculty_id
-  from dataset d
-  left outer join faculty f
-  on d.lead_faculty_id = f.faculty_id;
+  select
+    d.dataset_id,
+    f.faculty_id
+  from
+    dataset d
+  left outer join
+    faculty f
+  on
+    d.lead_faculty_id = f.faculty_id;
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
---round(psr.expected_storage / 1024 * sc.cost_per_tb, 2) storage_cost
 create or replace view project_expected_storage as
   select
     psr.inst_id,
@@ -494,7 +505,10 @@ create or replace view project_expected_storage as
   join
     inst_storage_platforms isp
   on
-    (psr.inst_id, psr.inst_storage_platform_id) = (isp.inst_id, isp.inst_storage_platform_id)
+    (psr.inst_id, psr.inst_storage_platform_id)
+    =
+    (isp.inst_id, isp.inst_storage_platform_id)
+  where psr.project_id = 10
   order by
     p.inst_id asc,
     p.project_id asc
@@ -503,57 +517,96 @@ create or replace view project_expected_storage as
 
 create or replace view project_storage_costs_breakdown as
   select
-    pes.inst_id, pes.project_id, pes.inst_storage_platform_id,
-    pes.inst_notes, pes.project_start, pes.project_end, sc.applicable_dates, cost_per_tb
+    pes.inst_id,
+    pes.project_id,
+    pes.inst_storage_platform_id,
+    pes.inst_notes,
+    pes.project_start,
+    pes.project_end,
+    sc.applicable_dates,
+    cost_per_tb_pa,
+    round(pes.expected_storage / 1024 * sc.cost_per_tb_pa, 2) storage_cost
   from
     project_expected_storage pes
   join
-    storage_costs sc
+    inst_storage_costs sc
   on
-    (pes.inst_id, pes.inst_storage_platform_id) = (sc.inst_id, sc.inst_storage_platform_id)
+    (
+      (pes.inst_id, pes.inst_storage_platform_id)
+      =
+      (sc.inst_id, sc.inst_storage_platform_id)
+    )
     and
     (
       (sc.applicable_dates @> pes.project_start)
       or
       (sc.applicable_dates @> pes.project_end)
     )
-  order by pes.inst_id asc, pes.project_id asc
+  order by
+    pes.inst_id asc,
+    pes.project_id asc,
+    sc.applicable_dates asc
 ;
 
--- -------------------------------------------------------------------
--- -------------------------------------------------------------------
--- create or replace view project_storage_costs_aggregated as
---   select
---     pscb.inst_id,
---     pscb.project_id,
---     sum(pscb.storage_cost) storage_cost
---   from
---     project_storage_costs_breakdown pscb
---   group by
---     pscb.inst_id,
---     pscb.project_id
---   order by
---     pscb.inst_id,
---     pscb.project_id
--- ;
---
---
--- -------------------------------------------------------------------
--- -------------------------------------------------------------------
--- create or replace view inst_storage_costs_aggregated as
---   select
---     psca.inst_id,
---     sum(psca.storage_cost) storage_cost
---   from
---     project_storage_costs_aggregated psca
---   group by
---     psca.inst_id
---   order by
---     psca.inst_id
--- ;
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view project_storage_costs_aggregated as
+  select
+    pscb.inst_id,
+    pscb.project_id,
+    pscb.inst_storage_platform_id,
+    applicable_dates,
+    sum(pscb.storage_cost) storage_cost
+  from
+    project_storage_costs_breakdown pscb
+  group by
+    pscb.inst_id,
+    pscb.project_id,
+    pscb.inst_storage_platform_id,
+    applicable_dates
+  order by
+    pscb.inst_id,
+    pscb.project_id,
+    applicable_dates
+;
 
 
---  -------------------------------------------------------------------
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view inst_storage_costs_breakdown as
+  select
+    psca.inst_id,
+    psca.applicable_dates,
+    psca.inst_storage_platform_id,
+    sum(psca.storage_cost) storage_cost
+  from
+    project_storage_costs_aggregated psca
+  group by
+    psca.applicable_dates,
+    psca.inst_id,
+    psca.inst_storage_platform_id
+  order by
+    psca.inst_id,
+    psca.applicable_dates
+;
+
+
+create or replace view inst_storage_costs_aggregated as
+  select
+    iscb.inst_id,
+    iscb.applicable_dates,
+    sum(iscb.storage_cost) storage_cost
+  from
+    inst_storage_costs_breakdown iscb
+  group by
+    iscb.inst_id,
+    iscb.applicable_dates
+  order by
+    iscb.inst_id,
+    iscb.applicable_dates
+;
+
+---------------------------------------------------------------------
 -------------------------------------------------------------------
 create or replace view project_status as
   select
