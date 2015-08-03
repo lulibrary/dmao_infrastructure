@@ -84,7 +84,8 @@ insert into inst_storage_costs
    cost_per_tb_pa, applicable_dates)
   values
     ('lancaster', 'hcp', 8.76, '[2000-01-01,)'),
-    ('lancaster', 'box', 2.89, '[2000-01-01,)'),
+    ('lancaster', 'box', 10.00, '[2000-01-01,2017-12-31)'),
+    ('lancaster', 'box', 9.00, '[2018-01-01,)'),
     ('lancaster', 'ark', 100.00, '[2000-01-01,2015-07-01)'),
     ('lancaster', 'ark', 90.00, '[2015-08-01,2017-06-30)'),
     ('lancaster', 'ark', 85.00, '[2017-07-01,)')
@@ -103,8 +104,7 @@ insert into project
    has_dmp_been_reviewed,
    dmp_id,
    project_awarded,
-   project_start,
-   project_end)
+   project_date_range)
   values
     ('Intractable Likelihood: New Challenges '
       'From Modern Applications (iLike)',
@@ -117,7 +117,8 @@ insert into project
      false,
      'no',
      null,
-     '2012-12-01', '2013-01-01', '2017-12-31'),
+     '2012-12-01',
+     '[2013-01-01,2017-12-31)'),
     ('FST CASE Studentship: Design and testing of a Novel Neutron Meter',
      null,
      true,
@@ -128,7 +129,8 @@ insert into project
      true,
      'yes',
      null,
-     '2013-02-12', '2013-04-01', '2016-09-30'),
+     '2013-02-12',
+     '[2013-04-01,2016-09-30)'),
     ('ESRC studentship Blything',
      'EP/J019585/1',
      true,
@@ -139,7 +141,8 @@ insert into project
      false,
      'no',
      null,
-     '2013-02-12', '2011-10-01', '2015-09-30'),
+     '2013-02-12',
+     '(2011-10-01,2015-09-30)'),
     ('Orbit-based methods for Multielectron Systems in Strong Fields',
      'EP/J019585/1',
      true,
@@ -150,7 +153,8 @@ insert into project
      false,
      'no',
      null,
-     '2012-10-01', '2012-10-01', '2016-01-31'),
+     '2012-10-01',
+     '[2012-10-01,2016-01-31)'),
     ('GaInAsNSb quantum wells for GaAs-based Telecoms devices',
      'PYA7943',
      true,
@@ -161,7 +165,8 @@ insert into project
      false,
      'no',
      null,
-     null, '2010-10-01', '2014-03-31'),
+     null,
+     '[2010-10-01,2014-03-31)'),
     ('Quasiparticle imaging and superfluid flow experiments at '
      'ultralow temperatures',
      'EP/I028285/1',
@@ -173,7 +178,8 @@ insert into project
      false,
      'no',
       null,
-     '2011-05-24', '2011-10-01', '2015-09-30'),
+     '2011-05-24',
+     '[2011-10-01,2015-09-30)'),
     ('Superfluid 3He at UltraLow Temperatures',
      'EP/L000016/1',
      true,
@@ -184,7 +190,8 @@ insert into project
      false,
      'no',
      null,
-     '2013-05-24', '2013-07-01', '2017-06-30'),
+     '2013-05-24',
+     '[2013-07-01,2017-06-30)'),
     ('Islam on campus',
      '',
      false,
@@ -195,7 +202,8 @@ insert into project
      true,
      'yes',
      5,
-     null, '2015-06-01', '2018-05-31'),
+     null,
+     '[2015-06-01,2018-05-31)'),
     ('The effects of age on temporal coding in the auditory system',
      'BB/M007243/1',
      true,
@@ -206,7 +214,8 @@ insert into project
      true,
      'yes',
      7,
-     '2015-01-08', '2015-05-01', '2018-04-30'),
+     '2015-01-08',
+     '[2015-05-01,2018-04-30)'),
     ('Elucidating the neural mechanisms by which evolutionarily '
      'conserved intracellular signalling pathway',
     null,
@@ -218,7 +227,8 @@ insert into project
     true,
     'yes',
     8,
-    null, '2016-01-01', '2020-12-31'),
+    null,
+    '[2016-01-01,2020-12-31)'),
     ('Elucidating the functional brain networks underlying cognitive '
      'flexibility and attention through tas',
     null,
@@ -230,7 +240,8 @@ insert into project
     true,
     'yes',
     9,
-    null, '2015-12-07', '2018-12-06')
+    null,
+    '[2015-12-07,2018-12-06)')
   ;
 
 insert into project_storage_requirement
@@ -239,23 +250,23 @@ insert into project_storage_requirement
     project_id,
     inst_storage_platform_id,
     expected_storage,
-    keep_after_end_date
+    keep_until
   ) values
-    ('lancaster', 1, 'hcp', 2500, false),
-    ('lancaster', 2, 'hcp', 2, false),
-    ('lancaster', 3, 'box', 2, true),
-    ('lancaster', 4, 'hcp', 2, false),
-    ('lancaster', 5, 'hcp', 200, false),
-    ('lancaster', 5, 'box', 2000, true),
-    ('lancaster', 5, 'ark', 5, true),
-    ('lancaster', 6, 'box', 2, true),
-    ('lancaster', 7, 'box', 2, true),
-    ('lancaster', 8, 'box', 0, true),
-    ('lancaster', 9, 'hcp', 50, false),
-    ('lancaster', 10, 'ark', 10000, true),
-    ('lancaster', 10, 'hcp', 500, false),
-    ('lancaster', 10, 'box', 20000, false),
-    ('lancaster', 11, 'ark', 500, true)
+    ('lancaster', 1, 'hcp', 2500, null),
+    ('lancaster', 2, 'hcp', 2, null),
+    ('lancaster', 3, 'box', 2, null),
+    ('lancaster', 4, 'hcp', 2, null),
+    ('lancaster', 5, 'hcp', 200, null),
+    ('lancaster', 5, 'box', 2000, null),
+    ('lancaster', 5, 'ark', 5, null),
+    ('lancaster', 6, 'box', 2, null),
+    ('lancaster', 7, 'box', 2, null),
+    ('lancaster', 8, 'box', 0, null),
+    ('lancaster', 9, 'hcp', 50, null),
+    ('lancaster', 10, 'ark', 10000, null),
+    ('lancaster', 10, 'hcp', 500, '2021-12-31'),
+    ('lancaster', 10, 'box', 20000, '2021-12-31'),
+    ('lancaster', 11, 'ark', 500, null)
   ;
 
 

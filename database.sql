@@ -2,6 +2,9 @@
 
 -- Postgres DDL for DMAOnline database, v0.2
 
+-- drop function project_costs_at_date(inst_id_t, int, date);
+-- drop function all_project_costs_at_date(inst_id_t, date);
+
 drop table if exists inst_ds_map cascade;
 drop table if exists funder_project_map cascade;
 drop table if exists project_ds_map cascade;
@@ -29,6 +32,15 @@ drop table if exists institution cascade;
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- Type declarations
+
+drop domain if exists inst_id_t cascade;
+create domain inst_id_t varchar(256);
+drop domain if exists inst_storage_platform_id_t cascade;
+create domain inst_storage_platform_id_t varchar(256);
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 create or replace function sha512(bytea) returns text as $$
   select encode(digest($1, 'sha512'), 'hex')
 $$ language sql strict immutable;
@@ -36,7 +48,7 @@ $$ language sql strict immutable;
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table institution (
-  inst_id varchar(256) unique not null primary key,
+  inst_id inst_id_t unique not null primary key,
   name varchar(256) not null,
   contact varchar(256) not null,
   contact_email varchar(256),
@@ -62,7 +74,7 @@ comment on column institution.pub_sys is
 -------------------------------------------------------------------
 create table faculty (
   faculty_id serial primary key,
-  inst_id varchar(256) references institution(inst_id)
+  inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade not null,
   name varchar(256) not null,
   abbreviation varchar(64),
@@ -77,7 +89,7 @@ comment on table faculty is
 -------------------------------------------------------------------
 create table department (
   department_id serial primary key,
-  inst_id varchar(256) references institution(inst_id)
+  inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade not null,
   faculty_id integer references faculty(faculty_id)
     on delete cascade on update cascade not null,
@@ -147,9 +159,9 @@ comment on column dmp.dmp_status is
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table inst_storage_platforms (
-  inst_id varchar(256) references institution(inst_id)
+  inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade,
-  inst_storage_platform_id varchar(256),
+  inst_storage_platform_id inst_storage_platform_id_t,
   inst_notes varchar(1024),
   inst_api_url varchar(2048),
   primary key(inst_id, inst_storage_platform_id)
@@ -159,8 +171,8 @@ create index on inst_storage_platforms(inst_storage_platform_id);
 
 create table inst_storage_costs (
   sc_id serial primary key,
-  inst_id varchar(256),
-  inst_storage_platform_id varchar(256),
+  inst_id inst_id_t,
+  inst_storage_platform_id inst_storage_platform_id_t,
   cost_per_tb_pa numeric
     check (cost_per_tb_pa >= 0) default 0,
   applicable_dates daterange,
@@ -182,7 +194,7 @@ create table project (
   project_name varchar(2048),
   funder_project_code varchar(256),
   is_awarded boolean default false,
-  inst_id varchar(256) references institution(inst_id)
+  inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade,
   institution_project_code varchar(256),
   lead_faculty_id integer references faculty(faculty_id)
@@ -194,8 +206,7 @@ create table project (
   dmp_id integer references dmp(dmp_id)
     on delete cascade on update cascade,
   project_awarded date,
-  project_start date,
-  project_end date,
+  project_date_range daterange,
   check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
 );
 comment on table project is 'Describes an institutions projects';
@@ -215,8 +226,8 @@ comment on column project.has_dmp_been_reviewed is
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table project_storage_requirement (
-  inst_id varchar(256) not null,
-  inst_storage_platform_id varchar(256),
+  inst_id inst_id_t not null,
+  inst_storage_platform_id inst_storage_platform_id_t,
   project_id integer references project(project_id)
     on delete cascade on update cascade not null,
   expected_storage numeric not null
@@ -224,7 +235,7 @@ create table project_storage_requirement (
   foreign key (inst_id, inst_storage_platform_id)
     references inst_storage_platforms(inst_id, inst_storage_platform_id)
     on delete restrict on update cascade,
-  keep_after_end_date boolean
+  keep_until date
 );
 create index on project_storage_requirement(inst_id,
                                             inst_storage_platform_id);
@@ -240,7 +251,7 @@ comment on column project_storage_requirement.expected_storage is
 create table users (
   username varchar(64),
   name varchar(256),
-  inst_id varchar(256) references institution(inst_id)
+  inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade not null,
   email varchar(1024),
   phone varchar(128),
@@ -311,7 +322,7 @@ create table publication (
   repo_id varchar(256),
   publication_pid varchar(256),
   funder_project_code varchar(256),
-  lead_inst_id varchar(256) references institution(inst_id)
+  lead_inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade,
   lead_faculty_id integer references faculty(faculty_id)
     on delete cascade on update cascade,
@@ -460,7 +471,7 @@ create index on project_pub_map(publication_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table inst_ds_map (
-  inst_id varchar(256) references institution(inst_id)
+  inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
@@ -494,8 +505,8 @@ create or replace view project_expected_storage as
     psr.project_id,
     psr.expected_storage,
     isp.inst_notes,
-    p.project_start,
-    p.project_end
+    p.project_date_range,
+    psr.keep_until
   from
     project_storage_requirement psr
   join
@@ -508,24 +519,26 @@ create or replace view project_expected_storage as
     (psr.inst_id, psr.inst_storage_platform_id)
     =
     (isp.inst_id, isp.inst_storage_platform_id)
-  where psr.project_id = 10
+--   where psr.project_id = 10
   order by
     p.inst_id asc,
     p.project_id asc
 ;
 
 
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 create or replace view project_storage_costs_breakdown as
   select
     pes.inst_id,
     pes.project_id,
     pes.inst_storage_platform_id,
     pes.inst_notes,
-    pes.project_start,
-    pes.project_end,
+    pes.project_date_range,
     sc.applicable_dates,
     cost_per_tb_pa,
-    round(pes.expected_storage / 1024 * sc.cost_per_tb_pa, 2) storage_cost
+    round(pes.expected_storage / 1024 * sc.cost_per_tb_pa, 2)
+      storage_cost_pa
   from
     project_expected_storage pes
   join
@@ -536,84 +549,127 @@ create or replace view project_storage_costs_breakdown as
       =
       (sc.inst_id, sc.inst_storage_platform_id)
     )
-    and
-    (
-      (sc.applicable_dates @> pes.project_start)
-      or
-      (sc.applicable_dates @> pes.project_end)
-    )
   order by
     pes.inst_id asc,
     pes.project_id asc,
+    pes.inst_storage_platform_id,
     sc.applicable_dates asc
 ;
 
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace view project_storage_costs_aggregated as
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+create or replace view project_storage_costs_intermediate as
   select
     pscb.inst_id,
     pscb.project_id,
     pscb.inst_storage_platform_id,
-    applicable_dates,
-    sum(pscb.storage_cost) storage_cost
+    pscb.applicable_dates * pscb.project_date_range project_storage_dates,
+    sum(pscb.storage_cost_pa) storage_cost_pa
   from
     project_storage_costs_breakdown pscb
+  join
+    project p
+  on
+    (pscb.project_id = p.project_id)
+  where
+    not isempty(pscb.applicable_dates * pscb.project_date_range)
   group by
     pscb.inst_id,
     pscb.project_id,
     pscb.inst_storage_platform_id,
-    applicable_dates
+    project_storage_dates
   order by
     pscb.inst_id,
-    pscb.project_id,
-    applicable_dates
+    pscb.project_id
 ;
 
 
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
-create or replace view inst_storage_costs_breakdown as
+create or replace function project_costs_at_date
+  (
+    i_id inst_id_t,
+    p_id int,
+    d date
+  )
+  returns table (
+    inst_storage_platform_id inst_storage_platform_id_t,
+    cost numeric
+  ) as
+$$
   select
-    psca.inst_id,
-    psca.applicable_dates,
-    psca.inst_storage_platform_id,
-    sum(psca.storage_cost) storage_cost
+    inst_storage_platform_id,
+    storage_cost_pa
   from
-    project_storage_costs_aggregated psca
-  group by
-    psca.applicable_dates,
-    psca.inst_id,
-    psca.inst_storage_platform_id
-  order by
-    psca.inst_id,
-    psca.applicable_dates
-;
+    project_storage_costs_intermediate
+  where
+    inst_id = i_id
+  and
+    project_id = p_id
+  and
+    project_storage_dates @> d
+$$ language sql strict immutable;
 
-
-create or replace view inst_storage_costs_aggregated as
-  select
-    iscb.inst_id,
-    iscb.applicable_dates,
-    sum(iscb.storage_cost) storage_cost
-  from
-    inst_storage_costs_breakdown iscb
-  group by
-    iscb.inst_id,
-    iscb.applicable_dates
-  order by
-    iscb.inst_id,
-    iscb.applicable_dates
-;
 
 ---------------------------------------------------------------------
--------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace function all_project_costs_at_date
+  (
+    i_id inst_id_t,
+    d date
+  )
+  returns table(
+    project_id int,
+    inst_storage_platform_id inst_storage_platform_id_t,
+    cost numeric
+  ) as
+$$
+  select
+    project_id,
+    inst_storage_platform_id,
+    storage_cost_pa
+  from
+    project_storage_costs_intermediate
+  where
+    inst_id = i_id
+  and
+    project_storage_dates @> d
+$$ language sql strict immutable;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+-- create or replace function project_costs_during_daterange(int, daterange)
+--   returns table(
+--     i_id inst_id_t,
+--     project_storage_dates daterange,
+--     inst_storage_platform_id varchar(256),
+--     cost numeric
+--   ) as
+-- $$
+--   select
+--     project_storage_dates,
+--     inst_storage_platform_id,
+--     storage_cost_pa
+--   from
+--     project_storage_costs_intermediate
+--   where
+--     inst_id =
+--     project_id = $1
+--   and
+--     project_storage_dates && $2
+-- $$ language sql strict immutable;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
 create or replace view project_status as
   select
     project_id,
     (
       case when
-        project.project_end > now()
+        upper(project.project_date_range) > now()
         then
           'active'
       else
