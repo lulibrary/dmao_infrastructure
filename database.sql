@@ -2,9 +2,8 @@
 
 -- Postgres DDL for DMAOnline database, v0.2
 
--- drop function project_costs_at_date(inst_id_t, int, date);
--- drop function all_project_costs_at_date(inst_id_t, date);
-
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 drop table if exists inst_ds_map cascade;
 drop table if exists funder_project_map cascade;
 drop table if exists project_ds_map cascade;
@@ -33,17 +32,19 @@ drop table if exists institution cascade;
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 -- Type declarations
-
 drop domain if exists inst_id_t cascade;
 create domain inst_id_t varchar(256);
 drop domain if exists inst_storage_platform_id_t cascade;
 create domain inst_storage_platform_id_t varchar(256);
+drop domain if exists funder_id_t;
+create domain funder_id_t varchar(256);
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create or replace function sha512(bytea) returns text as $$
   select encode(digest($1, 'sha512'), 'hex')
 $$ language sql strict immutable;
+
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -105,7 +106,7 @@ comment on table department is
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table funder (
-  funder_id varchar(256) unique not null primary key,
+  funder_id funder_id_t unique not null primary key,
   name varchar(256) not null
 );
 comment on table funder is 'Describes a funding body.';
@@ -115,7 +116,7 @@ comment on table funder is 'Describes a funding body.';
 -------------------------------------------------------------------
 create table funder_dmp_states (
   dmp_state_id serial primary key,
-  funder_id varchar(256) references funder(funder_id)
+  funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade,
   funder_state_code varchar(256) not null,
   funder_state_name varchar(1024)
@@ -399,7 +400,7 @@ create index on dept_ds_map(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table funder_pub_map (
-  funder_id varchar(256) references funder(funder_id)
+  funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
     on delete cascade on update cascade not null
@@ -413,7 +414,7 @@ create index on funder_pub_map(publication_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table funder_ds_map (
-  funder_id varchar(256) references funder(funder_id)
+  funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
@@ -428,7 +429,7 @@ create index on funder_ds_map(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table funder_project_map (
-  funder_id varchar(256) references funder(funder_id)
+  funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   project_id integer references project(project_id)
     on delete cascade on update cascade not null
@@ -595,8 +596,9 @@ create or replace function project_costs_at_date
   )
   returns table (
     inst_storage_platform_id inst_storage_platform_id_t,
-    cost numeric
-  ) as
+    cost_pa numeric
+  )
+as
 $$
   select
     inst_storage_platform_id,
@@ -609,7 +611,8 @@ $$
     project_id = p_id
   and
     project_storage_dates @> d
-$$ language sql strict immutable;
+$$
+language sql strict immutable;
 
 
 ---------------------------------------------------------------------
@@ -622,8 +625,9 @@ create or replace function all_project_costs_at_date
   returns table(
     project_id int,
     inst_storage_platform_id inst_storage_platform_id_t,
-    cost numeric
-  ) as
+    cost_pa numeric
+  )
+as
 $$
   select
     project_id,
@@ -635,32 +639,123 @@ $$
     inst_id = i_id
   and
     project_storage_dates @> d
-$$ language sql strict immutable;
+$$
+language sql strict immutable;
 
 
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
--- create or replace function project_costs_during_daterange(int, daterange)
---   returns table(
---     i_id inst_id_t,
---     project_storage_dates daterange,
---     inst_storage_platform_id varchar(256),
---     cost numeric
---   ) as
--- $$
---   select
---     project_storage_dates,
---     inst_storage_platform_id,
---     storage_cost_pa
---   from
---     project_storage_costs_intermediate
---   where
---     inst_id =
---     project_id = $1
---   and
---     project_storage_dates && $2
--- $$ language sql strict immutable;
+create or replace function project_costs_during_daterange
+  (
+    i_id inst_id_t,
+    p_id int,
+    d daterange
+  )
+  returns table(
+    project_storage_dates daterange,
+    inst_storage_platform_id inst_storage_platform_id_t,
+    cost_pa numeric
+  )
+as
+$$
+  select
+    project_storage_dates,
+    inst_storage_platform_id,
+    storage_cost_pa
+  from
+    project_storage_costs_intermediate
+  where
+    inst_id = i_id
+  and
+    project_id = p_id
+  and
+    project_storage_dates && d
+$$
+language sql strict immutable;
 
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace function expand_project_costs_during_daterange
+  (
+    i_id inst_id_t,
+    p_id int,
+    dr daterange
+  )
+  returns table (
+    day date,
+    isp_id inst_storage_platform_id_t,
+    cost_pa numeric
+  )
+as
+$$
+  select
+    d::date as day,
+    v.inst_storage_platform_id as isp_id,
+    v.cost_pa as cost_pa
+  from
+    generate_series(lower(dr)::date, upper(dr)::date, '1 day'::interval) d,
+    project_costs_at_date(i_id, p_id, d::date) v
+  order by
+    day, isp_id asc
+$$
+language sql strict immutable;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace function aggregate_project_costs_during_daterange
+  (
+    i_id inst_id_t,
+    p_id int,
+    dr daterange
+  )
+  returns table (
+    day date,
+    cost_pa numeric
+  )
+as
+  $$
+  select
+    d::date as day,
+    sum(v.cost_pa) as cost_pa
+  from
+    generate_series(lower(dr)::date, upper(dr)::date, '1 day'::interval) d,
+    project_costs_at_date(i_id, p_id, d::date) v
+  group by day
+  order by day asc
+$$
+language sql strict immutable;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace function all_project_costs_during_daterange
+  (
+    i_id inst_id_t,
+    d daterange
+  )
+  returns table(
+    p_id int,
+    project_storage_dates daterange,
+    inst_storage_platform_id inst_storage_platform_id_t,
+    cost numeric
+  )
+as
+$$
+  select
+    project_id,
+    project_storage_dates,
+    inst_storage_platform_id,
+    storage_cost_pa
+  from
+    project_storage_costs_intermediate
+  where
+    inst_id = i_id
+  and
+    project_storage_dates && d
+$$
+language sql strict immutable;
 
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
