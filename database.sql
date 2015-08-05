@@ -15,6 +15,7 @@ drop table if exists funder_pub_map cascade;
 drop table if exists funder_ds_map cascade;
 drop table if exists users cascade;
 drop table if exists project_storage_requirement cascade;
+drop trigger if exists pdate_trigger on project cascade;
 drop table if exists project cascade;
 drop table if exists dmp cascade;
 drop table if exists publication cascade;
@@ -208,6 +209,8 @@ create table project (
     on delete cascade on update cascade,
   project_awarded date,
   project_date_range daterange,
+  project_start date,
+  project_end date
   check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
 );
 comment on table project is 'Describes an institutions projects';
@@ -223,6 +226,17 @@ comment on column project.has_dmp_been_reviewed is
   'Is ''true'' if a DMP exists and has been reviewed, ''false'' '
   'otherwise.';
 
+create or replace function project_date_update() returns trigger
+as $$
+begin
+    new.project_start = lower(new.project_date_range);
+    new.project_end = upper(new.project_date_range);
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger project_trigger before insert or update on project
+  for each row execute procedure project_date_update();
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
