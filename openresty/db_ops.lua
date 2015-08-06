@@ -5,10 +5,11 @@ pg = require 'pgmoon'
 
 debug = false
 debug = true
+environment = "dev" -- or test or prod
 
 
 -- iterate through a lua table to print via nginx, for debugging purposes.
-local function tprint (tbl, indent)
+local function tprint(tbl, indent)
     if not indent then indent = 4 end
     for k, v in pairs(tbl) do
         local formatting = string.rep('  ', indent) .. k .. ': '
@@ -22,6 +23,7 @@ local function tprint (tbl, indent)
         end
     end
 end
+
 
 --[[
 Apologies, this is here to swallow Pycharm warnings about 'unused
@@ -40,7 +42,7 @@ local function form_to_table()
     local form, err = upload:new(8192)
     if not form then
         ngx.log(ngx.ERR, 'failed to upload:new -  ', err)
-        ngx.exit(500)
+        ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
     form:set_timeout(2000) -- 2 seconds
     while true do
@@ -61,6 +63,7 @@ local function form_to_table()
         end
     end
 end
+
 
 
 local function get_connection_details()
@@ -95,16 +98,25 @@ local function error_to_json(e)
 end
 
 
-local function do_db_operation(d, q)
+local function do_db_operation(d, query, method)
+    local return_code
     if debug then
         swallow(d)
-        return 200, '[{"query": ' .. cjson.encode(q) .. '}]'
+        return ng.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
     else
-        local res, err = d:query(q)
+        local res, err = d:query(query)
         if not res then
-            return 500, '[{"error": ' .. cjson.encode(err) .. '}]'
+            return ngx.HTTP_BAD_REQUEST,
+                '[{"error": ' .. cjson.encode(err) .. '}]'
         end
-        return 200, cjson.encode(res)
+        if method == 'POST' then
+            return_code = ngx.HTTP_CREATED
+            swallow(return_code)
+        else
+            return_code = ngx.HTTP_OK
+            swallow(return_code)
+        end
+        return return_code, cjson.encode(res)
     end
 end
 
@@ -153,11 +165,13 @@ local function make_sql(...)
 end
 
 
-local function db_operation(db, object, operation, inst, data_table)
-    local columns, values, pkey, pkey_val =
-        columns_rows_maker(db, data_table)
+local function db_operation(db, object, inst)
+    local method = ngx.req.get_method()
     local query
-    if operation == 'insert' then
+    if method == 'POST' then
+        local data_table = form_to_table()
+        local columns, values, pkey, pkey_val =
+        columns_rows_maker(db, data_table)
         query = make_sql(
             'insert into ',
             object,
@@ -167,7 +181,16 @@ local function db_operation(db, object, operation, inst, data_table)
             ' returning *;'
         )
         swallow(query)
-    elseif operation == 'update' then
+    elseif method == 'PUT' then
+        local data_table = form_to_table()
+        local columns, values, pkey, pkey_val =
+            columns_rows_maker(db, data_table)
+        if not pkey then
+            local e = 'Incorrect data specification ' ..
+                    'for update (no pkey specified)'
+            ngx.log(ngx.ERR, e)
+            return ngx.HTTP_BAD_REQUEST, error_to_json(e)
+        end
         query = make_sql(
             'update ',
             object,
@@ -184,43 +207,32 @@ local function db_operation(db, object, operation, inst, data_table)
             ' returning *;'
         )
         swallow(query)
-    elseif operation == 'delete' then
+    elseif method == 'DELETE' then
+        query = ''
+        swallow(query)
+    elseif method == 'GET' then
         query = make_sql(
-            'delete from ',
+            'select * from ',
             object,
             ' where inst_id = ',
             db:escape_literal(inst),
-            ' and ',
-            string.gsub(columns, '[%(%)]', ''),
-            ' = ',
-            string.gsub(values, '[%(%)]', ''),
-            ' returning *;'
+            ';'
         )
         swallow(query)
     else
-        local e = 'unknown operation - ' .. operation
+        local e = 'No defined action for http_method = ' .. method
         ngx.log(ngx.ERR, e)
-        return 406, error_to_json(e)
+        return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     end
-    if operation == 'update' and not pkey then
-        local e = 'Incorrect data specification ' ..
-                'for update (no pkey specified)'
-        ngx.log(ngx.ERR, e)
-        return 406, error_to_json(e)
-    else
-        return do_db_operation(db, query)
-    end
+    return do_db_operation(db, query, method)
 end
 
 
 -- main
 local inst = ngx.var.inst_id
 local object = ngx.var.object
-local operation = ngx.var.operation
-
-local data = form_to_table()
 local db = open_dmaonline_db()
-local status, result = db_operation(db, object, operation, inst, data)
+local status, result = db_operation(db, object, inst)
 close_dmaonline_db(db)
 ngx.status = status
 ngx.say(result)
