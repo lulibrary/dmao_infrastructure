@@ -6,6 +6,13 @@ pg = require 'pgmoon'
 debug = false
 debug = true
 environment = "dev" -- or test or prod
+base_uri = ''
+
+if environment == "dev" then
+    local host = "localhost"
+    local port = "8080"
+    base_uri = "http://" .. host .. ":" .. port .. "/dmaonline/lua_test"
+end
 
 
 -- iterate through a lua table to print via nginx, for debugging purposes.
@@ -102,7 +109,7 @@ local function do_db_operation(d, query, method)
     local return_code
     if debug then
         swallow(d)
-        return ng.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
+        return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
     else
         local res, err = d:query(query)
         if not res then
@@ -165,20 +172,23 @@ local function make_sql(...)
 end
 
 
-local function db_operation(db, object, inst)
+local function db_operation(db)
+    local inst = ngx.var.inst_id
+    local object = ngx.var.object
     local method = ngx.req.get_method()
+    local k, v
+    if ngx.var.pkey then
+        k, v = ngx.var.pkey, ngx.var.value
+    end
     local query
     if method == 'POST' then
         local data_table = form_to_table()
         local columns, values, pkey, pkey_val =
         columns_rows_maker(db, data_table)
         query = make_sql(
-            'insert into ',
-            object,
-            columns,
-            ' values ',
-            values,
-            ' returning *;'
+            'insert into ', object, columns,
+            ' values ', values,
+            ';'
         )
         swallow(query)
     elseif method == 'PUT' then
@@ -192,47 +202,64 @@ local function db_operation(db, object, inst)
             return ngx.HTTP_BAD_REQUEST, error_to_json(e)
         end
         query = make_sql(
-            'update ',
-            object,
-            ' set ',
-            columns,
-            ' = ',
-            values,
-            ' where inst_id = ',
-            db:escape_literal(inst),
+            'update ', object,
+            ' set ', columns, ' = ', values,
+            ' where inst_id = ', db:escape_literal(inst),
             ' and ',
-            pkey,
-            ' = ',
-            pkey_val,
+            pkey, ' = ', pkey_val,
             ' returning *;'
         )
         swallow(query)
     elseif method == 'DELETE' then
-        query = ''
-        swallow(query)
+        if k and v then
+            query = make_sql(
+                'delete from ', object,
+                ' where inst_id = ', db:escape_literal(inst),
+                ' and ',
+                k, ' = ', db:escape_literal(v),
+                ';'
+            )
+            swallow(query)
+        else
+            local e = 'No pkey and value specified for for http_method = '
+                    .. method
+            ngx.log(ngx.ERR, e)
+            return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
+        end
     elseif method == 'GET' then
-        query = make_sql(
-            'select * from ',
-            object,
-            ' where inst_id = ',
-            db:escape_literal(inst),
-            ';'
-        )
-        swallow(query)
+        if k and v then
+            query = make_sql(
+                'select * from ', object,
+                ' where inst_id = ', db:escape_literal(inst),
+                ' and ',
+                k, ' = ', db:escape_literal(v),
+                ';'
+            )
+            swallow(query)
+        else
+            query = make_sql(
+                'select * from ', object,
+                ' where inst_id = ', db:escape_literal(inst),
+                ';'
+            )
+            swallow(query)
+        end
     else
         local e = 'No defined action for http_method = ' .. method
         ngx.log(ngx.ERR, e)
         return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     end
-    return do_db_operation(db, query, method)
+    local status, result = do_db_operation(db, query, method)
+    if method == "POST" then
+        ngx.header["Location"] = base_uri ..  "/" .. inst .. "/" .. object
+    end
+    return status, result
 end
 
 
 -- main
-local inst = ngx.var.inst_id
-local object = ngx.var.object
 local db = open_dmaonline_db()
-local status, result = db_operation(db, object, inst)
+local status, result = db_operation(db)
 close_dmaonline_db(db)
 ngx.status = status
 ngx.say(result)
