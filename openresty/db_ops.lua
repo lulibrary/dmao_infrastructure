@@ -107,9 +107,9 @@ end
 
 local function do_db_operation(d, query, method)
     local return_code
-    swallow(method)
     if debug then
         swallow(d)
+        swallow(method)
         return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
     else
         local res, err = d:query(query)
@@ -122,7 +122,6 @@ local function do_db_operation(d, query, method)
             swallow(return_code)
         else
             return_code = ngx.HTTP_OK
-            swallow(return_code)
         end
         return return_code, cjson.encode(res)
     end
