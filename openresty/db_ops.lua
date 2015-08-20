@@ -5,13 +5,13 @@ pg = require 'pgmoon'
 
 debug = false
 debug = true
-environment = "dev" -- or test or prod
+environment = 'dev' -- or test or prod
 base_uri = ''
 
-if environment == "dev" then
-    local host = "localhost"
-    local port = "8080"
-    base_uri = "http://" .. host .. ":" .. port .. "/dmaonline/lua_test"
+if environment == 'dev' then
+    local host = 'localhost'
+    local port = '8080'
+    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
 end
 
 
@@ -107,6 +107,7 @@ end
 
 local function do_db_operation(d, query, method)
     local return_code
+    swallow(method)
     if debug then
         swallow(d)
         return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
@@ -172,88 +173,246 @@ local function make_sql(...)
 end
 
 
-local function db_operation(db)
-    local inst = ngx.var.inst_id
-    local object = ngx.var.object
-    local method = ngx.req.get_method()
-    local k, v
-    if ngx.var.pkey then
-        k, v = ngx.var.pkey, ngx.var.value
+local function fill_query_template(qt, t)
+    local q = qt
+    for c, v in pairs(t) do
+        q = string.gsub(q, '#' .. c .. '#', v)
     end
+    q = string.gsub(q, '\n', '')
+    q = string.gsub(q, '  *', ' ')
+    return q
+end
+
+
+local function do_c_datasets_query(db, inst)
     local query
-    if method == 'POST' then
-        local data_table = form_to_table()
-        local columns, values, pkey, pkey_val =
-        columns_rows_maker(db, data_table)
-        query = make_sql(
-            'insert into ', object, columns,
-            ' values ', values,
-            ';'
+    local args = ngx.req.get_uri_args()
+    local query_template = [[
+        select
+            #columns_list#
+        from
+            dataset d
+        left outer join
+            funder_ds_map fdm
+        on
+            (d.dataset_id = fdm.dataset_id)
+        left outer join
+            funder f
+        on
+            (fdm.funder_id = f.funder_id)
+        left outer join
+            faculty fac
+        on
+            (d.lead_faculty_id = fac.faculty_id)
+        left outer join
+            department dept
+        on
+            (d.lead_department_id = dept.department_id)
+        left outer join
+            project p
+        on
+            (d.project_id = p.project_id)
+        where (
+            d.dataset_id in (
+                select
+                    dataset_id
+                from
+                    funder_ds_map
+                #funder_id_filter_clause#
+            )
+        and
+            d.dataset_id in (
+                select
+                    dataset_id
+                from
+                    inst_ds_map
+                where
+                    inst_id = #inst_id#
+            )
         )
-        swallow(query)
-    elseif method == 'PUT' then
-        local data_table = form_to_table()
-        local columns, values, pkey, pkey_val =
-            columns_rows_maker(db, data_table)
-        if not pkey then
-            local e = 'Incorrect data specification ' ..
-                    'for update (no pkey specified)'
-            ngx.log(ngx.ERR, e)
-            return ngx.HTTP_BAD_REQUEST, error_to_json(e)
+        #arch_status_filter_clause#
+        #date_filter_clause#
+        #dataset_filter_clause#
+        #location_filter_clause#
+        #faculty_filter_clause#
+        #dept_filter_clause#
+        #project_filter_clause#
+        #order_clause#
+        ;
+    ]]
+    local columns_list = [[
+        f.funder_id,
+        f.name funder_name,
+        d.*,
+        fac.abbreviation lead_faculty_abbrev,
+        fac.name lead_faculty_name,
+        dept.abbreviation lead_dept_abbrev,
+        dept.name lead_dept_name,
+        p.project_awarded,
+        p.project_start,
+        p.project_end,
+        p.project_name'
+    ]]
+    local project_null_dates ='or p.project_date_range is null'
+    local funder_id_filter_clause = ''
+    local arch_status_filter_clause = ''
+    local date_filter_clause = ''
+    local dataset_filter_clause = ''
+    local location_filter_clause = ''
+    local faculty_filter_clause = ''
+    local dept_filter_clause = ''
+    local project_filter_clause = ''
+    local order_clause = ''
+    if args['count'] == 'true' then
+        columns_list = 'count(*) num_datasets'
+    end
+    if args['filter'] == 'rcuk' then
+        funder_id_filter_clause = [[
+            where funder_id in (
+                select funder_id from funder where is_rcuk_funder = true
+            )
+        ]]
+        project_null_dates = '';
+    end
+    if args['date'] then
+        date_filter_clause = 'and (p.' .. args['date'] .. ' >= ' ..
+            db:escape_literal(args['sd']) .. ' and p.' .. args['date'] ..
+            ' <= ' .. db:escape_literal(args['ed']) ..
+            project_null_dates .. ')'
+    end
+    if args['faculty'] then
+        faculty_filter_clause = 'and d.lead_faculty_id = '
+                .. db:escape_literal(args['faculty'])
+    end
+    query = fill_query_template(query_template,
+        {
+            columns_list = columns_list,
+            funder_id_filter_clause = funder_id_filter_clause,
+            inst_id = db:escape_literal(inst),
+            arch_status_filter_clause = arch_status_filter_clause,
+            date_filter_clause = date_filter_clause,
+            dataset_filter_clause = dataset_filter_clause,
+            location_filter_clause = location_filter_clause,
+            faculty_filter_clause = faculty_filter_clause,
+            dept_filter_clause = dept_filter_clause,
+            project_filter_clause = project_filter_clause,
+            order_clause = order_clause
+        }
+    )
+    return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
+end
+
+
+-- pre-defined 'canned' queries
+local function do_c_query(db)
+    local inst = ngx.var.inst_id
+    local query = ngx.var.query
+    local method = ngx.req.get_method()
+    -- maps queries to functions
+    local qf_map = {
+        datasets = do_c_datasets_query,
+        project_dmps = do_c_project_dmps_query
+    }
+    if not (method == 'GET') then
+        local e = method .. ' not supported for query on '
+            .. query .. ' in ' .. inst
+        ngx.log(ngx.ERR, e)
+        swallow(db)
+        swallow(qf_map)
+        return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
+    else
+        return qf_map[query](db, inst)
+    end
+end
+
+
+local function db_operation(db)
+    local c_query = ngx.var.c_query
+    if c_query == 'true' then
+        return do_c_query(db)
+    else
+        local inst = ngx.var.inst_id
+        local object = ngx.var.object
+        local method = ngx.req.get_method()
+        local k, v
+        if ngx.var.pkey then
+            k, v = ngx.var.pkey, ngx.var.value
         end
-        query = make_sql(
-            'update ', object,
-            ' set ', columns, ' = ', values,
-            ' where inst_id = ', db:escape_literal(inst),
-            ' and ',
-            pkey, ' = ', pkey_val,
-            ' returning *;'
-        )
-        swallow(query)
-    elseif method == 'DELETE' then
-        if k and v then
+        local query
+        if method == 'POST' then
+            local data_table = form_to_table()
+            local columns, values, pkey, pkey_val =
+            columns_rows_maker(db, data_table)
             query = make_sql(
-                'delete from ', object,
-                ' where inst_id = ', db:escape_literal(inst),
-                ' and ',
-                k, ' = ', db:escape_literal(v),
+                'insert into ', object, columns,
+                ' values ', values,
                 ';'
             )
             swallow(query)
+        elseif method == 'PUT' then
+            local data_table = form_to_table()
+            local columns, values, pkey, pkey_val =
+                columns_rows_maker(db, data_table)
+            if not pkey then
+                local e = 'Incorrect data specification ' ..
+                        'for update (no pkey specified)'
+                ngx.log(ngx.ERR, e)
+                return ngx.HTTP_BAD_REQUEST, error_to_json(e)
+            end
+            query = make_sql(
+                'update ', object,
+                ' set ', columns, ' = ', values,
+                ' where inst_id = ', db:escape_literal(inst),
+                ' and ',
+                pkey, ' = ', pkey_val,
+                ' returning *;'
+            )
+            swallow(query)
+        elseif method == 'DELETE' then
+            if k and v then
+                query = make_sql(
+                    'delete from ', object,
+                    ' where inst_id = ', db:escape_literal(inst),
+                    ' and ',
+                    k, ' = ', db:escape_literal(v),
+                    ';'
+                )
+                swallow(query)
+            else
+                local e = 'No pkey and value specified for for http_method = '
+                        .. method .. ' on object ' .. object
+                ngx.log(ngx.ERR, e)
+                return ngx.BAD_REQUEST, error_to_json(e)
+            end
+        elseif method == 'GET' then
+            if k and v then
+                query = make_sql(
+                    'select * from ', object,
+                    ' where inst_id = ', db:escape_literal(inst),
+                    ' and ',
+                    k, ' = ', db:escape_literal(v),
+                    ';'
+                )
+                swallow(query)
+            else
+                query = make_sql(
+                    'select * from ', object,
+                    ' where inst_id = ', db:escape_literal(inst),
+                    ';'
+                )
+                swallow(query)
+            end
         else
-            local e = 'No pkey and value specified for for http_method = '
-                    .. method
+            local e = 'No defined action for http_method = ' .. method
             ngx.log(ngx.ERR, e)
             return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
         end
-    elseif method == 'GET' then
-        if k and v then
-            query = make_sql(
-                'select * from ', object,
-                ' where inst_id = ', db:escape_literal(inst),
-                ' and ',
-                k, ' = ', db:escape_literal(v),
-                ';'
-            )
-            swallow(query)
-        else
-            query = make_sql(
-                'select * from ', object,
-                ' where inst_id = ', db:escape_literal(inst),
-                ';'
-            )
-            swallow(query)
+        local status, result = do_db_operation(db, query, method)
+        if method == "POST" then
+            ngx.header["Location"] = base_uri ..  "/" .. inst .. "/" .. object
         end
-    else
-        local e = 'No defined action for http_method = ' .. method
-        ngx.log(ngx.ERR, e)
-        return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
+        return status, result
     end
-    local status, result = do_db_operation(db, query, method)
-    if method == "POST" then
-        ngx.header["Location"] = base_uri ..  "/" .. inst .. "/" .. object
-    end
-    return status, result
 end
 
 

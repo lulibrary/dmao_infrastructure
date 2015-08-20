@@ -29,17 +29,17 @@ insert into department (inst_id, faculty_id, name, abbreviation) values
 
 
 insert into funder values
-  ('ahrc', 'Arts & Humanities Research Council'),
-  ('bbsrc', 'Biotechnology and Biological Sciences Research Council'),
-  ('epsrc', 'Engineering and Physical Sciences Research Council'),
-  ('esrc', 'Economic and Social Research Council'),
-  ('mrc', 'Medical Research Council'),
-  ('nerc', 'Natural Environment Research Council'),
-  ('stfc', 'Science and Technology Facilities Council'),
-  ('h2020', 'Horizon 2020'),
-  ('npl', 'National Physical Laboratory'),
-  ('oclaro', 'Oclaro Inc'),
-  ('none', 'Not funded')
+  ('ahrc', 'Arts & Humanities Research Council', true),
+  ('bbsrc', 'Biotechnology and Biological Sciences Research Council', true),
+  ('epsrc', 'Engineering and Physical Sciences Research Council', true),
+  ('esrc', 'Economic and Social Research Council', true),
+  ('mrc', 'Medical Research Council', true),
+  ('nerc', 'Natural Environment Research Council', true),
+  ('stfc', 'Science and Technology Facilities Council', true),
+  ('h2020', 'Horizon 2020', false),
+  ('npl', 'National Physical Laboratory', false),
+  ('oclaro', 'Oclaro Inc', false),
+  ('none', 'Not funded', false)
 ;
 
 
@@ -449,23 +449,23 @@ insert into publication (project_id, cris_id, repo_id, publication_pid,
 values
   (1, '68975423', '71672', '10.1214/14-AOAS795',
     'EP/K014463/1', 'lancaster', 2, 5,
-    '2015-03-01', 'does not exist'),
+    '2015-03-01', false),
   (null, '289125', '2438', '10.1002/env.712', null, 'lancaster', 3, 6,
-    '2008-05-01', 'does not exist'),
+    '2008-05-01', false),
   (3, '81303601', '73749', null, null, 'lancaster', 2, 7,
-    '2015-01-01', 'exists with persistent link'),
+    '2015-01-01', true),
   (null, '56480293', '69441', '10.1099/vir.0.067199-0', null,
     'lancaster', 3, 8,
-    '2014-08-01', 'does not exist'),
+    '2014-08-01', 'n'),
   (5, '72017672', '72289', '10.1136/ebmed-2014-110127', null,
     'lancaster', 3, 8,
-    '2015-02-01', 'exists with link'),
+    '2015-02-01', true),
   (5, '85850308', '74419', '10.1063/1.4922950', 'PYA7943',
     'lancaster', 2, 8,
-    '2015-06-10', 'does not exist'),
+    '2015-06-10', false),
   (null, '41842996', '67274', '10.1016/j.jbusres.2015.03.028', null,
     'lancaster', 4, 10,
-    '2015-08-01', 'does not exist')
+    '2015-08-01', false)
 ;
 
 

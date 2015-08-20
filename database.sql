@@ -108,7 +108,8 @@ comment on table department is
 -------------------------------------------------------------------
 create table funder (
   funder_id funder_id_t unique not null primary key,
-  name varchar(256) not null
+  name varchar(256) not null,
+  is_rcuk_funder boolean default false
 );
 comment on table funder is 'Describes a funding body.';
 
@@ -344,11 +345,12 @@ create table publication (
   lead_department_id integer references department(department_id)
     on delete cascade on update cascade,
   publication_date date,
-  data_access_statement varchar(50),
-  check (data_access_statement in ('exists with no dataset',
-                                   'does not exist', 'exists without link',
-                                   'exists with link',
-                                   'exists with persistent link'))
+  data_access_statement boolean default false,
+  data_access_statement_notes varchar(1024),
+  rcuk_funder_compliant varchar(50) default 'n'
+    check (rcuk_funder_compliant in ('y', 'n', 'partial')),
+  other_funder_compliant varchar(50) default 'n'
+    check (other_funder_compliant in ('y', 'n', 'partial'))
 );
 comment on table publication is 'Describes publications';
 comment on column publication.project_id is
