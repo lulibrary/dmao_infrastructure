@@ -3,8 +3,8 @@ cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
 
-debug = false
 debug = true
+debug = false
 environment = 'dev' -- or test or prod
 base_uri = ''
 
@@ -77,6 +77,12 @@ local function get_connection_details()
     local f = '/usr/local/openresty/lualib/connection.conf'
     dofile(f)
     return user, passwd
+end
+
+local function read_templates()
+    local f = '/usr/local/openresty/lualib/resty/query_templates.lua'
+    dofile(f)
+    return query_templates, columns_lists
 end
 
 
@@ -184,74 +190,10 @@ end
 
 
 local function do_c_datasets_query(db, inst)
+    local qt, cl = read_templates()
+    local columns_list
     local query
     local args = ngx.req.get_uri_args()
-    local query_template = [[
-        select
-            #columns_list#
-        from
-            dataset d
-        left outer join
-            funder_ds_map fdm
-        on
-            (d.dataset_id = fdm.dataset_id)
-        left outer join
-            funder f
-        on
-            (fdm.funder_id = f.funder_id)
-        left outer join
-            faculty fac
-        on
-            (d.lead_faculty_id = fac.faculty_id)
-        left outer join
-            department dept
-        on
-            (d.lead_department_id = dept.department_id)
-        left outer join
-            project p
-        on
-            (d.project_id = p.project_id)
-        where (
-            d.dataset_id in (
-                select
-                    dataset_id
-                from
-                    funder_ds_map
-                #funder_id_filter_clause#
-            )
-        and
-            d.dataset_id in (
-                select
-                    dataset_id
-                from
-                    inst_ds_map
-                where
-                    inst_id = #inst_id#
-            )
-        )
-        #arch_status_filter_clause#
-        #date_filter_clause#
-        #dataset_filter_clause#
-        #location_filter_clause#
-        #faculty_filter_clause#
-        #dept_filter_clause#
-        #project_filter_clause#
-        #order_clause#
-        ;
-    ]]
-    local columns_list = [[
-        f.funder_id,
-        f.name funder_name,
-        d.*,
-        fac.abbreviation lead_faculty_abbrev,
-        fac.name lead_faculty_name,
-        dept.abbreviation lead_dept_abbrev,
-        dept.name lead_dept_name,
-        p.project_awarded,
-        p.project_start,
-        p.project_end,
-        p.project_name'
-    ]]
     local project_null_dates ='or p.project_date_range is null'
     local funder_id_filter_clause = ''
     local arch_status_filter_clause = ''
@@ -263,7 +205,10 @@ local function do_c_datasets_query(db, inst)
     local project_filter_clause = ''
     local order_clause = ''
     if args['count'] == 'true' then
-        columns_list = 'count(*) num_datasets'
+        columns_list = cl['datasets_count']
+        swallow(columns_list)
+    else
+        columns_list = cl['datasets']
     end
     if args['filter'] == 'rcuk' then
         funder_id_filter_clause = [[
@@ -283,7 +228,7 @@ local function do_c_datasets_query(db, inst)
         faculty_filter_clause = 'and d.lead_faculty_id = '
                 .. db:escape_literal(args['faculty'])
     end
-    query = fill_query_template(query_template,
+    query = fill_query_template(qt['datasets'],
         {
             columns_list = columns_list,
             funder_id_filter_clause = funder_id_filter_clause,
@@ -298,7 +243,7 @@ local function do_c_datasets_query(db, inst)
             order_clause = order_clause
         }
     )
-    return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
+    return do_db_operation(db, query, 'GET')
 end
 
 
