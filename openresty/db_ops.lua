@@ -82,7 +82,7 @@ end
 local function read_templates()
     local f = '/usr/local/openresty/lualib/resty/query_templates.lua'
     dofile(f)
-    return query_templates, columns_lists
+    return query_templates
 end
 
 
@@ -178,72 +178,153 @@ local function make_sql(...)
 end
 
 
-local function fill_query_template(qt, t)
-    local q = qt
-    for c, v in pairs(t) do
-        q = string.gsub(q, '#' .. c .. '#', v)
+local function populate_var_clauses(q, db, args, template)
+    local clauses = {}
+    if args then
+        for var, value in pairs(args) do
+            if not (
+                (var == 'sd') or (var == 'ed')
+                    or (var == 'filter') or (var == 'count')
+                    or (
+                        q == 'dataset_accesses'
+                        and
+                        (
+                            var == 'dataset_id' or
+                            var == 'summary' or
+                            var == 'summary_by_date'
+                        )
+            )
+            ) then
+                local clause = template[var]
+                if var == 'date' then
+                    clause = string.gsub(clause, '#var_value#', value)
+                    clause = string.gsub(clause, '#el_sd#',
+                        db:escape_literal(args['sd']))
+                    clause = string.gsub(clause, '#el_ed#',
+                        db:escape_literal(args['ed']))
+                    if (q == 'datasets') then
+                        if args['filter'] == 'rcuk' then
+                            clause = string.gsub(clause,
+                                '#project_null_dates#', '')
+                        else
+                            clause = string.gsub(clause,
+                                '#project_null_dates#',
+                                'or p.project_date_range is null')
+                        end
+                    end
+                elseif (var == 'has_dmp') or (var == 'is_awarded') then
+                    if (value == 'true') then
+                        clause = string.gsub(clause, '#not#', '')
+                    else
+                        clause = string.gsub(clause, '#not#', 'not')
+                    end
+                else
+                    clause = string.gsub(clause, '#el_var_value#',
+                        db:escape_literal(value))
+                end
+                clauses[#clauses + 1] = clause
+                clauses[#clauses + 1] = ' '
+            end
+        end
     end
-    q = string.gsub(q, '\n', '')
-    q = string.gsub(q, '  *', ' ')
-    return q
+    return table.concat(clauses)
 end
 
 
-local function do_c_datasets_query(db, inst)
-    local qt, cl = read_templates()
-    local columns_list
-    local query
+local function construct_c_query(db, inst, query)
+    local institution = db:escape_literal(inst)
+    local qt = read_templates()
     local args = ngx.req.get_uri_args()
-    local project_null_dates ='or p.project_date_range is null'
-    local funder_id_filter_clause = ''
-    local arch_status_filter_clause = ''
-    local date_filter_clause = ''
-    local dataset_filter_clause = ''
-    local location_filter_clause = ''
-    local faculty_filter_clause = ''
-    local dept_filter_clause = ''
-    local project_filter_clause = ''
-    local order_clause = ''
-    if args['count'] == 'true' then
-        columns_list = cl['datasets_count']
-        swallow(columns_list)
-    else
-        columns_list = cl['datasets']
-    end
-    if args['filter'] == 'rcuk' then
-        funder_id_filter_clause = [[
-            where funder_id in (
-                select funder_id from funder where is_rcuk_funder = true
-            )
-        ]]
-        project_null_dates = '';
-    end
-    if args['date'] then
-        date_filter_clause = 'and (p.' .. args['date'] .. ' >= ' ..
-            db:escape_literal(args['sd']) .. ' and p.' .. args['date'] ..
-            ' <= ' .. db:escape_literal(args['ed']) ..
-            project_null_dates .. ')'
-    end
-    if args['faculty'] then
-        faculty_filter_clause = 'and d.lead_faculty_id = '
-                .. db:escape_literal(args['faculty'])
-    end
-    query = fill_query_template(qt['datasets'],
-        {
-            columns_list = columns_list,
-            funder_id_filter_clause = funder_id_filter_clause,
-            inst_id = db:escape_literal(inst),
-            arch_status_filter_clause = arch_status_filter_clause,
-            date_filter_clause = date_filter_clause,
-            dataset_filter_clause = dataset_filter_clause,
-            location_filter_clause = location_filter_clause,
-            faculty_filter_clause = faculty_filter_clause,
-            dept_filter_clause = dept_filter_clause,
-            project_filter_clause = project_filter_clause,
-            order_clause = order_clause
-        }
+    local q = qt[query]['query']
+    local vc = populate_var_clauses(
+        query, db, args, qt[query]['variable_clauses']
     )
-    return do_db_operation(db, query, 'GET')
+    if args['count'] then
+        q = string.gsub(q, '#columns_list#',
+            qt[query]['columns_list_count'])
+        q = string.gsub(q, '#order_clause#', '')
+        q = string.gsub(q, '#group_by_clause#', '')
+    else
+        q = string.gsub(q, '#columns_list#', qt[query]['columns_list'])
+        if not (query == 'dataset_accesses') then
+            q = string.gsub(q, '#order_clause#', qt[query]['output_order'])
+            q = string.gsub(q, '#group_by_clause#', qt[query]['group_by'])
+        end
+    end
+    if args['filter'] then
+        q = string.gsub(q, '#funder_id_filter_clause#',
+            qt[query]['variable_clauses']['filter'])
+    else
+        q = string.gsub(q, '#funder_id_filter_clause#', '')
+    end
+    q = string.gsub(q, '#variable_clauses#', vc)
+    -- unfortunately, special processing, todo: inprove this
+    if query == 'dataset_accesses' then
+        if args['summary'] == 'true' then
+            q = string.gsub(q, '#summary_column#',
+                qt[query]['summary_column_1'])
+            q = string.gsub(q, '#summary_clause#',
+                qt[query]['summary_clause_2'])
+            q = string.gsub(q, '#group_by_clause#',
+                qt[query]['group_by_clause_2'])
+            q = string.gsub(q, '#order_clause#',
+                qt[query]['output_order_2'])
+        elseif args['summary_by_date'] == 'true' then
+            q = string.gsub(q, '#summary_column#',
+                qt[query]['summary_column_2'])
+            q = string.gsub(q, '#summary_clause#',
+                qt[query]['summary_clause_2'])
+            q = string.gsub(q, '#group_by_clause#',
+                qt[query]['group_by_clause_3'])
+            q = string.gsub(q, '#order_clause#',
+                qt[query]['output_order_3'])
+        else
+            q = string.gsub(q, '#summary_column#',
+                qt[query]['summary_column_1'])
+            q = string.gsub(q, '#summary_clause#',
+                qt[query]['summary_clause_1'])
+            q = string.gsub(q, '#group_by_clause#',
+                qt[query]['group_by_clause_1'])
+            q = string.gsub(q, '#order_clause#',
+                qt[query]['output_order_1'])
+        end
+        if not args['dataset_id'] and not args['sd'] then
+            q = string.gsub(q, '#and_clause_1#', '')
+            q = string.gsub(q, '#and_clause_2#', '')
+        end
+        if args['dataset_id'] then
+            q = string.gsub(q, '#and_clause_1#', 'and')
+            q = string.gsub(q, '#dataset_id#',
+                string.gsub(qt[query]['dataset_id'], '#el_var_value#',
+                    db:escape_literal(args['dataset_id'])))
+        else
+            q = string.gsub(q, '#dataset_id#', '')
+        end
+        if args['sd'] then
+            q = string.gsub(q, '#and_clause_1#', 'and')
+            local date_range =
+                string.gsub(qt[query]['sd'], '#el_var_value#',
+                    db:escape_literal(args['sd']))
+                .. ' ' ..
+                string.gsub(qt[query]['ed'], '#el_var_value#',
+                    db:escape_literal(args['ed']))
+            q = string.gsub(q, '#date_range#', date_range)
+        else
+            q = string.gsub(q, '#date_range#', '')
+        end
+        if args['dataset_id'] and args['sd'] then
+            q = string.gsub(q, '#and_clause_2#', 'and')
+        else
+            q = string.gsub(q, '#and_clause_2#', '')
+        end
+
+    end
+    q = string.gsub(q, '#inst_id#', institution)
+    q = string.gsub(q, '\n', '')
+    q = string.gsub(q, '  *', ' ')
+    q = string.gsub(q, '^ ', '')
+    q = string.gsub(q, ' $', ';')
+    return q
 end
 
 
@@ -252,20 +333,16 @@ local function do_c_query(db)
     local inst = ngx.var.inst_id
     local query = ngx.var.query
     local method = ngx.req.get_method()
-    -- maps queries to functions
-    local qf_map = {
-        datasets = do_c_datasets_query,
-        project_dmps = do_c_project_dmps_query
-    }
     if not (method == 'GET') then
         local e = method .. ' not supported for query on '
             .. query .. ' in ' .. inst
         ngx.log(ngx.ERR, e)
         swallow(db)
-        swallow(qf_map)
         return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     else
-        return qf_map[query](db, inst)
+        return do_db_operation(
+            db, construct_c_query(db, inst, query), 'GET'
+        )
     end
 end
 
@@ -323,7 +400,8 @@ local function db_operation(db)
                 )
                 swallow(query)
             else
-                local e = 'No pkey and value specified for for http_method = '
+                local e = 'No pkey and value specified ' ..
+                        'for for http_method = '
                         .. method .. ' on object ' .. object
                 ngx.log(ngx.ERR, e)
                 return ngx.BAD_REQUEST, error_to_json(e)
@@ -353,7 +431,8 @@ local function db_operation(db)
         end
         local status, result = do_db_operation(db, query, method)
         if method == "POST" then
-            ngx.header["Location"] = base_uri ..  "/" .. inst .. "/" .. object
+            ngx.header["Location"] = base_uri ..  "/" .. inst
+                    .. "/" .. object
         end
         return status, result
     end
