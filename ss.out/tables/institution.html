@@ -103,58 +103,70 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </tr>
 </thead>
 <tbody valign='top'>
-<tr class='odd'>
+<tr class='even'>
  <td class='primaryKey' title='Primary Key'>inst_id</td>
- <td class='detail'>varchar</td>
- <td class='detail' align='right'>256</td>
+ <td class='detail'>inst_id_t</td>
+ <td class='detail' align='right'>2147483647</td>
  <td class='detail' align='center'></td>
  <td class='detail' align='center'></td>
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="department.inst_id refs institution.inst_id via department_inst_id_fkey"><a href='department.html'>department</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>department_inst_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="faculty.inst_id refs institution.inst_id via faculty_inst_id_fkey"><a href='faculty.html'>faculty</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>faculty_inst_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="inst_ds_map.inst_id refs institution.inst_id via inst_ds_map_inst_id_fkey"><a href='inst_ds_map.html'>inst_ds_map</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>inst_ds_map_inst_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
+    <td class='relatedTable detail' title="inst_storage_platforms.inst_id refs institution.inst_id via inst_storage_platforms_inst_id_fkey"><a href='inst_storage_platforms.html'>inst_storage_platforms</a><span class='relatedKey'>.inst_id</span>
+    </td>
+    <td class='constraint detail'>inst_storage_platforms_inst_id_fkey<span title='Cascade on delete:
+ Deletion of parent deletes child'>&nbsp;C</span></td>
+   </tr>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="project.inst_id refs institution.inst_id via project_inst_id_fkey"><a href='project.html'>project</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>project_inst_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='impliedRelationship relative odd' valign='top'>
-    <td class='relatedTable detail' title="project_expected_storage_costs.inst_id's name implies that it's a child of institution.inst_id, but it doesn't reference that column."><a href='project_expected_storage_costs.html'>project_expected_storage_costs</a><span class='relatedKey'>.inst_id</span>
+   <tr class='impliedRelationship relative even' valign='top'>
+    <td class='relatedTable detail' title="project_expected_storage.inst_id's name implies that it's a child of institution.inst_id, but it doesn't reference that column."><a href='project_expected_storage.html'>project_expected_storage</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>Implied Constraint<span title='Restrict delete:
  Parent cannot be deleted if children exist'>&nbsp;R</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='impliedRelationship relative even' valign='top'>
+    <td class='relatedTable detail' title="project_storage_costs_breakdown.inst_id's name implies that it's a child of institution.inst_id, but it doesn't reference that column."><a href='project_storage_costs_breakdown.html'>project_storage_costs_breakdown</a><span class='relatedKey'>.inst_id</span>
+    </td>
+    <td class='constraint detail'>Implied Constraint<span title='Restrict delete:
+ Parent cannot be deleted if children exist'>&nbsp;R</span></td>
+   </tr>
+   <tr class='impliedRelationship relative even' valign='top'>
+    <td class='relatedTable detail' title="project_storage_costs_intermediate.inst_id's name implies that it's a child of institution.inst_id, but it doesn't reference that column."><a href='project_storage_costs_intermediate.html'>project_storage_costs_intermediate</a><span class='relatedKey'>.inst_id</span>
+    </td>
+    <td class='constraint detail'>Implied Constraint<span title='Restrict delete:
+ Parent cannot be deleted if children exist'>&nbsp;R</span></td>
+   </tr>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="publication.lead_inst_id refs institution.inst_id via publication_lead_inst_id_fkey"><a href='publication.html'>publication</a><span class='relatedKey'>.lead_inst_id</span>
     </td>
     <td class='constraint detail'>publication_lead_inst_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative odd' valign='top'>
-    <td class='relatedTable detail' title="storage_costs.inst_id refs institution.inst_id via storage_costs_inst_id_fkey"><a href='storage_costs.html'>storage_costs</a><span class='relatedKey'>.inst_id</span>
-    </td>
-    <td class='constraint detail'>storage_costs_inst_id_fkey<span title='Cascade on delete:
- Deletion of parent deletes child'>&nbsp;C</span></td>
-   </tr>
-   <tr class='relative odd' valign='top'>
+   <tr class='relative even' valign='top'>
     <td class='relatedTable detail' title="users.inst_id refs institution.inst_id via users_inst_id_fkey"><a href='users.html'>users</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>users_inst_id_fkey<span title='Cascade on delete:
@@ -165,7 +177,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>name</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -176,7 +188,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>contact</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -187,7 +199,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>contact_email</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -198,7 +210,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>contact_phone</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -209,7 +221,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>cris_sys</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>1024</td>
@@ -221,7 +233,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>A description of the CRIS<br>
   system in use at this institution, e.g. 'Pure'.</td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>pub_sys</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>1024</td>
@@ -233,7 +245,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'>A description of the publication repository<br>
   system in use at this institution e.g. 'Eprints'.</td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>dataset_sys</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>1024</td>
@@ -244,7 +256,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>archive_sys</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>1024</td>
@@ -255,8 +267,30 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
+<tr class='odd'>
+ <td class='detail'>currency</td>
+ <td class='detail'>varchar</td>
+ <td class='detail' align='right'>3</td>
+ <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
+ <td class='detail' align='center'></td>
+ <td class='detail' align='right'>null</td>
+ <td class='detail'></td>
+ <td class='detail'> </td>
+ <td class='comment detail'></td>
+</tr>
+<tr class='even'>
+ <td class='detail'>currency_symbol</td>
+ <td class='detail'>varchar</td>
+ <td class='detail' align='right'>32</td>
+ <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
+ <td class='detail' align='center'></td>
+ <td class='detail' align='right'>null</td>
+ <td class='detail'></td>
+ <td class='detail'> </td>
+ <td class='comment detail'></td>
+</tr>
 </table>
-<p title='9 columns'>Table contained 1 rows at Thu Jul 16 15:23 BST 2015<p/>
+<p title='11 columns'>Table contained 1 rows at Thu Aug 27 09:44 BST 2015<p/>
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -282,56 +316,62 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <br><form action='get'><b>Close relationships</b><span class='degrees' id='degrees' title='Detail diminishes with increased separation from institution'>
 &nbsp;within <label for='oneDegree'><input type='radio' name='degrees' id='oneDegree' checked>one</label>  <label for='twoDegrees'><input type='radio' name='degrees' id='twoDegrees'>two degrees</label> of separation</span><b>:</b></form>
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="department.html" title="department" alt="" coords="456,499,597,679">
-<area shape="rect" id="node2" href="faculty.html" title="faculty" alt="" coords="279,535,412,691">
-<area shape="rect" id="node3" href="institution.html" title="institution" alt="" coords="6,426,234,707">
-<area shape="rect" id="node4" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="281,337,410,445">
-<area shape="rect" id="node5" href="project.html" title="project" alt="" coords="642,5,838,449">
-<area shape="rect" id="node6" href="storage_costs.html" title="storage_costs" alt="" coords="460,247,593,403">
-<area shape="rect" id="node7" href="publication.html" title="publication" alt="" coords="883,294,1066,618">
-<area shape="rect" id="node8" href="users.html" title="users" alt="" coords="288,709,403,913">
+<area shape="rect" id="node1" href="department.html" title="department" alt="" coords="579,457,720,637">
+<area shape="rect" id="node2" href="faculty.html" title="faculty" alt="" coords="373,621,507,777">
+<area shape="rect" id="node3" href="institution.html" title="institution" alt="" coords="6,407,301,737">
+<area shape="rect" id="node4" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="375,285,505,393">
+<area shape="rect" id="node5" href="inst_storage_platforms.html" title="inst_storage_platforms" alt="" coords="346,410,534,566">
+<area shape="rect" id="node6" href="project.html" title="project" alt="" coords="765,5,961,425">
+<area shape="rect" id="node7" href="publication.html" title="publication" alt="" coords="1006,265,1231,661">
+<area shape="rect" id="node8" href="users.html" title="users" alt="" coords="383,794,497,998">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/institution.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="impliedTwoDegreesRelationshipsDiagram" name="impliedTwoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="1008,623,1149,707">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="560,539,701,719">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="331,503,464,659">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="746,5,942,449">
-<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="6,583,234,865">
-<area shape="rect" id="node12" href="dmp.html" title="dmp" alt="" coords="564,191,697,275">
-<area shape="rect" id="node13" href="storage_costs.html" title="storage_costs" alt="" coords="564,293,697,449">
-<area shape="rect" id="node6" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1226,630,1347,714">
-<area shape="rect" id="node7" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1223,366,1351,450">
-<area shape="rect" id="node8" href="publication.html" title="publication" alt="" coords="987,245,1170,569">
-<area shape="rect" id="node9" href="funder_project_map.html" title="funder_project_map" alt="" coords="999,111,1159,195">
-<area shape="rect" id="node10" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1217,245,1357,329">
-<area shape="rect" id="node11" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1222,735,1351,843">
-<area shape="rect" id="node14" href="project_ds_map.html" title="project_ds_map" alt="" coords="1220,125,1353,209">
-<area shape="rect" id="node15" href="project_expected_storage_costs.html" title="project_expected_storage_costs" alt="" coords="279,810,516,1014">
-<area shape="rect" id="node16" href="project_pub_map.html" title="project_pub_map" alt="" coords="1215,14,1358,98">
-<area shape="rect" id="node17" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1226,507,1347,591">
-<area shape="rect" id="node18" href="users.html" title="users" alt="" coords="340,1031,455,1235">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="1117,699,1259,783">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="648,518,789,698">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="408,566,541,722">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="834,343,1030,763">
+<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="6,870,301,1199">
+<area shape="rect" id="node14" href="dmp.html" title="dmp" alt="" coords="652,715,785,799">
+<area shape="rect" id="node6" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1357,985,1478,1069">
+<area shape="rect" id="node7" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1353,5,1481,89">
+<area shape="rect" id="node8" href="publication.html" title="publication" alt="" coords="1075,75,1301,471">
+<area shape="rect" id="node9" href="funder_project_map.html" title="funder_project_map" alt="" coords="1108,526,1268,610">
+<area shape="rect" id="node10" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1347,106,1487,190">
+<area shape="rect" id="node11" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1353,795,1482,903">
+<area shape="rect" id="node12" href="inst_storage_costs.html" title="inst_storage_costs" alt="" coords="1113,902,1263,986">
+<area shape="rect" id="node13" href="inst_storage_platforms.html" title="inst_storage_platforms" alt="" coords="838,854,1026,1010">
+<area shape="rect" id="node15" href="project_ds_map.html" title="project_ds_map" alt="" coords="1351,662,1484,746">
+<area shape="rect" id="node16" href="project_expected_storage.html" title="project_expected_storage" alt="" coords="377,961,573,1189">
+<area shape="rect" id="node17" href="project_pub_map.html" title="project_pub_map" alt="" coords="1346,331,1489,415">
+<area shape="rect" id="node18" href="project_storage_costs_breakdown.html" title="project_storage_costs_breakdown" alt="" coords="349,1206,600,1458">
+<area shape="rect" id="node19" href="project_storage_costs_intermediate.html" title="project_storage_costs_intermediate" alt="" coords="345,1475,604,1655">
+<area shape="rect" id="node20" href="project_storage_requirement.html" title="project_storage_requirement" alt="" coords="1080,801,1296,885">
+<area shape="rect" id="node21" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1357,438,1478,522">
+<area shape="rect" id="node22" href="users.html" title="users" alt="" coords="417,1673,532,1877">
 </map>
 
   <a name='diagram'><img id='impliedTwoDegreesImg' src='../diagrams/institution.implied2degrees.png' usemap='#impliedTwoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="904,623,1045,707">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="456,539,597,719">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="279,503,412,659">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="642,5,838,449">
-<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="6,525,234,806">
-<area shape="rect" id="node12" href="dmp.html" title="dmp" alt="" coords="460,245,593,329">
-<area shape="rect" id="node13" href="storage_costs.html" title="storage_costs" alt="" coords="279,293,412,449">
-<area shape="rect" id="node6" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1122,630,1243,714">
-<area shape="rect" id="node7" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1119,366,1247,450">
-<area shape="rect" id="node8" href="publication.html" title="publication" alt="" coords="883,245,1066,569">
-<area shape="rect" id="node9" href="funder_project_map.html" title="funder_project_map" alt="" coords="895,111,1055,195">
-<area shape="rect" id="node10" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1113,245,1253,329">
-<area shape="rect" id="node11" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1118,735,1247,843">
-<area shape="rect" id="node14" href="project_ds_map.html" title="project_ds_map" alt="" coords="1116,125,1249,209">
-<area shape="rect" id="node15" href="project_pub_map.html" title="project_pub_map" alt="" coords="1111,14,1254,98">
-<area shape="rect" id="node16" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1122,507,1243,591">
-<area shape="rect" id="node17" href="users.html" title="users" alt="" coords="288,810,403,1014">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="992,699,1133,783">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="523,518,664,698">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="345,525,479,681">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="709,343,905,763">
+<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="6,662,301,991">
+<area shape="rect" id="node14" href="dmp.html" title="dmp" alt="" coords="527,715,660,799">
+<area shape="rect" id="node6" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1231,985,1353,1069">
+<area shape="rect" id="node7" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1228,5,1356,89">
+<area shape="rect" id="node8" href="publication.html" title="publication" alt="" coords="950,75,1175,471">
+<area shape="rect" id="node9" href="funder_project_map.html" title="funder_project_map" alt="" coords="983,526,1143,610">
+<area shape="rect" id="node10" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1222,106,1362,190">
+<area shape="rect" id="node11" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1227,795,1357,903">
+<area shape="rect" id="node12" href="inst_storage_costs.html" title="inst_storage_costs" alt="" coords="987,902,1138,986">
+<area shape="rect" id="node13" href="inst_storage_platforms.html" title="inst_storage_platforms" alt="" coords="713,854,901,1010">
+<area shape="rect" id="node15" href="project_ds_map.html" title="project_ds_map" alt="" coords="1225,662,1359,746">
+<area shape="rect" id="node16" href="project_pub_map.html" title="project_pub_map" alt="" coords="1221,331,1363,415">
+<area shape="rect" id="node17" href="project_storage_requirement.html" title="project_storage_requirement" alt="" coords="955,801,1171,885">
+<area shape="rect" id="node18" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1231,438,1353,522">
+<area shape="rect" id="node19" href="users.html" title="users" alt="" coords="355,1065,469,1269">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/institution.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

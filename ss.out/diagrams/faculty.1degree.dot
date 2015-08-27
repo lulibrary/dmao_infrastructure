@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-55-generic
+// dot 2.36.0 on Linux 3.13.0-62-generic
 // SchemaSpy rev 590
 digraph "oneDegreeRelationshipsDiagram" {
   graph [
@@ -74,7 +74,7 @@ digraph "oneDegreeRelationshipsDiagram" {
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">faculty</TD></TR>
       <TR><TD PORT="faculty_id" COLSPAN="2" BGCOLOR="#bed1b8" ALIGN="LEFT">faculty_id</TD><TD PORT="faculty_id.type" ALIGN="LEFT">serial[10]</TD></TR>
-      <TR><TD PORT="inst_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD><TD PORT="inst_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
+      <TR><TD PORT="inst_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD><TD PORT="inst_id.type" ALIGN="LEFT">inst_id_t[2147483647]</TD></TR>
       <TR><TD PORT="name" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD><TD PORT="name.type" ALIGN="LEFT">varchar[256]</TD></TR>
       <TR><TD PORT="abbreviation" COLSPAN="2" ALIGN="LEFT">abbreviation</TD><TD PORT="abbreviation.type" ALIGN="LEFT">varchar[64]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
@@ -95,6 +95,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="pub_sys" COLSPAN="3" ALIGN="LEFT">pub_sys</TD></TR>
       <TR><TD PORT="dataset_sys" COLSPAN="3" ALIGN="LEFT">dataset_sys</TD></TR>
       <TR><TD PORT="archive_sys" COLSPAN="3" ALIGN="LEFT">archive_sys</TD></TR>
+      <TR><TD PORT="currency" COLSPAN="3" ALIGN="LEFT">currency</TD></TR>
+      <TR><TD PORT="currency_symbol" COLSPAN="3" ALIGN="LEFT">currency_symbol</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
@@ -115,12 +117,11 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="has_dmp" COLSPAN="3" ALIGN="LEFT">has_dmp</TD></TR>
       <TR><TD PORT="has_dmp_been_reviewed" COLSPAN="3" ALIGN="LEFT">has_dmp_been_reviewed</TD></TR>
       <TR><TD PORT="dmp_id" COLSPAN="3" ALIGN="LEFT">dmp_id</TD></TR>
-      <TR><TD PORT="expected_storage" COLSPAN="3" ALIGN="LEFT">expected_storage</TD></TR>
       <TR><TD PORT="project_awarded" COLSPAN="3" ALIGN="LEFT">project_awarded</TD></TR>
+      <TR><TD PORT="project_date_range" COLSPAN="3" ALIGN="LEFT">project_date_range</TD></TR>
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
-      <TR><TD PORT="sc_id" COLSPAN="3" ALIGN="LEFT">sc_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
@@ -140,6 +141,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
       <TR><TD PORT="publication_date" COLSPAN="3" ALIGN="LEFT">publication_date</TD></TR>
       <TR><TD PORT="data_access_statement" COLSPAN="3" ALIGN="LEFT">data_access_statement</TD></TR>
+      <TR><TD PORT="data_access_statement_notes" COLSPAN="3" ALIGN="LEFT">data_access_statement_notes</TD></TR>
+      <TR><TD PORT="rcuk_funder_compliant" COLSPAN="3" ALIGN="LEFT">rcuk_funder_compliant</TD></TR>
+      <TR><TD PORT="other_funder_compliant" COLSPAN="3" ALIGN="LEFT">other_funder_compliant</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"

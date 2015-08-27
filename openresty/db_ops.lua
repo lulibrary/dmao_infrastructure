@@ -2,6 +2,7 @@
 cjson = require 'cjson'
 upload = require 'resty.upload'
 pg = require 'pgmoon'
+util = require 'resty/dmao_i_utility'
 
 debug = true
 debug = false
@@ -12,35 +13,6 @@ if environment == 'dev' then
     local host = 'localhost'
     local port = '8080'
     base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
-end
-
-
--- iterate through a lua table to print via nginx, for debugging purposes.
-local function tprint(tbl, indent)
-    if not indent then indent = 4 end
-    for k, v in pairs(tbl) do
-        local formatting = string.rep('  ', indent) .. k .. ': '
-        if type(v) == 'table' then
-            ngx.say(formatting)
-            tprint(v, indent + 1)
-        elseif type(v) == 'boolean' then
-            ngx.say(formatting .. tostring(v))
-        else
-            ngx.say(formatting .. v)
-        end
-    end
-end
-
-
---[[
-Apologies, this is here to swallow Pycharm warnings about 'unused
-assigment' in the cases where I'm convinced that the code inspector has
-got it wrong. It enables me to see a green tick, which, sadly, I like to
-see before I deploy. Hopefully, it's mostly optimised away. It's an
-open case for the lua plugin, maybe it will get fixed.
---]]
-local function swallow(v)
-    if v then end
 end
 
 
@@ -114,8 +86,7 @@ end
 local function do_db_operation(d, query, method)
     local return_code
     if debug then
-        swallow(d)
-        swallow(method)
+        util.swallow(d, method)
         return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
     else
         local res, err = d:query(query)
@@ -125,7 +96,7 @@ local function do_db_operation(d, query, method)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
-            swallow(return_code)
+            util.swallow(return_code)
         else
             return_code = ngx.HTTP_OK
         end
@@ -337,7 +308,7 @@ local function do_c_query(db)
         local e = method .. ' not supported for query on '
             .. query .. ' in ' .. inst
         ngx.log(ngx.ERR, e)
-        swallow(db)
+        util.swallow(db)
         return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     else
         return do_db_operation(
@@ -369,7 +340,7 @@ local function db_operation(db)
                 ' values ', values,
                 ';'
             )
-            swallow(query)
+            util.swallow(query)
         elseif method == 'PUT' then
             local data_table = form_to_table()
             local columns, values, pkey, pkey_val =
@@ -388,7 +359,7 @@ local function db_operation(db)
                 pkey, ' = ', pkey_val,
                 ' returning *;'
             )
-            swallow(query)
+            util.swallow(query)
         elseif method == 'DELETE' then
             if k and v then
                 query = make_sql(
@@ -398,7 +369,7 @@ local function db_operation(db)
                     k, ' = ', db:escape_literal(v),
                     ';'
                 )
-                swallow(query)
+                util.swallow(query)
             else
                 local e = 'No pkey and value specified ' ..
                         'for for http_method = '
@@ -415,14 +386,14 @@ local function db_operation(db)
                     k, ' = ', db:escape_literal(v),
                     ';'
                 )
-                swallow(query)
+                util.swallow(query)
             else
                 query = make_sql(
                     'select * from ', object,
                     ' where inst_id = ', db:escape_literal(inst),
                     ';'
                 )
-                swallow(query)
+                util.swallow(query)
             end
         else
             local e = 'No defined action for http_method = ' .. method

@@ -102,34 +102,34 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </tr>
 </thead>
 <tbody valign='top'>
-<tr class='even'>
+<tr class='odd'>
  <td class='primaryKey' title='Primary Key'>funder_id</td>
- <td class='detail'>varchar</td>
- <td class='detail' align='right'>256</td>
+ <td class='detail'>funder_id_t</td>
+ <td class='detail' align='right'>2147483647</td>
  <td class='detail' align='center'></td>
  <td class='detail' align='center'></td>
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative even' valign='top'>
+   <tr class='relative odd' valign='top'>
     <td class='relatedTable detail' title="funder_dmp_states.funder_id refs funder.funder_id via funder_dmp_states_funder_id_fkey"><a href='funder_dmp_states.html'>funder_dmp_states</a><span class='relatedKey'>.funder_id</span>
     </td>
     <td class='constraint detail'>funder_dmp_states_funder_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative even' valign='top'>
+   <tr class='relative odd' valign='top'>
     <td class='relatedTable detail' title="funder_ds_map.funder_id refs funder.funder_id via funder_ds_map_funder_id_fkey"><a href='funder_ds_map.html'>funder_ds_map</a><span class='relatedKey'>.funder_id</span>
     </td>
     <td class='constraint detail'>funder_ds_map_funder_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative even' valign='top'>
+   <tr class='relative odd' valign='top'>
     <td class='relatedTable detail' title="funder_project_map.funder_id refs funder.funder_id via funder_project_map_funder_id_fkey"><a href='funder_project_map.html'>funder_project_map</a><span class='relatedKey'>.funder_id</span>
     </td>
     <td class='constraint detail'>funder_project_map_funder_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
-   <tr class='relative even' valign='top'>
+   <tr class='relative odd' valign='top'>
     <td class='relatedTable detail' title="funder_pub_map.funder_id refs funder.funder_id via funder_pub_map_funder_id_fkey"><a href='funder_pub_map.html'>funder_pub_map</a><span class='relatedKey'>.funder_id</span>
     </td>
     <td class='constraint detail'>funder_pub_map_funder_id_fkey<span title='Cascade on delete:
@@ -140,7 +140,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>name</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -151,8 +151,19 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
+<tr class='odd'>
+ <td class='detail'>is_rcuk_funder</td>
+ <td class='detail'>bool</td>
+ <td class='detail' align='right'>1</td>
+ <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
+ <td class='detail' align='center'></td>
+ <td class='detail' align='right'>false</td>
+ <td class='detail'></td>
+ <td class='detail'> </td>
+ <td class='comment detail'></td>
+</tr>
 </table>
-<p title='2 columns'>Table contained 11 rows at Thu Jul 16 15:23 BST 2015<p/>
+<p title='3 columns'>Table contained 11 rows at Thu Aug 27 09:44 BST 2015<p/>
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -178,23 +189,23 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <br><form action='get'><b>Close relationships</b><span class='degrees' id='degrees' title='Detail diminishes with increased separation from funder'>
 &nbsp;within <label for='oneDegree'><input type='radio' name='degrees' id='oneDegree' checked>one</label>  <label for='twoDegrees'><input type='radio' name='degrees' id='twoDegrees'>two degrees</label> of separation</span><b>:</b></form>
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="259,5,415,161">
-<area shape="rect" id="node2" href="funder.html" title="funder" alt="" coords="6,238,213,351">
-<area shape="rect" id="node3" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="271,178,403,286">
-<area shape="rect" id="node4" href="funder_project_map.html" title="funder_project_map" alt="" coords="257,303,417,411">
-<area shape="rect" id="node5" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="267,429,407,537">
+<area shape="rect" id="node1" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="353,5,509,161">
+<area shape="rect" id="node2" href="funder.html" title="funder" alt="" coords="6,238,306,375">
+<area shape="rect" id="node3" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="365,178,497,286">
+<area shape="rect" id="node4" href="funder_project_map.html" title="funder_project_map" alt="" coords="351,303,511,411">
+<area shape="rect" id="node5" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="361,429,501,537">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/funder.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="831,176,972,260">
-<area shape="rect" id="node2" href="project.html" title="project" alt="" coords="636,140,777,224">
-<area shape="rect" id="node3" href="dmp.html" title="dmp" alt="" coords="459,123,592,207">
-<area shape="rect" id="node4" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="258,104,414,260">
-<area shape="rect" id="node5" href="funder.html" title="funder" alt="" coords="6,79,213,192">
-<area shape="rect" id="node6" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="1030,132,1162,240">
-<area shape="rect" id="node7" href="funder_project_map.html" title="funder_project_map" alt="" coords="821,51,981,159">
-<area shape="rect" id="node8" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1026,264,1166,372">
-<area shape="rect" id="node9" href="publication.html" title="publication" alt="" coords="835,315,968,399">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="924,176,1065,260">
+<area shape="rect" id="node2" href="project.html" title="project" alt="" coords="729,140,871,224">
+<area shape="rect" id="node3" href="dmp.html" title="dmp" alt="" coords="552,123,685,207">
+<area shape="rect" id="node4" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="351,104,507,260">
+<area shape="rect" id="node5" href="funder.html" title="funder" alt="" coords="6,79,306,216">
+<area shape="rect" id="node6" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="1123,132,1255,240">
+<area shape="rect" id="node7" href="funder_project_map.html" title="funder_project_map" alt="" coords="915,51,1075,159">
+<area shape="rect" id="node8" href="funder_pub_map.html" title="funder_pub_map" alt="" coords="1119,264,1259,372">
+<area shape="rect" id="node9" href="publication.html" title="publication" alt="" coords="928,315,1061,399">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/funder.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

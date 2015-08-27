@@ -80,6 +80,7 @@ create table faculty (
     on delete cascade on update cascade not null,
   name varchar(256) not null,
   abbreviation varchar(64),
+  inst_local_id varchar(64),
   unique (inst_id, name)
 );
 comment on table faculty is
@@ -95,8 +96,9 @@ create table department (
     on delete cascade on update cascade not null,
   faculty_id integer references faculty(faculty_id)
     on delete cascade on update cascade not null,
-  name varchar(256) not null,
+  name varchar(1024) not null,
   abbreviation varchar(64) not null,
+  inst_local_id varchar(64),
   unique (inst_id, faculty_id, name)
 );
 comment on table department is

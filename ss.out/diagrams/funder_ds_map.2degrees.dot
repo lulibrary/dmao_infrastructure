@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-55-generic
+// dot 2.36.0 on Linux 3.13.0-62-generic
 // SchemaSpy rev 590
 digraph "twoDegreesRelationshipsDiagram" {
   graph [
@@ -107,6 +107,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" ALIGN="LEFT">name</TD></TR>
+      <TR><TD PORT="is_rcuk_funder" COLSPAN="3" ALIGN="LEFT">is_rcuk_funder</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="funder.html"
@@ -126,7 +127,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder_ds_map</TD></TR>
-      <TR><TD PORT="funder_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD><TD PORT="funder_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
+      <TR><TD PORT="funder_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD><TD PORT="funder_id.type" ALIGN="LEFT">funder_id_t[2147483647]</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD><TD PORT="dataset_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 &gt;</TD></TR>
     </TABLE>>
@@ -168,7 +169,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"

@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-55-generic
+// dot 2.36.0 on Linux 3.13.0-62-generic
 // SchemaSpy rev 590
 digraph "oneDegreeRelationshipsDiagram" {
   graph [
@@ -30,16 +30,15 @@ digraph "oneDegreeRelationshipsDiagram" {
   "project":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project":"sc_id":w -> "storage_costs":"sc_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_ds_map":"dataset_id":w -> "dataset":"dataset_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_ds_map":"project_id":w -> "project":"project_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_pub_map":"project_id":w -> "project":"project_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_pub_map":"publication_id":w -> "publication":"publication_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "project_storage_requirement":"project_id":w -> "project":"project_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"project_id":w -> "project":"project_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "storage_costs":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -84,7 +83,7 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="dmp_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">dmp_id</TD></TR>
       <TR><TD PORT="dmp_source_system" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dmp_source_system</TD></TR>
       <TR><TD PORT="dmp_ss_pid" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dmp_ss_pid</TD></TR>
-      <TR><TD PORT="dmp_stage" COLSPAN="3" ALIGN="LEFT">dmp_stage</TD></TR>
+      <TR><TD PORT="dmp_state" COLSPAN="3" ALIGN="LEFT">dmp_state</TD></TR>
       <TR><TD PORT="dmp_status" COLSPAN="3" ALIGN="LEFT">dmp_status</TD></TR>
       <TR><TD PORT="author_orcid" COLSPAN="3" ALIGN="LEFT">author_orcid</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">9 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
@@ -129,6 +128,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="pub_sys" COLSPAN="3" ALIGN="LEFT">pub_sys</TD></TR>
       <TR><TD PORT="dataset_sys" COLSPAN="3" ALIGN="LEFT">dataset_sys</TD></TR>
       <TR><TD PORT="archive_sys" COLSPAN="3" ALIGN="LEFT">archive_sys</TD></TR>
+      <TR><TD PORT="currency" COLSPAN="3" ALIGN="LEFT">currency</TD></TR>
+      <TR><TD PORT="currency_symbol" COLSPAN="3" ALIGN="LEFT">currency_symbol</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
@@ -142,19 +143,18 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_name" COLSPAN="2" ALIGN="LEFT">project_name</TD><TD PORT="project_name.type" ALIGN="LEFT">varchar[2048]</TD></TR>
       <TR><TD PORT="funder_project_code" COLSPAN="2" ALIGN="LEFT">funder_project_code</TD><TD PORT="funder_project_code.type" ALIGN="LEFT">varchar[256]</TD></TR>
       <TR><TD PORT="is_awarded" COLSPAN="2" ALIGN="LEFT">is_awarded</TD><TD PORT="is_awarded.type" ALIGN="LEFT">bool[1]</TD></TR>
-      <TR><TD PORT="inst_id" COLSPAN="2" ALIGN="LEFT">inst_id</TD><TD PORT="inst_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
+      <TR><TD PORT="inst_id" COLSPAN="2" ALIGN="LEFT">inst_id</TD><TD PORT="inst_id.type" ALIGN="LEFT">inst_id_t[2147483647]</TD></TR>
       <TR><TD PORT="institution_project_code" COLSPAN="2" ALIGN="LEFT">institution_project_code</TD><TD PORT="institution_project_code.type" ALIGN="LEFT">varchar[256]</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="2" ALIGN="LEFT">lead_faculty_id</TD><TD PORT="lead_faculty_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="2" ALIGN="LEFT">lead_department_id</TD><TD PORT="lead_department_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="has_dmp" COLSPAN="2" ALIGN="LEFT">has_dmp</TD><TD PORT="has_dmp.type" ALIGN="LEFT">bool[1]</TD></TR>
       <TR><TD PORT="has_dmp_been_reviewed" COLSPAN="2" ALIGN="LEFT">has_dmp_been_reviewed</TD><TD PORT="has_dmp_been_reviewed.type" ALIGN="LEFT">varchar[50]</TD></TR>
       <TR><TD PORT="dmp_id" COLSPAN="2" ALIGN="LEFT">dmp_id</TD><TD PORT="dmp_id.type" ALIGN="LEFT">int4[10]</TD></TR>
-      <TR><TD PORT="expected_storage" COLSPAN="2" ALIGN="LEFT">expected_storage</TD><TD PORT="expected_storage.type" ALIGN="LEFT">numeric[131089]</TD></TR>
       <TR><TD PORT="project_awarded" COLSPAN="2" ALIGN="LEFT">project_awarded</TD><TD PORT="project_awarded.type" ALIGN="LEFT">date[13]</TD></TR>
+      <TR><TD PORT="project_date_range" COLSPAN="2" ALIGN="LEFT">project_date_range</TD><TD PORT="project_date_range.type" ALIGN="LEFT">daterange[2147483647]</TD></TR>
       <TR><TD PORT="project_start" COLSPAN="2" ALIGN="LEFT">project_start</TD><TD PORT="project_start.type" ALIGN="LEFT">date[13]</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="2" ALIGN="LEFT">project_end</TD><TD PORT="project_end.type" ALIGN="LEFT">date[13]</TD></TR>
-      <TR><TD PORT="sc_id" COLSPAN="2" ALIGN="LEFT">sc_id</TD><TD PORT="sc_id.type" ALIGN="LEFT">int4[10]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
@@ -181,6 +181,20 @@ digraph "oneDegreeRelationshipsDiagram" {
     URL="project_pub_map.html"
     tooltip="project_pub_map"
   ];
+  "project_storage_requirement" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_storage_requirement</TD></TR>
+      <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
+      <TR><TD PORT="inst_storage_platform_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_storage_platform_id</TD></TR>
+      <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
+      <TR><TD PORT="expected_storage" COLSPAN="3" ALIGN="LEFT">expected_storage</TD></TR>
+      <TR><TD PORT="keep_until" COLSPAN="3" ALIGN="LEFT">keep_until</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">15 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="project_storage_requirement.html"
+    tooltip="project_storage_requirement"
+  ];
   "publication" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -196,22 +210,12 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
       <TR><TD PORT="publication_date" COLSPAN="3" ALIGN="LEFT">publication_date</TD></TR>
       <TR><TD PORT="data_access_statement" COLSPAN="3" ALIGN="LEFT">data_access_statement</TD></TR>
+      <TR><TD PORT="data_access_statement_notes" COLSPAN="3" ALIGN="LEFT">data_access_statement_notes</TD></TR>
+      <TR><TD PORT="rcuk_funder_compliant" COLSPAN="3" ALIGN="LEFT">rcuk_funder_compliant</TD></TR>
+      <TR><TD PORT="other_funder_compliant" COLSPAN="3" ALIGN="LEFT">other_funder_compliant</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"
     tooltip="publication"
-  ];
-  "storage_costs" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">storage_costs</TD></TR>
-      <TR><TD PORT="sc_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">sc_id</TD></TR>
-      <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
-      <TR><TD PORT="inst_reference" COLSPAN="3" ALIGN="LEFT">inst_reference</TD></TR>
-      <TR><TD PORT="cost_per_tb" COLSPAN="3" ALIGN="LEFT">cost_per_tb</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
-    </TABLE>>
-    URL="storage_costs.html"
-    tooltip="storage_costs"
   ];
 }

@@ -147,7 +147,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
   plan.</td>
 </tr>
 <tr class='odd'>
- <td class='detail'>dmp_stage</td>
+ <td class='detail'>dmp_state</td>
  <td class='detail'>int4</td>
  <td class='detail' align='right'>10</td>
  <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
@@ -157,15 +157,15 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
    <tr class='relative odd' valign='top'>
-    <td class='relatedTable detail' title="dmp.dmp_stage refs funder_dmp_states.dmp_state_id via dmp_dmp_stage_fkey"><a href='funder_dmp_states.html'>funder_dmp_states</a><span class='relatedKey'>.dmp_state_id</span>
+    <td class='relatedTable detail' title="dmp.dmp_state refs funder_dmp_states.dmp_state_id via dmp_dmp_state_fkey"><a href='funder_dmp_states.html'>funder_dmp_states</a><span class='relatedKey'>.dmp_state_id</span>
     </td>
-    <td class='constraint detail'>dmp_dmp_stage_fkey<span title='Cascade on delete:
+    <td class='constraint detail'>dmp_dmp_state_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
   </table>
  </td>
  <td class='comment detail'>Some funders require multiple iterations of data management plan<br>
-  development, this integer field is used to identify the stage.</td>
+  development, this integer field is used to identify the state.</td>
 </tr>
 <tr class='even'>
  <td class='detail'>dmp_status</td>
@@ -191,7 +191,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'></td>
 </tr>
 </table>
-<p title='6 columns'>Table contained 9 rows at Thu Jul 16 15:23 BST 2015<p/>
+<p title='6 columns'>Table contained 9 rows at Thu Aug 27 09:44 BST 2015<p/>
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -225,23 +225,23 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
 <area shape="rect" id="node1" href="dmp.html" title="dmp" alt="" coords="207,242,465,451">
 <area shape="rect" id="node2" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="6,317,162,473">
-<area shape="rect" id="node3" href="project.html" title="project" alt="" coords="510,5,706,449">
+<area shape="rect" id="node3" href="project.html" title="project" alt="" coords="510,5,706,425">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/dmp.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="935,390,1076,474">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="440,522,581,606">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="192,458,325,542">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="685,39,881,483">
-<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="13,458,128,542">
-<area shape="rect" id="node6" href="dmp.html" title="dmp" alt="" coords="381,49,640,258">
-<area shape="rect" id="node10" href="storage_costs.html" title="storage_costs" alt="" coords="192,357,325,441">
-<area shape="rect" id="node7" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="181,113,337,269">
-<area shape="rect" id="node8" href="funder.html" title="funder" alt="" coords="6,53,135,137">
-<area shape="rect" id="node9" href="funder_project_map.html" title="funder_project_map" alt="" coords="925,6,1085,90">
-<area shape="rect" id="node11" href="project_ds_map.html" title="project_ds_map" alt="" coords="1135,390,1268,474">
-<area shape="rect" id="node12" href="project_pub_map.html" title="project_pub_map" alt="" coords="1130,523,1273,607">
-<area shape="rect" id="node13" href="publication.html" title="publication" alt="" coords="939,539,1072,623">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="963,323,1104,407">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="440,237,581,321">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="192,169,325,253">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="685,91,881,511">
+<area shape="rect" id="node5" href="institution.html" title="institution" alt="" coords="13,134,128,218">
+<area shape="rect" id="node6" href="dmp.html" title="dmp" alt="" coords="381,338,640,547">
+<area shape="rect" id="node7" href="funder_dmp_states.html" title="funder_dmp_states" alt="" coords="181,421,337,577">
+<area shape="rect" id="node8" href="funder.html" title="funder" alt="" coords="6,506,135,590">
+<area shape="rect" id="node9" href="funder_project_map.html" title="funder_project_map" alt="" coords="953,509,1113,593">
+<area shape="rect" id="node10" href="project_ds_map.html" title="project_ds_map" alt="" coords="1191,215,1324,299">
+<area shape="rect" id="node11" href="project_pub_map.html" title="project_pub_map" alt="" coords="1186,39,1329,123">
+<area shape="rect" id="node12" href="publication.html" title="publication" alt="" coords="967,5,1100,89">
+<area shape="rect" id="node13" href="project_storage_requirement.html" title="project_storage_requirement" alt="" coords="925,179,1141,263">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/dmp.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

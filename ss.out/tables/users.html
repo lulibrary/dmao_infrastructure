@@ -102,7 +102,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </tr>
 </thead>
 <tbody valign='top'>
-<tr class='even'>
+<tr class='odd'>
  <td class='indexedColumn' title='Indexed'>username</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>64</td>
@@ -113,7 +113,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>name</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>256</td>
@@ -124,17 +124,17 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='indexedColumn' title='Indexed'>inst_id</td>
- <td class='detail'>varchar</td>
- <td class='detail' align='right'>256</td>
+ <td class='detail'>inst_id_t</td>
+ <td class='detail' align='right'>2147483647</td>
  <td class='detail' align='center'></td>
  <td class='detail' align='center'></td>
  <td class='detail'></td>
  <td class='detail'></td>
  <td class='detail'>
   <table border='0' width='100%' cellspacing='0' cellpadding='0'>
-   <tr class='relative even' valign='top'>
+   <tr class='relative odd' valign='top'>
     <td class='relatedTable detail' title="users.inst_id refs institution.inst_id via users_inst_id_fkey"><a href='institution.html'>institution</a><span class='relatedKey'>.inst_id</span>
     </td>
     <td class='constraint detail'>users_inst_id_fkey<span title='Cascade on delete:
@@ -144,7 +144,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>email</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>1024</td>
@@ -155,7 +155,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='even'>
+<tr class='odd'>
  <td class='detail'>phone</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>128</td>
@@ -166,7 +166,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='detail'> </td>
  <td class='comment detail'></td>
 </tr>
-<tr class='odd'>
+<tr class='even'>
  <td class='detail'>passwd</td>
  <td class='detail'>varchar</td>
  <td class='detail' align='right'>128</td>
@@ -178,7 +178,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  <td class='comment detail'></td>
 </tr>
 </table>
-<p title='6 columns'>Table contained 1 rows at Thu Jul 16 15:23 BST 2015<p/>
+<p title='6 columns'>Table contained 1 rows at Thu Aug 27 09:44 BST 2015<p/>
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -204,32 +204,34 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <br><form action='get'><b>Close relationships</b><span class='degrees' id='degrees' title='Detail diminishes with increased separation from users'>
 &nbsp;within <label for='oneDegree'><input type='radio' name='degrees' id='oneDegree' checked>one</label>  <label for='twoDegrees'><input type='radio' name='degrees' id='twoDegrees'>two degrees</label> of separation</span><b>:</b></form>
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="users.html" title="users" alt="" coords="175,5,375,214">
-<area shape="rect" id="node2" href="institution.html" title="institution" alt="" coords="5,55,131,331">
+<area shape="rect" id="node1" href="users.html" title="users" alt="" coords="191,5,443,214">
+<area shape="rect" id="node2" href="institution.html" title="institution" alt="" coords="6,55,146,379">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/users.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="impliedTwoDegreesRelationshipsDiagram" name="impliedTwoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="department.html" title="department" alt="" coords="456,54,597,138">
-<area shape="rect" id="node2" href="faculty.html" title="faculty" alt="" coords="227,54,360,138">
-<area shape="rect" id="node3" href="institution.html" title="institution" alt="" coords="5,242,131,518">
-<area shape="rect" id="node4" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="229,156,358,240">
-<area shape="rect" id="node5" href="project.html" title="project" alt="" coords="641,193,783,277">
-<area shape="rect" id="node6" href="storage_costs.html" title="storage_costs" alt="" coords="460,294,593,378">
-<area shape="rect" id="node7" href="project_expected_storage_costs.html" title="project_expected_storage_costs" alt="" coords="175,330,412,414">
-<area shape="rect" id="node8" href="publication.html" title="publication" alt="" coords="827,158,960,242">
-<area shape="rect" id="node9" href="users.html" title="users" alt="" coords="193,469,393,678">
+<area shape="rect" id="node1" href="department.html" title="department" alt="" coords="493,200,635,284">
+<area shape="rect" id="node2" href="faculty.html" title="faculty" alt="" coords="253,285,387,369">
+<area shape="rect" id="node3" href="institution.html" title="institution" alt="" coords="6,336,146,660">
+<area shape="rect" id="node4" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="255,83,385,167">
+<area shape="rect" id="node5" href="inst_storage_platforms.html" title="inst_storage_platforms" alt="" coords="232,184,408,268">
+<area shape="rect" id="node6" href="project.html" title="project" alt="" coords="679,200,820,284">
+<area shape="rect" id="node7" href="project_expected_storage.html" title="project_expected_storage" alt="" coords="222,387,418,471">
+<area shape="rect" id="node8" href="project_storage_costs_breakdown.html" title="project_storage_costs_breakdown" alt="" coords="195,488,445,572">
+<area shape="rect" id="node9" href="project_storage_costs_intermediate.html" title="project_storage_costs_intermediate" alt="" coords="191,589,449,673">
+<area shape="rect" id="node10" href="publication.html" title="publication" alt="" coords="864,287,997,371">
+<area shape="rect" id="node11" href="users.html" title="users" alt="" coords="194,728,446,937">
 </map>
 
   <a name='diagram'><img id='impliedTwoDegreesImg' src='../diagrams/users.implied2degrees.png' usemap='#impliedTwoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="department.html" title="department" alt="" coords="419,42,560,126">
-<area shape="rect" id="node2" href="faculty.html" title="faculty" alt="" coords="208,47,341,131">
-<area shape="rect" id="node3" href="institution.html" title="institution" alt="" coords="5,216,131,492">
-<area shape="rect" id="node4" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="210,148,339,232">
-<area shape="rect" id="node5" href="project.html" title="project" alt="" coords="604,180,745,264">
-<area shape="rect" id="node6" href="storage_costs.html" title="storage_costs" alt="" coords="423,252,556,336">
-<area shape="rect" id="node7" href="publication.html" title="publication" alt="" coords="789,146,923,230">
-<area shape="rect" id="node8" href="users.html" title="users" alt="" coords="175,391,375,600">
+<area shape="rect" id="node1" href="department.html" title="department" alt="" coords="488,143,629,227">
+<area shape="rect" id="node2" href="faculty.html" title="faculty" alt="" coords="251,5,384,89">
+<area shape="rect" id="node3" href="institution.html" title="institution" alt="" coords="6,245,146,569">
+<area shape="rect" id="node4" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="253,143,382,227">
+<area shape="rect" id="node5" href="inst_storage_platforms.html" title="inst_storage_platforms" alt="" coords="229,245,405,329">
+<area shape="rect" id="node6" href="project.html" title="project" alt="" coords="673,74,815,158">
+<area shape="rect" id="node7" href="publication.html" title="publication" alt="" coords="859,109,992,193">
+<area shape="rect" id="node8" href="users.html" title="users" alt="" coords="191,419,443,629">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/users.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-55-generic
+// dot 2.36.0 on Linux 3.13.0-62-generic
 // SchemaSpy rev 590
 digraph "twoDegreesRelationshipsDiagram" {
   graph [
@@ -37,16 +37,15 @@ digraph "twoDegreesRelationshipsDiagram" {
   "project":"inst_id":w -> "institution":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_department_id":w -> "department":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_faculty_id":w -> "faculty":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project":"sc_id":w -> "storage_costs":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_ds_map":"elipses":w -> "dataset":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_ds_map":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_pub_map":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_pub_map":"elipses":w -> "publication":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "project_storage_requirement":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"elipses":w -> "department":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"elipses":w -> "faculty":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"elipses":w -> "institution":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "storage_costs":"elipses":w -> "institution":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -93,6 +92,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" ALIGN="LEFT">name</TD></TR>
+      <TR><TD PORT="is_rcuk_funder" COLSPAN="3" ALIGN="LEFT">is_rcuk_funder</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="funder.html"
@@ -122,7 +122,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder_project_map</TD></TR>
-      <TR><TD PORT="funder_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD><TD PORT="funder_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
+      <TR><TD PORT="funder_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD><TD PORT="funder_id.type" ALIGN="LEFT">funder_id_t[2147483647]</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD><TD PORT="project_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 &gt;</TD></TR>
     </TABLE>>
@@ -164,12 +164,11 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="has_dmp" COLSPAN="3" ALIGN="LEFT">has_dmp</TD></TR>
       <TR><TD PORT="has_dmp_been_reviewed" COLSPAN="3" ALIGN="LEFT">has_dmp_been_reviewed</TD></TR>
       <TR><TD PORT="dmp_id" COLSPAN="3" ALIGN="LEFT">dmp_id</TD></TR>
-      <TR><TD PORT="expected_storage" COLSPAN="3" ALIGN="LEFT">expected_storage</TD></TR>
       <TR><TD PORT="project_awarded" COLSPAN="3" ALIGN="LEFT">project_awarded</TD></TR>
+      <TR><TD PORT="project_date_range" COLSPAN="3" ALIGN="LEFT">project_date_range</TD></TR>
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
-      <TR><TD PORT="sc_id" COLSPAN="3" ALIGN="LEFT">sc_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
@@ -194,6 +193,16 @@ digraph "twoDegreesRelationshipsDiagram" {
     URL="project_pub_map.html"
     tooltip="project_pub_map"
   ];
+  "project_storage_requirement" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_storage_requirement</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">15 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="project_storage_requirement.html"
+    tooltip="project_storage_requirement"
+  ];
   "publication" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -203,15 +212,5 @@ digraph "twoDegreesRelationshipsDiagram" {
     </TABLE>>
     URL="publication.html"
     tooltip="publication"
-  ];
-  "storage_costs" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">storage_costs</TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
-    </TABLE>>
-    URL="storage_costs.html"
-    tooltip="storage_costs"
   ];
 }
