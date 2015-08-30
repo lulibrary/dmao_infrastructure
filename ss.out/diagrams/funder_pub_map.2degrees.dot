@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-62-generic
+// dot 2.38.0 on Linux 3.16.0-4-amd64
 // SchemaSpy rev 590
 digraph "twoDegreesRelationshipsDiagram" {
   graph [
@@ -77,6 +77,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="is_rcuk_funder" COLSPAN="3" ALIGN="LEFT">is_rcuk_funder</TD></TR>
+      <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="funder.html"
@@ -181,6 +182,14 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="data_access_statement_notes" COLSPAN="3" ALIGN="LEFT">data_access_statement_notes</TD></TR>
       <TR><TD PORT="rcuk_funder_compliant" COLSPAN="3" ALIGN="LEFT">rcuk_funder_compliant</TD></TR>
       <TR><TD PORT="other_funder_compliant" COLSPAN="3" ALIGN="LEFT">other_funder_compliant</TD></TR>
+      <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
+      <TR><TD PORT="inst_pub_type" COLSPAN="3" ALIGN="LEFT">inst_pub_type</TD></TR>
+      <TR><TD PORT="inst_pub_status" COLSPAN="3" ALIGN="LEFT">inst_pub_status</TD></TR>
+      <TR><TD PORT="inst_pub_year" COLSPAN="3" ALIGN="LEFT">inst_pub_year</TD></TR>
+      <TR><TD PORT="inst_pub_month" COLSPAN="3" ALIGN="LEFT">inst_pub_month</TD></TR>
+      <TR><TD PORT="inst_pub_day" COLSPAN="3" ALIGN="LEFT">inst_pub_day</TD></TR>
+      <TR><TD PORT="inst_pub_title" COLSPAN="3" ALIGN="LEFT">inst_pub_title</TD></TR>
+      <TR><TD PORT="inst_pub_sub_title" COLSPAN="3" ALIGN="LEFT">inst_pub_sub_title</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"

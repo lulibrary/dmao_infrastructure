@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-62-generic
+// dot 2.38.0 on Linux 3.16.0-4-amd64
 // SchemaSpy rev 590
 digraph "oneDegreeRelationshipsDiagram" {
   graph [
@@ -44,6 +44,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="faculty_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">faculty_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="abbreviation" COLSPAN="3" ALIGN="LEFT">abbreviation</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
+      <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="department.html"
@@ -68,6 +71,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="abbreviation" COLSPAN="3" ALIGN="LEFT">abbreviation</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
+      <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="faculty.html"
@@ -99,6 +105,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="archive_sys" COLSPAN="3" ALIGN="LEFT">archive_sys</TD></TR>
       <TR><TD PORT="currency" COLSPAN="3" ALIGN="LEFT">currency</TD></TR>
       <TR><TD PORT="currency_symbol" COLSPAN="3" ALIGN="LEFT">currency_symbol</TD></TR>
+      <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
@@ -110,6 +118,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">project_id</TD></TR>
       <TR><TD PORT="project_name" COLSPAN="3" ALIGN="LEFT">project_name</TD></TR>
+      <TR><TD PORT="project_acronym" COLSPAN="3" ALIGN="LEFT">project_acronym</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD PORT="funder_project_code" COLSPAN="3" ALIGN="LEFT">funder_project_code</TD></TR>
       <TR><TD PORT="is_awarded" COLSPAN="3" ALIGN="LEFT">is_awarded</TD></TR>
       <TR><TD PORT="inst_id" COLSPAN="3" ALIGN="LEFT">inst_id</TD></TR>
@@ -123,6 +133,7 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_date_range" COLSPAN="3" ALIGN="LEFT">project_date_range</TD></TR>
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
+      <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
@@ -168,6 +179,14 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="data_access_statement_notes" COLSPAN="2" ALIGN="LEFT">data_access_statement_notes</TD><TD PORT="data_access_statement_notes.type" ALIGN="LEFT">varchar[1024]</TD></TR>
       <TR><TD PORT="rcuk_funder_compliant" COLSPAN="2" ALIGN="LEFT">rcuk_funder_compliant</TD><TD PORT="rcuk_funder_compliant.type" ALIGN="LEFT">varchar[50]</TD></TR>
       <TR><TD PORT="other_funder_compliant" COLSPAN="2" ALIGN="LEFT">other_funder_compliant</TD><TD PORT="other_funder_compliant.type" ALIGN="LEFT">varchar[50]</TD></TR>
+      <TR><TD PORT="inst_url" COLSPAN="2" ALIGN="LEFT">inst_url</TD><TD PORT="inst_url.type" ALIGN="LEFT">varchar[2048]</TD></TR>
+      <TR><TD PORT="inst_pub_type" COLSPAN="2" ALIGN="LEFT">inst_pub_type</TD><TD PORT="inst_pub_type.type" ALIGN="LEFT">varchar[1024]</TD></TR>
+      <TR><TD PORT="inst_pub_status" COLSPAN="2" ALIGN="LEFT">inst_pub_status</TD><TD PORT="inst_pub_status.type" ALIGN="LEFT">varchar[512]</TD></TR>
+      <TR><TD PORT="inst_pub_year" COLSPAN="2" ALIGN="LEFT">inst_pub_year</TD><TD PORT="inst_pub_year.type" ALIGN="LEFT">int4[10]</TD></TR>
+      <TR><TD PORT="inst_pub_month" COLSPAN="2" ALIGN="LEFT">inst_pub_month</TD><TD PORT="inst_pub_month.type" ALIGN="LEFT">int4[10]</TD></TR>
+      <TR><TD PORT="inst_pub_day" COLSPAN="2" ALIGN="LEFT">inst_pub_day</TD><TD PORT="inst_pub_day.type" ALIGN="LEFT">int4[10]</TD></TR>
+      <TR><TD PORT="inst_pub_title" COLSPAN="2" ALIGN="LEFT">inst_pub_title</TD><TD PORT="inst_pub_title.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="inst_pub_sub_title" COLSPAN="2" ALIGN="LEFT">inst_pub_sub_title</TD><TD PORT="inst_pub_sub_title.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"

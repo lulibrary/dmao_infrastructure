@@ -52,7 +52,7 @@ $$ language sql strict immutable;
 create table institution (
   inst_id inst_id_t unique not null primary key,
   name varchar(256) not null,
-  contact varchar(256) not null,
+  contact varchar(256),
   contact_email varchar(256),
   contact_phone varchar(256),
   cris_sys varchar(1024),
@@ -60,7 +60,10 @@ create table institution (
   dataset_sys varchar(1024),
   archive_sys varchar(1024),
   currency varchar(3),
-  currency_symbol varchar(32)
+  currency_symbol varchar(32),
+  url varchar(2048),
+  inst_local_id varchar(64),
+  description varchar
 );
 comment on table institution is 'Describes an institution.';
 comment on column institution.cris_sys is
@@ -81,6 +84,8 @@ create table faculty (
   name varchar(256) not null,
   abbreviation varchar(64),
   inst_local_id varchar(64),
+  url varchar(2048),
+  description varchar,
   unique (inst_id, name)
 );
 comment on table faculty is
@@ -97,8 +102,10 @@ create table department (
   faculty_id integer references faculty(faculty_id)
     on delete cascade on update cascade not null,
   name varchar(1024) not null,
-  abbreviation varchar(64) not null,
+  abbreviation varchar(64),
   inst_local_id varchar(64),
+  url varchar(2048),
+  description varchar,
   unique (inst_id, faculty_id, name)
 );
 comment on table department is
@@ -111,7 +118,8 @@ comment on table department is
 create table funder (
   funder_id funder_id_t unique not null primary key,
   name varchar(256) not null,
-  is_rcuk_funder boolean default false
+  is_rcuk_funder boolean default false,
+  url varchar(2048)
 );
 comment on table funder is 'Describes a funding body.';
 
@@ -197,6 +205,8 @@ comment on table inst_storage_costs
 create table project (
   project_id serial primary key,
   project_name varchar(2048),
+  project_acronym varchar(512),
+  description varchar,
   funder_project_code varchar(256),
   is_awarded boolean default false,
   inst_id inst_id_t references institution(inst_id)
@@ -213,7 +223,8 @@ create table project (
   project_awarded date,
   project_date_range daterange,
   project_start date,
-  project_end date
+  project_end date,
+  inst_url varchar(2048),
   check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
 );
 comment on table project is 'Describes an institutions projects';
@@ -352,7 +363,15 @@ create table publication (
   rcuk_funder_compliant varchar(50) default 'n'
     check (rcuk_funder_compliant in ('y', 'n', 'partial')),
   other_funder_compliant varchar(50) default 'n'
-    check (other_funder_compliant in ('y', 'n', 'partial'))
+    check (other_funder_compliant in ('y', 'n', 'partial')),
+  inst_url varchar(2048),
+  inst_pub_type varchar(1024),
+  inst_pub_status varchar(512),
+  inst_pub_year int,
+  inst_pub_month int,
+  inst_pub_day int,
+  inst_pub_title varchar,
+  inst_pub_sub_title varchar
 );
 comment on table publication is 'Describes publications';
 comment on column publication.project_id is

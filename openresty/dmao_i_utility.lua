@@ -11,7 +11,7 @@ got it wrong. It enables me to see a green tick, which, sadly, I like to
 see before I deploy. Hopefully, it's mostly optimised away. It's an
 open case for the lua plugin, maybe it will get fixed.
 --]]
-function M.swallow(v, ...)
+function M.swallow(v)
     if v then end
 end
 
@@ -50,6 +50,10 @@ function M.tprint(tbl, pf, indent)
             pf(formatting .. v)
         end
     end
+end
+
+function M.trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
 return M

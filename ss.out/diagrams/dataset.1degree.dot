@@ -1,4 +1,4 @@
-// dot 2.36.0 on Linux 3.13.0-62-generic
+// dot 2.38.0 on Linux 3.16.0-4-amd64
 // SchemaSpy rev 590
 digraph "oneDegreeRelationshipsDiagram" {
   graph [
@@ -78,6 +78,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="faculty_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">faculty_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="abbreviation" COLSPAN="3" ALIGN="LEFT">abbreviation</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
+      <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="department.html"
@@ -102,6 +105,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="abbreviation" COLSPAN="3" ALIGN="LEFT">abbreviation</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
+      <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="faculty.html"
@@ -135,6 +141,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">project_id</TD></TR>
       <TR><TD PORT="project_name" COLSPAN="3" ALIGN="LEFT">project_name</TD></TR>
+      <TR><TD PORT="project_acronym" COLSPAN="3" ALIGN="LEFT">project_acronym</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD PORT="funder_project_code" COLSPAN="3" ALIGN="LEFT">funder_project_code</TD></TR>
       <TR><TD PORT="is_awarded" COLSPAN="3" ALIGN="LEFT">is_awarded</TD></TR>
       <TR><TD PORT="inst_id" COLSPAN="3" ALIGN="LEFT">inst_id</TD></TR>
@@ -148,6 +156,7 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_date_range" COLSPAN="3" ALIGN="LEFT">project_date_range</TD></TR>
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
+      <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"

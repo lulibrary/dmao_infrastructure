@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<database name="DMAonline" schema="public" type="PostgreSQL - 9.3.9">
+<database name="DMAonline" schema="public" type="PostgreSQL - 9.4.3">
    <tables>
       <table name="dataset" numRows="13" remarks="Describes datasets" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('dataset_dataset_id_seq'::regclass)" digits="0" id="0" name="dataset_id" nullable="false" remarks="" size="10" type="serial">
@@ -69,8 +69,11 @@
          <column autoUpdated="false" digits="0" id="2" name="faculty_id" nullable="false" remarks="" size="10" type="int4">
             <parent column="faculty_id" foreignKey="department_faculty_id_fkey" implied="false" onDeleteCascade="true" table="faculty"/>
          </column>
-         <column autoUpdated="false" digits="0" id="3" name="name" nullable="false" remarks="" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="3" name="name" nullable="false" remarks="" size="1024" type="varchar"/>
          <column autoUpdated="false" digits="0" id="4" name="abbreviation" nullable="false" remarks="" size="64" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="5" name="inst_local_id" nullable="true" remarks="" size="64" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="6" name="url" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="7" name="description" nullable="true" remarks="" size="2147483647" type="varchar"/>
          <primaryKey column="department_id" sequenceNumberInPK="1"/>
          <index name="department_pkey" unique="true">
             <column ascending="true" name="department_id"/>
@@ -141,6 +144,9 @@
          </column>
          <column autoUpdated="false" digits="0" id="2" name="name" nullable="false" remarks="" size="256" type="varchar"/>
          <column autoUpdated="false" digits="0" id="3" name="abbreviation" nullable="true" remarks="" size="64" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="4" name="inst_local_id" nullable="true" remarks="" size="64" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="5" name="url" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="6" name="description" nullable="true" remarks="" size="2147483647" type="varchar"/>
          <primaryKey column="faculty_id" sequenceNumberInPK="1"/>
          <index name="faculty_pkey" unique="true">
             <column ascending="true" name="faculty_id"/>
@@ -159,6 +165,7 @@
          </column>
          <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="256" type="varchar"/>
          <column autoUpdated="false" defaultValue="false" digits="0" id="2" name="is_rcuk_funder" nullable="true" remarks="" size="1" type="bool"/>
+         <column autoUpdated="false" digits="0" id="3" name="url" nullable="true" remarks="" size="2048" type="varchar"/>
          <primaryKey column="funder_id" sequenceNumberInPK="1"/>
          <index name="funder_pkey" unique="true">
             <column ascending="true" name="funder_id"/>
@@ -316,6 +323,8 @@
          <column autoUpdated="false" digits="0" id="8" name="archive_sys" nullable="true" remarks="" size="1024" type="varchar"/>
          <column autoUpdated="false" digits="0" id="9" name="currency" nullable="true" remarks="" size="3" type="varchar"/>
          <column autoUpdated="false" digits="0" id="10" name="currency_symbol" nullable="true" remarks="" size="32" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="11" name="url" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="12" name="description" nullable="true" remarks="" size="2147483647" type="varchar"/>
          <primaryKey column="inst_id" sequenceNumberInPK="1"/>
          <index name="institution_pkey" unique="true">
             <column ascending="true" name="inst_id"/>
@@ -331,27 +340,30 @@
             <child column="project_id" foreignKey="publication_project_id_fkey" implied="false" onDeleteCascade="true" table="publication"/>
          </column>
          <column autoUpdated="false" digits="0" id="1" name="project_name" nullable="true" remarks="" size="2048" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="2" name="funder_project_code" nullable="true" remarks="A code assigned to the project by the funding body, it may be null&#10;  if the funding application is in process." size="256" type="varchar"/>
-         <column autoUpdated="false" defaultValue="false" digits="0" id="3" name="is_awarded" nullable="true" remarks="Is 'true' if funding has been succesfully applied&#10;  for, 'false' otherwise" size="1" type="bool"/>
-         <column autoUpdated="false" digits="0" id="4" name="inst_id" nullable="true" remarks="" size="2147483647" type="inst_id_t">
+         <column autoUpdated="false" digits="0" id="2" name="project_acronym" nullable="true" remarks="" size="512" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="3" name="description" nullable="true" remarks="" size="2147483647" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="4" name="funder_project_code" nullable="true" remarks="A code assigned to the project by the funding body, it may be null&#10;  if the funding application is in process." size="256" type="varchar"/>
+         <column autoUpdated="false" defaultValue="false" digits="0" id="5" name="is_awarded" nullable="true" remarks="Is 'true' if funding has been succesfully applied&#10;  for, 'false' otherwise" size="1" type="bool"/>
+         <column autoUpdated="false" digits="0" id="6" name="inst_id" nullable="true" remarks="" size="2147483647" type="inst_id_t">
             <parent column="inst_id" foreignKey="project_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
          </column>
-         <column autoUpdated="false" digits="0" id="5" name="institution_project_code" nullable="true" remarks="" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="6" name="lead_faculty_id" nullable="true" remarks="" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="7" name="institution_project_code" nullable="true" remarks="" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="8" name="lead_faculty_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="faculty_id" foreignKey="project_lead_faculty_id_fkey" implied="false" onDeleteCascade="true" table="faculty"/>
          </column>
-         <column autoUpdated="false" digits="0" id="7" name="lead_department_id" nullable="true" remarks="" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="9" name="lead_department_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="department_id" foreignKey="project_lead_department_id_fkey" implied="false" onDeleteCascade="true" table="department"/>
          </column>
-         <column autoUpdated="false" digits="0" id="8" name="has_dmp" nullable="true" remarks="Is 'true' if a DMP exists, 'false' otherwise." size="1" type="bool"/>
-         <column autoUpdated="false" digits="0" id="9" name="has_dmp_been_reviewed" nullable="true" remarks="Is 'true' if a DMP exists and has been reviewed, 'false' otherwise." size="50" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="10" name="dmp_id" nullable="true" remarks="" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="10" name="has_dmp" nullable="true" remarks="Is 'true' if a DMP exists, 'false' otherwise." size="1" type="bool"/>
+         <column autoUpdated="false" digits="0" id="11" name="has_dmp_been_reviewed" nullable="true" remarks="Is 'true' if a DMP exists and has been reviewed, 'false' otherwise." size="50" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="12" name="dmp_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="dmp_id" foreignKey="project_dmp_id_fkey" implied="false" onDeleteCascade="true" table="dmp"/>
          </column>
-         <column autoUpdated="false" digits="0" id="11" name="project_awarded" nullable="true" remarks="" size="13" type="date"/>
-         <column autoUpdated="false" digits="0" id="12" name="project_date_range" nullable="true" remarks="" size="2147483647" type="daterange"/>
-         <column autoUpdated="false" digits="0" id="13" name="project_start" nullable="true" remarks="" size="13" type="date"/>
-         <column autoUpdated="false" digits="0" id="14" name="project_end" nullable="true" remarks="" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="13" name="project_awarded" nullable="true" remarks="" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="14" name="project_date_range" nullable="true" remarks="" size="2147483647" type="daterange"/>
+         <column autoUpdated="false" digits="0" id="15" name="project_start" nullable="true" remarks="" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="16" name="project_end" nullable="true" remarks="" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="17" name="inst_url" nullable="true" remarks="" size="2048" type="varchar"/>
          <primaryKey column="project_id" sequenceNumberInPK="1"/>
          <index name="project_pkey" unique="true">
             <column ascending="true" name="project_id"/>
@@ -486,6 +498,14 @@
          <column autoUpdated="false" digits="0" id="11" name="data_access_statement_notes" nullable="true" remarks="" size="1024" type="varchar"/>
          <column autoUpdated="false" defaultValue="'n'::character varying" digits="0" id="12" name="rcuk_funder_compliant" nullable="true" remarks="" size="50" type="varchar"/>
          <column autoUpdated="false" defaultValue="'n'::character varying" digits="0" id="13" name="other_funder_compliant" nullable="true" remarks="" size="50" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="14" name="inst_url" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="15" name="inst_pub_type" nullable="true" remarks="" size="1024" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="16" name="inst_pub_status" nullable="true" remarks="" size="512" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="17" name="inst_pub_year" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="18" name="inst_pub_month" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="19" name="inst_pub_day" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="20" name="inst_pub_title" nullable="true" remarks="" size="2147483647" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="21" name="inst_pub_sub_title" nullable="true" remarks="" size="2147483647" type="varchar"/>
          <primaryKey column="publication_id" sequenceNumberInPK="1"/>
          <index name="publication_pkey" unique="true">
             <column ascending="true" name="publication_id"/>
