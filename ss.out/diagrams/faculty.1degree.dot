@@ -50,7 +50,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="storage_location" COLSPAN="3" ALIGN="LEFT">storage_location</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="3" ALIGN="LEFT">lead_faculty_id</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="dataset.html"
     tooltip="dataset"
@@ -67,7 +69,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">35 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="department.html"
     tooltip="department"
@@ -83,7 +87,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_local_id" COLSPAN="2" ALIGN="LEFT">inst_local_id</TD><TD PORT="inst_local_id.type" ALIGN="LEFT">varchar[64]</TD></TR>
       <TR><TD PORT="url" COLSPAN="2" ALIGN="LEFT">url</TD><TD PORT="url.type" ALIGN="LEFT">varchar[2048]</TD></TR>
       <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT">description</TD><TD PORT="description.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="2" ALIGN="LEFT">load_date</TD><TD PORT="load_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="2" ALIGN="LEFT">mod_date</TD><TD PORT="mod_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="faculty.html"
     tooltip="faculty"
@@ -104,7 +110,10 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="currency" COLSPAN="3" ALIGN="LEFT">currency</TD></TR>
       <TR><TD PORT="currency_symbol" COLSPAN="3" ALIGN="LEFT">currency_symbol</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
@@ -132,7 +141,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
       <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">421 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
@@ -143,11 +154,11 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">publication</TD></TR>
       <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">publication_id</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" ALIGN="LEFT">project_id</TD></TR>
-      <TR><TD PORT="cris_id" COLSPAN="3" ALIGN="LEFT">cris_id</TD></TR>
+      <TR><TD PORT="cris_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">cris_id</TD></TR>
       <TR><TD PORT="repo_id" COLSPAN="3" ALIGN="LEFT">repo_id</TD></TR>
       <TR><TD PORT="publication_pid" COLSPAN="3" ALIGN="LEFT">publication_pid</TD></TR>
       <TR><TD PORT="funder_project_code" COLSPAN="3" ALIGN="LEFT">funder_project_code</TD></TR>
-      <TR><TD PORT="lead_inst_id" COLSPAN="3" ALIGN="LEFT">lead_inst_id</TD></TR>
+      <TR><TD PORT="lead_inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">lead_inst_id</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="3" ALIGN="LEFT">lead_faculty_id</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
       <TR><TD PORT="publication_date" COLSPAN="3" ALIGN="LEFT">publication_date</TD></TR>
@@ -163,7 +174,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_pub_day" COLSPAN="3" ALIGN="LEFT">inst_pub_day</TD></TR>
       <TR><TD PORT="inst_pub_title" COLSPAN="3" ALIGN="LEFT">inst_pub_title</TD></TR>
       <TR><TD PORT="inst_pub_sub_title" COLSPAN="3" ALIGN="LEFT">inst_pub_sub_title</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"
     tooltip="publication"

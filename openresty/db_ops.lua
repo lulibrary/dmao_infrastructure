@@ -1,8 +1,7 @@
 
-cjson = require 'cjson'
-upload = require 'resty.upload'
-pg = require 'pgmoon'
-util = require 'resty/dmao_i_utility'
+local cjson = require 'cjson'
+local upload = require 'resty.upload'
+local util = require 'resty/dmao_i_utility'
 
 debug = true
 debug = false
@@ -18,7 +17,7 @@ end
 
 -- put json data from form into lua table
 local function form_to_table()
-    local form, err = upload:new(8192)
+    local form, err = upload:new(1048576)
     if not form then
         ngx.log(ngx.ERR, 'failed to upload:new -  ', err)
         ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
@@ -44,37 +43,10 @@ local function form_to_table()
 end
 
 
-
-local function get_connection_details()
-    local f = '/usr/local/openresty/lualib/connection.conf'
-    dofile(f)
-    return user, passwd
-end
-
 local function read_templates()
     local f = '/usr/local/openresty/lualib/resty/query_templates.lua'
     dofile(f)
     return query_templates
-end
-
-
-local function open_dmaonline_db()
-    local u, p = get_connection_details()
-    local d = pg.new(
-        {
-            host='127.0.0.1',
-            port='5432',
-            database='DMAonline',
-            user=u, password=p
-        }
-    )
-    assert(d:connect())
-    return d
-end
-
-
-local function close_dmaonline_db(c)
-    assert(c:disconnect())
 end
 
 
@@ -126,7 +98,11 @@ local function columns_rows_maker(d, t_data)
                 a[#a + 1] = column
                 a[#a + 1] = ', '
             end
-            b[#b + 1] = d:escape_literal(value)
+            if value == 'null_value' then
+                b[#b + 1] = 'null'
+            else
+                b[#b + 1] = d:escape_literal(value)
+            end
             b[#b + 1] = ', '
         end
         b[#b + 1] = '), '
@@ -199,6 +175,15 @@ local function populate_var_clauses(q, db, args, template)
         end
     end
     return table.concat(clauses)
+end
+
+
+local function clean_query(q)
+    q = string.gsub(q, '\n', '')
+    q = string.gsub(q, '  *', ' ')
+    q = string.gsub(q, '^ ', '')
+    q = string.gsub(q, ' $', ';')
+    return q
 end
 
 
@@ -291,16 +276,25 @@ local function construct_c_query(db, inst, query)
 
     end
     q = string.gsub(q, '#inst_id#', institution)
-    q = string.gsub(q, '\n', '')
-    q = string.gsub(q, '  *', ' ')
-    q = string.gsub(q, '^ ', '')
-    q = string.gsub(q, ' $', ';')
+    q = clean_query(q)
     return q
 end
 
 
--- pre-defined 'canned' queries
-local function do_c_query(db)
+local function construct_u_query(db, inst, query)
+    local institution = db:escape_literal(inst)
+    local qt = read_templates()
+    local args = ngx.req.get_uri_args()
+    local q = qt[query]['query']
+    q = string.gsub(q, '#inst_id#', institution)
+    q = clean_query(q)
+    return q
+end
+
+
+-- pre-defined 'canned' and utility queries
+local function do_cu_query(db, qtype)
+    util.swallow(qtype)
     local inst = ngx.var.inst_id
     local query = ngx.var.query
     local method = ngx.req.get_method()
@@ -312,7 +306,7 @@ local function do_c_query(db)
         return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     else
         return do_db_operation(
-            db, construct_c_query(db, inst, query), 'GET'
+            db, qtype(db, inst, query), 'GET'
         )
     end
 end
@@ -320,8 +314,13 @@ end
 
 local function db_operation(db)
     local c_query = ngx.var.c_query
+    local u_query = ngx.var.u_query
+    util.swallow(u_query)
+    util.swallow(c_query)
     if c_query == 'true' then
-        return do_c_query(db)
+        return do_cu_query(db, construct_c_query)
+    elseif u_query == 'true' then
+        return do_cu_query(db, construct_u_query)
     else
         local inst = ngx.var.inst_id
         local object = ngx.var.object
@@ -411,8 +410,8 @@ end
 
 
 -- main
-local db = open_dmaonline_db()
+local db = util.open_dmaonline_db()
 local status, result = db_operation(db)
-close_dmaonline_db(db)
+util.close_dmaonline_db(db)
 ngx.status = status
 ngx.say(result)

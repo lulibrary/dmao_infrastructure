@@ -27,16 +27,16 @@ digraph "twoDegreesRelationshipsDiagram" {
   "dmp":"dmp_state":w -> "funder_dmp_states":"dmp_state_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "faculty":"elipses":w -> "institution":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "funder_dmp_states":"funder_id":w -> "funder":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
-  "funder_project_map":"elipses":w -> "funder":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
-  "funder_project_map":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_funder_project":"elipses":w -> "funder":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_funder_project":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_ds":"elipses":w -> "dataset":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_ds":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_pub":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_pub":"elipses":w -> "publication":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"dmp_id":w -> "dmp":"dmp_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"inst_id":w -> "institution":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_department_id":w -> "department":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_faculty_id":w -> "faculty":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_ds_map":"elipses":w -> "dataset":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_ds_map":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_pub_map":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_pub_map":"elipses":w -> "publication":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_storage_requirement":"elipses":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"elipses":w -> "department":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"elipses":w -> "faculty":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -47,7 +47,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dataset</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="dataset.html"
     tooltip="dataset"
@@ -57,7 +57,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">department</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">35 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="department.html"
     tooltip="department"
@@ -72,7 +72,9 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="dmp_state" COLSPAN="2" ALIGN="LEFT">dmp_state</TD><TD PORT="dmp_state.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="dmp_status" COLSPAN="2" ALIGN="LEFT">dmp_status</TD><TD PORT="dmp_status.type" ALIGN="LEFT">varchar[50]</TD></TR>
       <TR><TD PORT="author_orcid" COLSPAN="2" ALIGN="LEFT">author_orcid</TD><TD PORT="author_orcid.type" ALIGN="LEFT">varchar[256]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">9 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="2" ALIGN="LEFT">load_date</TD><TD PORT="load_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="2" ALIGN="LEFT">mod_date</TD><TD PORT="mod_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="dmp.html"
     tooltip="dmp"
@@ -82,7 +84,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">faculty</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="faculty.html"
     tooltip="faculty"
@@ -92,7 +94,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="funder.html"
     tooltip="funder"
@@ -105,20 +107,12 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="funder_state_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_state_code</TD></TR>
       <TR><TD PORT="funder_state_name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_state_name</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="funder_dmp_states.html"
     tooltip="funder_dmp_states"
-  ];
-  "funder_project_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder_project_map</TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="funder_project_map.html"
-    tooltip="funder_project_map"
   ];
   "institution" [
     label=<
@@ -129,6 +123,36 @@ digraph "twoDegreesRelationshipsDiagram" {
     </TABLE>>
     URL="institution.html"
     tooltip="institution"
+  ];
+  "map_funder_project" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_funder_project</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_funder_project.html"
+    tooltip="map_funder_project"
+  ];
+  "map_project_ds" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_project_ds</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_project_ds.html"
+    tooltip="map_project_ds"
+  ];
+  "map_project_pub" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_project_pub</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_project_pub.html"
+    tooltip="map_project_pub"
   ];
   "project" [
     label=<
@@ -152,37 +176,19 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
       <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">421 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
-  ];
-  "project_ds_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_ds_map</TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="project_ds_map.html"
-    tooltip="project_ds_map"
-  ];
-  "project_pub_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_pub_map</TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="project_pub_map.html"
-    tooltip="project_pub_map"
   ];
   "project_storage_requirement" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_storage_requirement</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">15 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="project_storage_requirement.html"
     tooltip="project_storage_requirement"
@@ -192,7 +198,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">publication</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"
     tooltip="publication"

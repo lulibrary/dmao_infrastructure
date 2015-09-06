@@ -4,18 +4,17 @@
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-drop table if exists inst_ds_map cascade;
-drop table if exists funder_project_map cascade;
-drop table if exists project_ds_map cascade;
-drop table if exists project_pub_map cascade;
-drop table if exists dept_pub_map cascade;
-drop table if exists dept_ds_map cascade;
-drop table if exists pub_ds_map cascade;
-drop table if exists funder_pub_map cascade;
-drop table if exists funder_ds_map cascade;
+drop table if exists map_inst_ds cascade;
+drop table if exists map_funder_project cascade;
+drop table if exists map_project_ds cascade;
+drop table if exists map_project_pub cascade;
+drop table if exists map_dept_pub cascade;
+drop table if exists map_dept_ds cascade;
+drop table if exists map_pub_ds cascade;
+drop table if exists map_funder_pub cascade;
+drop table if exists map_funder_ds cascade;
 drop table if exists users cascade;
 drop table if exists project_storage_requirement cascade;
-drop trigger if exists pdate_trigger on project cascade;
 drop table if exists project cascade;
 drop table if exists dmp cascade;
 drop table if exists publication cascade;
@@ -63,7 +62,9 @@ create table institution (
   currency_symbol varchar(32),
   url varchar(2048),
   inst_local_id varchar(64),
-  description varchar
+  description varchar,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table institution is 'Describes an institution.';
 comment on column institution.cris_sys is
@@ -73,6 +74,21 @@ comment on column institution.pub_sys is
   'A description of the publication repository
   system in use at this institution e.g. ''Eprints''.';
 
+create or replace function load_date_action() returns trigger
+as $$
+begin
+  if TG_OP = 'INSERT' then
+    new.load_date = now();
+  end if;
+  if TG_OP = 'UPDATE' then
+    new.mod_date = now();
+  end if;
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger action_date before insert or update on institution
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -86,11 +102,16 @@ create table faculty (
   inst_local_id varchar(64),
   url varchar(2048),
   description varchar,
+  load_date timestamp,
+  mod_date timestamp,
   unique (inst_id, name)
 );
 comment on table faculty is
   'Describes a faculty, the combination of the
   institution id and the faculty name must be unique.';
+
+create trigger action_date before insert or update on faculty
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -106,11 +127,16 @@ create table department (
   inst_local_id varchar(64),
   url varchar(2048),
   description varchar,
+  load_date timestamp,
+  mod_date timestamp,
   unique (inst_id, faculty_id, name)
 );
 comment on table department is
   'Describes a department within a faculty. The combination
   of institution id, faculty id and name must be unique.';
+
+create trigger action_date before insert or update on department
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -119,9 +145,14 @@ create table funder (
   funder_id funder_id_t unique not null primary key,
   name varchar(256) not null,
   is_rcuk_funder boolean default false,
-  url varchar(2048)
+  url varchar(2048),
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table funder is 'Describes a funding body.';
+
+create trigger action_date before insert or update on funder
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -131,13 +162,18 @@ create table funder_dmp_states (
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade,
   funder_state_code varchar(256) not null,
-  funder_state_name varchar(1024)
+  funder_state_name varchar(1024),
+  load_date timestamp,
+  mod_date timestamp
 );
 create index on funder_dmp_states(funder_id);
 create index on funder_dmp_states(funder_state_code);
 create index on funder_dmp_states(funder_state_name);
 comment on table funder_dmp_states is
   'Describes the states that a funder specifies for DMPs';
+
+create trigger action_date before insert or update on funder_dmp_states
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -149,7 +185,9 @@ create table dmp (
   dmp_state integer references funder_dmp_states(dmp_state_id)
     on delete cascade on update cascade,
   dmp_status varchar(50),
-  author_orcid varchar(256)
+  author_orcid varchar(256),
+  load_date timestamp,
+  mod_date timestamp
   check (dmp_status in ('verified', 'completed', 'in progress',
                        'new', 'none'))
 );
@@ -168,6 +206,9 @@ comment on column dmp.dmp_status is
   'The DMP status, can be one of
   ''none'', ''new'', ''in progress'', ''completed'', ''verified''.';
 
+create trigger action_date before insert or update on dmp
+  for each row execute procedure load_date_action();
+
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
@@ -177,6 +218,8 @@ create table inst_storage_platforms (
   inst_storage_platform_id inst_storage_platform_id_t,
   inst_notes varchar(1024),
   inst_api_url varchar(2048),
+  load_date timestamp,
+  mod_date timestamp,
   primary key(inst_id, inst_storage_platform_id)
 );
 create index on inst_storage_platforms(inst_id);
@@ -189,6 +232,8 @@ create table inst_storage_costs (
   cost_per_tb_pa numeric
     check (cost_per_tb_pa >= 0) default 0,
   applicable_dates daterange,
+  load_date timestamp,
+  mod_date timestamp,
   foreign key(inst_id, inst_storage_platform_id)
     references inst_storage_platforms(inst_id, inst_storage_platform_id)
       on delete cascade on update cascade
@@ -198,6 +243,9 @@ create index on inst_storage_costs(inst_storage_platform_id);
 create index on inst_storage_costs(inst_id, inst_storage_platform_id);
 comment on table inst_storage_costs
   is 'Describes storage costs for institutional storage platforms';
+
+create trigger action_date before insert or update on inst_storage_costs
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -225,6 +273,8 @@ create table project (
   project_start date,
   project_end date,
   inst_url varchar(2048),
+  load_date timestamp,
+  mod_date timestamp,
   check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
 );
 comment on table project is 'Describes an institutions projects';
@@ -232,7 +282,7 @@ comment on column project.funder_project_code is
   'A code assigned to the project by the funding body, it may be null
   if the funding application is in process.';
 comment on column project.is_awarded is
-  'Is ''true'' if funding has been succesfully applied
+  'Is ''true'' if funding has been successfully applied
   for, ''false'' otherwise';
 comment on column project.has_dmp is
   'Is ''true'' if a DMP exists, ''false'' otherwise.';
@@ -252,6 +302,10 @@ $$ language plpgsql;
 create trigger project_trigger before insert or update on project
   for each row execute procedure project_date_update();
 
+create trigger action_date before insert or update on project
+  for each row execute procedure load_date_action();
+
+
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table project_storage_requirement (
@@ -264,7 +318,9 @@ create table project_storage_requirement (
   foreign key (inst_id, inst_storage_platform_id)
     references inst_storage_platforms(inst_id, inst_storage_platform_id)
     on delete restrict on update cascade,
-  keep_until date
+  keep_until date,
+  load_date timestamp,
+  mod_date timestamp
 );
 create index on project_storage_requirement(inst_id,
                                             inst_storage_platform_id);
@@ -273,6 +329,10 @@ create index on project_storage_requirement(project_id);
 comment on column project_storage_requirement.expected_storage is
 'The amount of storage in GB this project is expecting to need to '
 'use on storage platform <sc_id>.';
+
+create trigger action_date before insert or update on
+  project_storage_requirement
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -285,9 +345,14 @@ create table users (
   email varchar(1024),
   phone varchar(128),
   passwd varchar(128),
+  load_date timestamp,
+  mod_date timestamp,
   unique(username, inst_id)
 );
 
+
+create trigger action_date before insert or update on users
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -310,6 +375,8 @@ create table dataset (
     on delete cascade on update cascade,
   lead_department_id integer references department(department_id)
     on delete cascade on update cascade,
+  load_date timestamp,
+  mod_date timestamp,
   check (storage_location in ('internal', 'external')),
   check (inst_archive_status in ('archived', 'not_archived', 'unknown'))
 );
@@ -323,6 +390,8 @@ comment on column dataset.dataset_size is
 comment on column dataset.storage_location is
   'Can be either ''internal'' or ''external'' to the institution.';
 
+create trigger action_date before insert or update on dataset
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -333,12 +402,16 @@ create table dataset_accesses (
   access_type varchar(64),
   access_date date,
   counter integer,
+  load_date timestamp,
+  mod_date timestamp,
   check (access_type in ('metadata', 'data_download'))
 );
 create index on dataset_accesses(dataset_id);
 create index on dataset_accesses(access_type);
 create index on dataset_accesses(access_date);
 
+create trigger action_date before insert or update on dataset_accesses
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
@@ -371,7 +444,10 @@ create table publication (
   inst_pub_month int,
   inst_pub_day int,
   inst_pub_title varchar,
-  inst_pub_sub_title varchar
+  inst_pub_sub_title varchar,
+  load_date timestamp,
+  mod_date timestamp,
+  unique(lead_inst_id, cris_id)
 );
 comment on table publication is 'Describes publications';
 comment on column publication.project_id is
@@ -390,139 +466,141 @@ comment on column publication.data_access_statement is
   ''exists without link'', ''exists with link'',
   ''exists with persistent link''';
 
+create trigger action_date before insert or update on publication
+  for each row execute procedure load_date_action();
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table pub_ds_map (
+create table map_pub_ds (
   publication_id integer references publication(publication_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
 );
-comment on table pub_ds_map is 'Maps publications to datasets.';
+comment on table map_pub_ds is 'Maps publications to datasets.';
 
-create index on pub_ds_map(publication_id);
-create index on pub_ds_map(dataset_id);
+create index on map_pub_ds(publication_id);
+create index on map_pub_ds(dataset_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table dept_pub_map (
+create table map_dept_pub (
   department_id integer references department(department_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
     on delete cascade on update cascade not null
 );
-comment on table dept_pub_map is 'Maps departments to publications.';
+comment on table map_dept_pub is 'Maps departments to publications.';
 
-create index on dept_pub_map(department_id);
-create index on dept_pub_map(publication_id);
+create index on map_dept_pub(department_id);
+create index on map_dept_pub(publication_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table dept_ds_map (
+create table map_dept_ds (
   department_id integer references department(department_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
 );
-comment on table dept_ds_map is 'Maps departments to datasets.';
+comment on table map_dept_ds is 'Maps departments to datasets.';
 
-create index on dept_ds_map(department_id);
-create index on dept_ds_map(dataset_id);
+create index on map_dept_ds(department_id);
+create index on map_dept_ds(dataset_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table funder_pub_map (
+create table map_funder_pub (
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
     on delete cascade on update cascade not null
 );
-comment on table funder_pub_map is 'Maps funders to publications.';
+comment on table map_funder_pub is 'Maps funders to publications.';
 
-create index on funder_pub_map(funder_id);
-create index on funder_pub_map(publication_id);
+create index on map_funder_pub(funder_id);
+create index on map_funder_pub(publication_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table funder_ds_map (
+create table map_funder_ds (
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
 );
-comment on table funder_ds_map is 'Maps funders to datasets.';
+comment on table map_funder_ds is 'Maps funders to datasets.';
 
-create index on funder_ds_map(funder_id);
-create index on funder_ds_map(dataset_id);
+create index on map_funder_ds(funder_id);
+create index on map_funder_ds(dataset_id);
 
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table funder_project_map (
+create table map_funder_project (
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   project_id integer references project(project_id)
     on delete cascade on update cascade not null
 );
-comment on table funder_project_map is 'Maps funders to projects.';
+comment on table map_funder_project is 'Maps funders to projects.';
 
-create index on funder_project_map(funder_id);
-create index on funder_project_map(project_id);
+create index on map_funder_project(funder_id);
+create index on map_funder_project(project_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table project_ds_map (
+create table map_project_ds (
   project_id integer references project(project_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
 );
-comment on table project_ds_map is 'Maps projects to datasets.';
+comment on table map_project_ds is 'Maps projects to datasets.';
 
-create index on project_ds_map(project_id);
-create index on project_ds_map(dataset_id);
+create index on map_project_ds(project_id);
+create index on map_project_ds(dataset_id);
 
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table project_pub_map (
+create table map_project_pub (
   project_id integer references project(project_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
     on delete cascade on update cascade not null
 );
-comment on table project_pub_map is 'Maps projects to publications.';
+comment on table map_project_pub is 'Maps projects to publications.';
 
-create index on project_pub_map(project_id);
-create index on project_pub_map(publication_id);
+create index on map_project_pub(project_id);
+create index on map_project_pub(publication_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create table inst_ds_map (
+create table map_inst_ds (
   inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
     on delete cascade on update cascade not null
 );
-comment on table inst_ds_map is 'Maps institutions and datasets.';
+comment on table map_inst_ds is 'Maps institutions and datasets.';
 
-create index on inst_ds_map(inst_id);
-create index on inst_ds_map(dataset_id);
+create index on map_inst_ds(inst_id);
+create index on map_inst_ds(dataset_id);
 
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create or replace view dataset_faculty_map as
+create or replace view map_dataset_faculty as
   select
     d.dataset_id,
     f.faculty_id

@@ -36,7 +36,10 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="currency" COLSPAN="3" ALIGN="LEFT">currency</TD></TR>
       <TR><TD PORT="currency_symbol" COLSPAN="3" ALIGN="LEFT">currency_symbol</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
@@ -52,7 +55,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="email" COLSPAN="2" ALIGN="LEFT">email</TD><TD PORT="email.type" ALIGN="LEFT">varchar[1024]</TD></TR>
       <TR><TD PORT="phone" COLSPAN="2" ALIGN="LEFT">phone</TD><TD PORT="phone.type" ALIGN="LEFT">varchar[128]</TD></TR>
       <TR><TD PORT="passwd" COLSPAN="2" ALIGN="LEFT">passwd</TD><TD PORT="passwd.type" ALIGN="LEFT">varchar[128]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="2" ALIGN="LEFT">load_date</TD><TD PORT="load_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="2" ALIGN="LEFT">mod_date</TD><TD PORT="mod_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 &gt;</TD></TR>
     </TABLE>>
     URL="users.html"
     tooltip="users"

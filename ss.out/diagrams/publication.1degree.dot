@@ -21,16 +21,16 @@ digraph "oneDegreeRelationshipsDiagram" {
   ];
   "department":"faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "department":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "dept_pub_map":"department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "dept_pub_map":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "faculty":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "funder_pub_map":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_dept_pub":"department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_dept_pub":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_funder_pub":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_pub":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_pub":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_pub_ds":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_pub_map":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_pub_map":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "pub_ds_map":"publication_id":w -> "publication":"publication_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -47,21 +47,12 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">35 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="department.html"
     tooltip="department"
-  ];
-  "dept_pub_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dept_pub_map</TD></TR>
-      <TR><TD PORT="department_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">department_id</TD></TR>
-      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="dept_pub_map.html"
-    tooltip="dept_pub_map"
   ];
   "faculty" [
     label=<
@@ -74,21 +65,12 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="faculty.html"
     tooltip="faculty"
-  ];
-  "funder_pub_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder_pub_map</TD></TR>
-      <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
-      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="funder_pub_map.html"
-    tooltip="funder_pub_map"
   ];
   "institution" [
     label=<
@@ -106,11 +88,58 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="currency" COLSPAN="3" ALIGN="LEFT">currency</TD></TR>
       <TR><TD PORT="currency_symbol" COLSPAN="3" ALIGN="LEFT">currency_symbol</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
+      <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="institution.html"
     tooltip="institution"
+  ];
+  "map_dept_pub" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_dept_pub</TD></TR>
+      <TR><TD PORT="department_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">department_id</TD></TR>
+      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_dept_pub.html"
+    tooltip="map_dept_pub"
+  ];
+  "map_funder_pub" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_funder_pub</TD></TR>
+      <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
+      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_funder_pub.html"
+    tooltip="map_funder_pub"
+  ];
+  "map_project_pub" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_project_pub</TD></TR>
+      <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
+      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_project_pub.html"
+    tooltip="map_project_pub"
+  ];
+  "map_pub_ds" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_pub_ds</TD></TR>
+      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
+      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_pub_ds.html"
+    tooltip="map_pub_ds"
   ];
   "project" [
     label=<
@@ -134,32 +163,12 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
       <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">421 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
-  ];
-  "project_pub_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_pub_map</TD></TR>
-      <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
-      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="project_pub_map.html"
-    tooltip="project_pub_map"
-  ];
-  "pub_ds_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">pub_ds_map</TD></TR>
-      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
-      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="pub_ds_map.html"
-    tooltip="pub_ds_map"
   ];
   "publication" [
     label=<
@@ -167,11 +176,11 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">publication</TD></TR>
       <TR><TD PORT="publication_id" COLSPAN="2" BGCOLOR="#bed1b8" ALIGN="LEFT">publication_id</TD><TD PORT="publication_id.type" ALIGN="LEFT">serial[10]</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="2" ALIGN="LEFT">project_id</TD><TD PORT="project_id.type" ALIGN="LEFT">int4[10]</TD></TR>
-      <TR><TD PORT="cris_id" COLSPAN="2" ALIGN="LEFT">cris_id</TD><TD PORT="cris_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
+      <TR><TD PORT="cris_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">cris_id</TD><TD PORT="cris_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
       <TR><TD PORT="repo_id" COLSPAN="2" ALIGN="LEFT">repo_id</TD><TD PORT="repo_id.type" ALIGN="LEFT">varchar[256]</TD></TR>
       <TR><TD PORT="publication_pid" COLSPAN="2" ALIGN="LEFT">publication_pid</TD><TD PORT="publication_pid.type" ALIGN="LEFT">varchar[256]</TD></TR>
       <TR><TD PORT="funder_project_code" COLSPAN="2" ALIGN="LEFT">funder_project_code</TD><TD PORT="funder_project_code.type" ALIGN="LEFT">varchar[256]</TD></TR>
-      <TR><TD PORT="lead_inst_id" COLSPAN="2" ALIGN="LEFT">lead_inst_id</TD><TD PORT="lead_inst_id.type" ALIGN="LEFT">inst_id_t[2147483647]</TD></TR>
+      <TR><TD PORT="lead_inst_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">lead_inst_id</TD><TD PORT="lead_inst_id.type" ALIGN="LEFT">inst_id_t[2147483647]</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="2" ALIGN="LEFT">lead_faculty_id</TD><TD PORT="lead_faculty_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="2" ALIGN="LEFT">lead_department_id</TD><TD PORT="lead_department_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="publication_date" COLSPAN="2" ALIGN="LEFT">publication_date</TD><TD PORT="publication_date.type" ALIGN="LEFT">date[13]</TD></TR>
@@ -187,7 +196,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_pub_day" COLSPAN="2" ALIGN="LEFT">inst_pub_day</TD><TD PORT="inst_pub_day.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="inst_pub_title" COLSPAN="2" ALIGN="LEFT">inst_pub_title</TD><TD PORT="inst_pub_title.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
       <TR><TD PORT="inst_pub_sub_title" COLSPAN="2" ALIGN="LEFT">inst_pub_sub_title</TD><TD PORT="inst_pub_sub_title.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="2" ALIGN="LEFT">load_date</TD><TD PORT="load_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="2" ALIGN="LEFT">mod_date</TD><TD PORT="mod_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="publication.html"
     tooltip="publication"

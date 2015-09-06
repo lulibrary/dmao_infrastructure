@@ -118,33 +118,33 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
    <tr class='relative even' valign='top'>
-    <td class='relatedTable detail' title="dept_ds_map.dataset_id refs dataset.dataset_id via dept_ds_map_dataset_id_fkey"><a href='dept_ds_map.html'>dept_ds_map</a><span class='relatedKey'>.dataset_id</span>
+    <td class='relatedTable detail' title="map_dept_ds.dataset_id refs dataset.dataset_id via map_dept_ds_dataset_id_fkey"><a href='map_dept_ds.html'>map_dept_ds</a><span class='relatedKey'>.dataset_id</span>
     </td>
-    <td class='constraint detail'>dept_ds_map_dataset_id_fkey<span title='Cascade on delete:
+    <td class='constraint detail'>map_dept_ds_dataset_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
    <tr class='relative even' valign='top'>
-    <td class='relatedTable detail' title="funder_ds_map.dataset_id refs dataset.dataset_id via funder_ds_map_dataset_id_fkey"><a href='funder_ds_map.html'>funder_ds_map</a><span class='relatedKey'>.dataset_id</span>
+    <td class='relatedTable detail' title="map_funder_ds.dataset_id refs dataset.dataset_id via map_funder_ds_dataset_id_fkey"><a href='map_funder_ds.html'>map_funder_ds</a><span class='relatedKey'>.dataset_id</span>
     </td>
-    <td class='constraint detail'>funder_ds_map_dataset_id_fkey<span title='Cascade on delete:
+    <td class='constraint detail'>map_funder_ds_dataset_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
    <tr class='relative even' valign='top'>
-    <td class='relatedTable detail' title="inst_ds_map.dataset_id refs dataset.dataset_id via inst_ds_map_dataset_id_fkey"><a href='inst_ds_map.html'>inst_ds_map</a><span class='relatedKey'>.dataset_id</span>
+    <td class='relatedTable detail' title="map_inst_ds.dataset_id refs dataset.dataset_id via map_inst_ds_dataset_id_fkey"><a href='map_inst_ds.html'>map_inst_ds</a><span class='relatedKey'>.dataset_id</span>
     </td>
-    <td class='constraint detail'>inst_ds_map_dataset_id_fkey<span title='Cascade on delete:
+    <td class='constraint detail'>map_inst_ds_dataset_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
    <tr class='relative even' valign='top'>
-    <td class='relatedTable detail' title="project_ds_map.dataset_id refs dataset.dataset_id via project_ds_map_dataset_id_fkey"><a href='project_ds_map.html'>project_ds_map</a><span class='relatedKey'>.dataset_id</span>
+    <td class='relatedTable detail' title="map_project_ds.dataset_id refs dataset.dataset_id via map_project_ds_dataset_id_fkey"><a href='map_project_ds.html'>map_project_ds</a><span class='relatedKey'>.dataset_id</span>
     </td>
-    <td class='constraint detail'>project_ds_map_dataset_id_fkey<span title='Cascade on delete:
+    <td class='constraint detail'>map_project_ds_dataset_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
    <tr class='relative even' valign='top'>
-    <td class='relatedTable detail' title="pub_ds_map.dataset_id refs dataset.dataset_id via pub_ds_map_dataset_id_fkey"><a href='pub_ds_map.html'>pub_ds_map</a><span class='relatedKey'>.dataset_id</span>
+    <td class='relatedTable detail' title="map_pub_ds.dataset_id refs dataset.dataset_id via map_pub_ds_dataset_id_fkey"><a href='map_pub_ds.html'>map_pub_ds</a><span class='relatedKey'>.dataset_id</span>
     </td>
-    <td class='constraint detail'>pub_ds_map_dataset_id_fkey<span title='Cascade on delete:
+    <td class='constraint detail'>map_pub_ds_dataset_id_fkey<span title='Cascade on delete:
  Deletion of parent deletes child'>&nbsp;C</span></td>
    </tr>
   </table>
@@ -322,8 +322,30 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  </td>
  <td class='comment detail'></td>
 </tr>
+<tr class='even'>
+ <td class='detail'>load_date</td>
+ <td class='detail'>timestamp</td>
+ <td class='detail' align='right'>29,6</td>
+ <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
+ <td class='detail' align='center'></td>
+ <td class='detail' align='right'>null</td>
+ <td class='detail'></td>
+ <td class='detail'> </td>
+ <td class='comment detail'></td>
+</tr>
+<tr class='odd'>
+ <td class='detail'>mod_date</td>
+ <td class='detail'>timestamp</td>
+ <td class='detail' align='right'>29,6</td>
+ <td class='detail' align='center' title='nullable'>&nbsp;&radic;&nbsp;</td>
+ <td class='detail' align='center'></td>
+ <td class='detail' align='right'>null</td>
+ <td class='detail'></td>
+ <td class='detail'> </td>
+ <td class='comment detail'></td>
+</tr>
 </table>
-<p title='14 columns'>Table contained 13 rows at Fri Aug 28 10:18 BST 2015<p/>
+<p title='16 columns'>Table contained 0 rows at Sat Sep 05 21:12 BST 2015<p/>
 </td></tr></table>
 <div class='indent'>
 <b>Indexes:</b>
@@ -349,37 +371,37 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <br><form action='get'><b>Close relationships</b><span class='degrees' id='degrees' title='Detail diminishes with increased separation from dataset'>
 &nbsp;within <label for='oneDegree'><input type='radio' name='degrees' id='oneDegree' checked>one</label>  <label for='twoDegrees'><input type='radio' name='degrees' id='twoDegrees'>two degrees</label> of separation</span><b>:</b></form>
 <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="619,268,912,668">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="183,627,324,877">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="5,559,139,785">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="368,83,575,573">
-<area shape="rect" id="node5" href="dataset_accesses.html" title="dataset_accesses" alt="" coords="956,253,1115,408">
-<area shape="rect" id="node6" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="969,673,1101,780">
-<area shape="rect" id="node7" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="966,425,1105,532">
-<area shape="rect" id="node8" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="971,549,1100,656">
-<area shape="rect" id="node9" href="project_ds_map.html" title="project_ds_map" alt="" coords="964,5,1107,112">
-<area shape="rect" id="node10" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="973,129,1097,236">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="619,269,913,717">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="183,628,324,927">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="5,560,139,835">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="368,36,575,575">
+<area shape="rect" id="node5" href="dataset_accesses.html" title="dataset_accesses" alt="" coords="957,253,1116,456">
+<area shape="rect" id="node6" href="map_dept_ds.html" title="map_dept_ds" alt="" coords="971,721,1103,828">
+<area shape="rect" id="node7" href="map_funder_ds.html" title="map_funder_ds" alt="" coords="967,473,1106,580">
+<area shape="rect" id="node8" href="map_inst_ds.html" title="map_inst_ds" alt="" coords="976,597,1097,704">
+<area shape="rect" id="node9" href="map_project_ds.html" title="map_project_ds" alt="" coords="965,5,1108,112">
+<area shape="rect" id="node10" href="map_pub_ds.html" title="map_pub_ds" alt="" coords="975,129,1099,236">
 </map>
   <a name='diagram'><img id='oneDegreeImg' src='../diagrams/dataset.1degree.png' usemap='#oneDegreeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>
 <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="776,533,1069,933">
-<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="340,499,481,749">
-<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="163,569,296,796">
-<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="525,296,732,787">
-<area shape="rect" id="node6" href="institution.html" title="institution" alt="" coords="5,501,119,584">
-<area shape="rect" id="node14" href="dmp.html" title="dmp" alt="" coords="344,803,477,885">
-<area shape="rect" id="node5" href="dataset_accesses.html" title="dataset_accesses" alt="" coords="1119,677,1278,832">
-<area shape="rect" id="node7" href="dept_ds_map.html" title="dept_ds_map" alt="" coords="1133,849,1265,956">
-<area shape="rect" id="node8" href="dept_pub_map.html" title="dept_pub_map" alt="" coords="1131,5,1266,88">
-<area shape="rect" id="node9" href="publication.html" title="publication" alt="" coords="856,89,989,172">
-<area shape="rect" id="node10" href="funder_ds_map.html" title="funder_ds_map" alt="" coords="1129,429,1268,536">
-<area shape="rect" id="node11" href="funder.html" title="funder" alt="" coords="858,297,987,380">
-<area shape="rect" id="node12" href="funder_project_map.html" title="funder_project_map" alt="" coords="1113,205,1284,288">
-<area shape="rect" id="node13" href="inst_ds_map.html" title="inst_ds_map" alt="" coords="1134,973,1263,1080">
-<area shape="rect" id="node15" href="project_ds_map.html" title="project_ds_map" alt="" coords="1127,553,1270,660">
-<area shape="rect" id="node16" href="project_pub_map.html" title="project_pub_map" alt="" coords="1123,105,1274,188">
-<area shape="rect" id="node17" href="project_storage_requirement.html" title="project_storage_requirement" alt="" coords="807,397,1039,480">
-<area shape="rect" id="node18" href="pub_ds_map.html" title="pub_ds_map" alt="" coords="1137,305,1261,412">
+<area shape="rect" id="node1" href="dataset.html" title="dataset" alt="" coords="776,533,1071,981">
+<area shape="rect" id="node2" href="department.html" title="department" alt="" coords="340,324,481,623">
+<area shape="rect" id="node3" href="faculty.html" title="faculty" alt="" coords="163,395,296,669">
+<area shape="rect" id="node4" href="project.html" title="project" alt="" coords="525,243,732,781">
+<area shape="rect" id="node6" href="institution.html" title="institution" alt="" coords="5,327,119,409">
+<area shape="rect" id="node17" href="dmp.html" title="dmp" alt="" coords="344,676,477,759">
+<area shape="rect" id="node5" href="dataset_accesses.html" title="dataset_accesses" alt="" coords="1121,677,1279,880">
+<area shape="rect" id="node7" href="map_dept_ds.html" title="map_dept_ds" alt="" coords="1134,897,1266,1004">
+<area shape="rect" id="node8" href="map_dept_pub.html" title="map_dept_pub" alt="" coords="1133,5,1267,88">
+<area shape="rect" id="node9" href="publication.html" title="publication" alt="" coords="857,89,990,172">
+<area shape="rect" id="node10" href="map_funder_ds.html" title="map_funder_ds" alt="" coords="1131,429,1269,536">
+<area shape="rect" id="node11" href="funder.html" title="funder" alt="" coords="863,297,984,380">
+<area shape="rect" id="node12" href="map_funder_project.html" title="map_funder_project" alt="" coords="1115,205,1285,288">
+<area shape="rect" id="node13" href="map_inst_ds.html" title="map_inst_ds" alt="" coords="1139,1021,1261,1128">
+<area shape="rect" id="node14" href="map_project_ds.html" title="map_project_ds" alt="" coords="1129,553,1271,660">
+<area shape="rect" id="node15" href="map_project_pub.html" title="map_project_pub" alt="" coords="1125,105,1275,188">
+<area shape="rect" id="node16" href="map_pub_ds.html" title="map_pub_ds" alt="" coords="1138,305,1262,412">
+<area shape="rect" id="node18" href="project_storage_requirement.html" title="project_storage_requirement" alt="" coords="807,397,1039,480">
 </map>
 
   <a name='diagram'><img id='twoDegreesImg' src='../diagrams/dataset.2degrees.png' usemap='#twoDegreesRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>

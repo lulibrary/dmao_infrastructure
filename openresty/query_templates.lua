@@ -14,6 +14,7 @@ query_templates = {
             p.project_end,
             p.project_name
         ]],
+        group_by = '',
         output_order = 'order by d.dataset_id asc',
         columns_list_count = [[
             count(*) num_datasets
@@ -45,7 +46,7 @@ query_templates = {
             from
                 dataset d
             left outer join
-                funder_ds_map fdm
+                map_funder_ds fdm
             on
                 (d.dataset_id = fdm.dataset_id)
             left outer join
@@ -69,7 +70,7 @@ query_templates = {
                     select
                         dataset_id
                     from
-                        funder_ds_map
+                        map_funder_ds
                     #funder_id_filter_clause#
                 )
             and
@@ -77,12 +78,13 @@ query_templates = {
                     select
                         dataset_id
                     from
-                        inst_ds_map
+                        map_inst_ds
                     where
                         inst_id = #inst_id#
                 )
             )
             #variable_clauses#
+            #group_by_clause#
             #order_clause#
         ]],
     },
@@ -94,6 +96,7 @@ query_templates = {
             d.abbreviation lead_dept_abbrev,
             d.name lead_dept_name
         ]],
+        group_by = '',
         output_order = 'order by p.project_id asc',
         columns_list_count = [[
             count(*) num_project_dmps
@@ -128,6 +131,7 @@ query_templates = {
             where
                 p.inst_id = #inst_id#
             #variable_clauses#
+            #group_by_clause#
             #order_clause#
         ]]
     },
@@ -165,7 +169,7 @@ query_templates = {
             from
                 project p
             left outer join
-                funder_project_map fpm
+                map_funder_project fpm
             on
                 (p.project_id = fpm.project_id)
             left outer join
@@ -175,6 +179,7 @@ query_templates = {
             where
                 p.inst_id = #inst_id#
             #variable_clauses#
+            #group_by_clause#
             #order_clause#
         ]]
     },
@@ -262,7 +267,7 @@ query_templates = {
             from
                 publication pub
             join
-                funder_pub_map fpm
+                map_funder_pub fpm
             on
                 (
                     pub.publication_id = fpm.publication_id
@@ -309,7 +314,7 @@ query_templates = {
                 and d.dataset_id in
                     (
                         select dataset_id
-                        from dataset_faculty_map
+                        from map_dataset_faculty
                         where faculty_id = #el_var_value#
                     )
             ]],
@@ -317,7 +322,7 @@ query_templates = {
                 and d.dataset_id in
                     (
                         select dataset_id
-                        from dataset_department_map
+                        from map_dept_ds
                         where department_id = #el_var_value#
                     )
             ]]
@@ -330,7 +335,7 @@ query_templates = {
             from
                 dataset_accesses d
             where d.dataset_id in (
-                select dataset_id from inst_ds_map
+                select dataset_id from map_inst_ds
                 where inst_id = #inst_id#
             )
             #and_clause_1#
@@ -341,7 +346,21 @@ query_templates = {
             #group_by_clause#
             #order_clause#
         ]]
+    },
+    -- utility queries for internal use
+    u_dmao_faculty_ids_inst_ids_map = {
+        query = [[
+            select faculty_id, inst_local_id
+            from faculty
+            where inst_id = #inst_id#
+        ]]
+    },
+    u_dmao_department_ids_faculty_ids_map = {
+        query = [[
+            select department_id, faculty_id,
+            inst_local_id local_faculty_id, name dept_name
+            from department
+            where inst_id = #inst_id#
+        ]]
     }
 }
-
-

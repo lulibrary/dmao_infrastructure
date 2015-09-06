@@ -1,11 +1,14 @@
 #!/usr/bin/env lua5.1
 -- pure data import tools
 package.path = package.path .. ';../openresty/?.lua;'
-util = require 'dmao_i_utility'
-xml = require 'xml'
-lub = require 'lub'
-cjson = require 'cjson'
-curl = require 'cURL'
+local util = require 'dmao_i_utility'
+local xml = require 'xml'
+local lub = require 'lub'
+local cjson = require 'cjson'
+local curl = require 'cURL'
+http = require'socket.http'
+
+environment = 'dev' -- or test or prod
 
 
 local function extract_json(inst, xml_table, et, id_add, id_add_value)
@@ -17,7 +20,10 @@ local function extract_json(inst, xml_table, et, id_add, id_add_value)
             if node.xml == et['element'] then
                 local row = {}
                 for field, field_value_pair in pairs(et['fields']) do
-                    local field_value = field_value_pair[1]
+                    local field_value = ''
+                    if field_value_pair[1] then
+                        field_value = field_value_pair[1]
+                    end
                     local inc = field_value_pair[2]
                     local value = xml.find(node, field_value)[1]
                     if not value then value = '' end
@@ -30,6 +36,9 @@ local function extract_json(inst, xml_table, et, id_add, id_add_value)
                         row[#row + 1] = '"'
                         row[#row + 1] = field
                         row[#row + 1] = '": '
+                        if field_value_pair[3] then
+                            value = field_value_pair[3](value)
+                        end
                         row[#row + 1] = cjson.encode(util.trim(value))
                         row[#row + 1] = ', '
                     end
@@ -71,6 +80,29 @@ local function json_load(table, json)
     c:perform()
 end
 
+
+local function get_json_query(inst, q)
+    local get_url = 'http://localhost:8080/dmaonline/v0.3/u/'
+            .. inst ..'/' .. q
+    local body = http.request(get_url)
+    return body
+end
+
+
+local function date_reformat(d)
+    local nd
+    if not (d == '') then
+        local y = string.format('%4d', tonumber(string.sub(d, 7, 10)))
+        local m = string.format('%02d', tonumber(string.sub(d, 4, 5)))
+        local d = string.format('%02d', tonumber(string.sub(d, 1, 2)))
+        nd = y .. '-' .. m .. '-' .. d
+    else
+        nd = 'null_value'
+    end
+    return nd
+end
+
+
 -- main
 local extract_fields = {
     pure_org_institution = {
@@ -80,7 +112,8 @@ local extract_fields = {
             inst_local_id = {'a:OrganisationID', 'include'},
             name = {'a:OrganisationName', 'include'},
             type = {'a:Type', 'exclude'},
-            url = {'a:URL', 'include'}
+            url = {'a:URL', 'include'},
+            description = {'a:SummaryText', 'include'}
         },
         want = {
             type = 'university'
@@ -107,13 +140,40 @@ local extract_fields = {
             inst_local_id = {'a:OrganisationID', 'include'},
             name = {'a:OrganisationName', 'include'},
             type = {'a:Type', 'exclude'},
-            url = {'a:URL', 'include'}
+            url = {'a:URL', 'include'},
+            description = {'a:SummaryText', 'include'}
         },
         want = {
             type = 'department'
         },
         add = {
             faculty_id
+        }
+    },
+    pure_publication = {
+        dmao_table = 'publication',
+        element = 'a:PublicationList',
+        fields = {
+
+        }
+    },
+    pure_project = {
+        dmao_table = 'project',
+        element = 'a:Project',
+        fields = {
+            project_name = {'a:Title', 'include'},
+            project_acronym = {'a:Acronym', 'include'},
+            description = {'a:Description', 'include'},
+            institution_project_code = {'a:ProjectID', 'include'},
+            type = {'a:Type', 'exclude'},
+            -- lead_faculty_id = '',
+            -- lead_department_id = '',
+            project_start = {'a:StartDate', 'include', date_reformat},
+            project_end = {'a:EndDate', 'include', date_reformat},
+            inst_url = {'a:InternalURL', 'include'},
+        },
+        want = {
+            type = 'Projects'
         }
     }
 }
@@ -123,26 +183,46 @@ for _, org_type in ipairs({'pure_org_institution', 'pure_org_faculty'}) do
     local xml_table = xml.load(f:read'*a')
     local json = extract_json('lancaster', xml_table,
         extract_fields[org_type])
-    json_load(extract_fields[org_type]['dmao_table'], json)
+    if not (json== '[]') then
+        json_load(extract_fields[org_type]['dmao_table'], json)
+    end
     f:close()
 end
 
-for _, local_id in ipairs({
-    {'2', '5091'},
-    {'1', '5096'},
-    {'5', '5106'},
-    {'3', '5111'},
-    {'7', '5137'},
-    {'4', '5282'},
-    {'6', '5326'}
-}) do
+-- get a mapping of pure faculty ids to dmao faculty ids
+local q = 'u_dmao_faculty_ids_inst_ids_map'
+local json = get_json_query('lancaster', q)
+local f_map = cjson.decode(json)
+
+-- load departments by faculty
+for _, lf in pairs(f_map) do
+    local f_id, lf_id = lf['faculty_id'], lf['inst_local_id']
     local f = assert(io.open(
-        'data/pure_orgs_by_parent_id_' .. local_id[2] .. '.xml'))
+        'data/pure_orgs_by_parent_id_' .. lf_id .. '.xml'))
     local xml_table = xml.load(f:read'*a')
     local json = extract_json('lancaster', xml_table,
-        extract_fields['pure_org_department'], 'faculty_id', local_id[1])
+        extract_fields['pure_org_department'], 'faculty_id', f_id)
     if not (json == '[]') then
         json_load(extract_fields['pure_org_department']['dmao_table'], json)
     end
     f:close()
+end
+
+-- load projects
+local f = assert(io.open('data/pure_projects.xml'))
+local xml_table = xml.load(f:read'*a')
+local json = extract_json('lancaster', xml_table,
+        extract_fields['pure_project'])
+if not (json== '[]') then
+    json_load(extract_fields['pure_project']['dmao_table'], json)
+end
+f:close()
+
+local q = 'u_dmao_department_ids_faculty_ids_map'
+local json = get_json_query('lancaster', q)
+local d_map = cjson.decode(json)
+
+-- load publications by faculty, department
+for x, y in pairs(d_map) do
+    print(x, y['department_id'], y['faculty_id'], y['local_faculty_id'], y['dept_name'])
 end

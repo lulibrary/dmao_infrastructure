@@ -1,4 +1,6 @@
 
+pg = require 'pgmoon'
+
 local M = {}
 setmetatable(M, {__index = _G})
 _ENV = M
@@ -13,6 +15,33 @@ open case for the lua plugin, maybe it will get fixed.
 --]]
 function M.swallow(v)
     if v then end
+end
+
+
+function M.get_connection_details()
+    local f = '/usr/local/openresty/lualib/connection.conf'
+    dofile(f)
+    return user, passwd
+end
+
+
+function M.open_dmaonline_db()
+    local u, p = M.get_connection_details()
+    local d = pg.new(
+        {
+            host='127.0.0.1',
+            port='5432',
+            database='DMAonline',
+            user=u, password=p
+        }
+    )
+    assert(d:connect())
+    return d
+end
+
+
+function M.close_dmaonline_db(c)
+    assert(c:disconnect())
 end
 
 

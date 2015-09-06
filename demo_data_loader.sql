@@ -469,7 +469,7 @@ values
 ;
 
 
-insert into pub_ds_map values
+insert into map_pub_ds values
   (2, 3),
   (1, 2),
   (3, 4),
@@ -481,14 +481,14 @@ insert into pub_ds_map values
 
 
 
-insert into funder_pub_map values
+insert into map_funder_pub values
   ('epsrc', 1),
   ('esrc', 3),
   ('epsrc', 5)
 ;
 
 
-insert into funder_ds_map
+insert into map_funder_ds
 values
   ('epsrc', 1),
   ('npl', 2),
@@ -506,7 +506,7 @@ values
 ;
 
 
-insert into funder_project_map values
+insert into map_funder_project values
   ('epsrc', 1),
   ('npl', 2),
   ('esrc', 3),
@@ -520,7 +520,7 @@ insert into funder_project_map values
 ;
 
 
-insert into inst_ds_map
+insert into map_inst_ds
 values
   ('lancaster', 1),
   ('lancaster', 2),

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 debug=1
-load_demo_data = 0
+load_demo_data=0
 
 home_dir=/home/krug/PycharmProjects/dmao_infrastructure
 

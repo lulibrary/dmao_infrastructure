@@ -24,15 +24,15 @@ digraph "oneDegreeRelationshipsDiagram" {
   "dataset":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset_accesses":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "department":"faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "dept_ds_map":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "dept_ds_map":"department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "funder_ds_map":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "inst_ds_map":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_dept_ds":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_dept_ds":"department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_funder_ds":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_inst_ds":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_ds":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_project_ds":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "map_pub_ds":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_ds_map":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
-  "project_ds_map":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "pub_ds_map":"dataset_id":w -> "dataset":"dataset_id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset" [
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -51,7 +51,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="storage_location" COLSPAN="2" ALIGN="LEFT">storage_location</TD><TD PORT="storage_location.type" ALIGN="LEFT">varchar[50]</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="2" ALIGN="LEFT">lead_faculty_id</TD><TD PORT="lead_faculty_id.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="2" ALIGN="LEFT">lead_department_id</TD><TD PORT="lead_department_id.type" ALIGN="LEFT">int4[10]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="2" ALIGN="LEFT">load_date</TD><TD PORT="load_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="2" ALIGN="LEFT">mod_date</TD><TD PORT="mod_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="dataset.html"
     tooltip="dataset"
@@ -64,7 +66,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="access_type" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">access_type</TD></TR>
       <TR><TD PORT="access_date" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">access_date</TD></TR>
       <TR><TD PORT="counter" COLSPAN="3" ALIGN="LEFT">counter</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6,656 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="dataset_accesses.html"
     tooltip="dataset_accesses"
@@ -81,21 +85,12 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">35 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="department.html"
     tooltip="department"
-  ];
-  "dept_ds_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dept_ds_map</TD></TR>
-      <TR><TD PORT="department_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">department_id</TD></TR>
-      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="dept_ds_map.html"
-    tooltip="dept_ds_map"
   ];
   "faculty" [
     label=<
@@ -108,32 +103,67 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="inst_local_id" COLSPAN="3" ALIGN="LEFT">inst_local_id</TD></TR>
       <TR><TD PORT="url" COLSPAN="3" ALIGN="LEFT">url</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="faculty.html"
     tooltip="faculty"
   ];
-  "funder_ds_map" [
+  "map_dept_ds" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder_ds_map</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_dept_ds</TD></TR>
+      <TR><TD PORT="department_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">department_id</TD></TR>
+      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_dept_ds.html"
+    tooltip="map_dept_ds"
+  ];
+  "map_funder_ds" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_funder_ds</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
-    URL="funder_ds_map.html"
-    tooltip="funder_ds_map"
+    URL="map_funder_ds.html"
+    tooltip="map_funder_ds"
   ];
-  "inst_ds_map" [
+  "map_inst_ds" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">inst_ds_map</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_inst_ds</TD></TR>
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
-    URL="inst_ds_map.html"
-    tooltip="inst_ds_map"
+    URL="map_inst_ds.html"
+    tooltip="map_inst_ds"
+  ];
+  "map_project_ds" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_project_ds</TD></TR>
+      <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
+      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_project_ds.html"
+    tooltip="map_project_ds"
+  ];
+  "map_pub_ds" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_pub_ds</TD></TR>
+      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
+      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="map_pub_ds.html"
+    tooltip="map_pub_ds"
   ];
   "project" [
     label=<
@@ -157,31 +187,11 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="project_start" COLSPAN="3" ALIGN="LEFT">project_start</TD></TR>
       <TR><TD PORT="project_end" COLSPAN="3" ALIGN="LEFT">project_end</TD></TR>
       <TR><TD PORT="inst_url" COLSPAN="3" ALIGN="LEFT">inst_url</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="load_date" COLSPAN="3" ALIGN="LEFT">load_date</TD></TR>
+      <TR><TD PORT="mod_date" COLSPAN="3" ALIGN="LEFT">mod_date</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">421 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="project.html"
     tooltip="project"
-  ];
-  "project_ds_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">project_ds_map</TD></TR>
-      <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
-      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="project_ds_map.html"
-    tooltip="project_ds_map"
-  ];
-  "pub_ds_map" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">pub_ds_map</TD></TR>
-      <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
-      <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="pub_ds_map.html"
-    tooltip="pub_ds_map"
   ];
 }
