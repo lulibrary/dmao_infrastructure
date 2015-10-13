@@ -41,8 +41,12 @@ create domain funder_id_t varchar(256);
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
-create or replace function sha512(bytea) returns text as $$
+create or replace function encrypt_password(bytea) returns text as $$
   select encode(digest($1, 'sha512'), 'hex')
+$$ language sql strict immutable;
+
+create or replace function gen_api_key(bytea) returns text as $$
+  select encode(digest($1, 'sha224'), 'hex')
 $$ language sql strict immutable;
 
 
@@ -61,8 +65,8 @@ create table institution (
   currency varchar(3),
   currency_symbol varchar(32),
   url varchar(2048),
-  inst_local_id varchar(64),
   description varchar,
+  api_key varchar(128),
   load_date timestamp,
   mod_date timestamp
 );
@@ -227,7 +231,8 @@ create index on inst_storage_platforms(inst_storage_platform_id);
 
 create table inst_storage_costs (
   sc_id serial primary key,
-  inst_id inst_id_t,
+  inst_id inst_id_t references institution(inst_id)
+    on delete cascade on update cascade,
   inst_storage_platform_id inst_storage_platform_id_t,
   cost_per_tb_pa numeric
     check (cost_per_tb_pa >= 0) default 0,
@@ -359,6 +364,8 @@ create trigger action_date before insert or update on users
 -------------------------------------------------------------------
 create table dataset (
   dataset_id serial primary key,
+  inst_id inst_id_t references institution(inst_id)
+    on delete cascade on update cascade,
   project_id integer references project(project_id)
     on delete cascade on update cascade,
   dataset_pid varchar(256),
@@ -418,14 +425,14 @@ create trigger action_date before insert or update on dataset_accesses
 -------------------------------------------------------------------
 create table publication (
   publication_id serial primary key,
+  inst_id inst_id_t references institution(inst_id)
+    on delete cascade on update cascade,
   project_id integer references project(project_id)
     on delete cascade on update cascade,
   cris_id varchar(256),
   repo_id varchar(256),
   publication_pid varchar(256),
   funder_project_code varchar(256),
-  lead_inst_id inst_id_t references institution(inst_id)
-    on delete cascade on update cascade,
   lead_faculty_id integer references faculty(faculty_id)
     on delete cascade on update cascade,
   lead_department_id integer references department(department_id)
@@ -447,7 +454,7 @@ create table publication (
   inst_pub_sub_title varchar,
   load_date timestamp,
   mod_date timestamp,
-  unique(lead_inst_id, cris_id)
+  unique(inst_id, cris_id)
 );
 comment on table publication is 'Describes publications';
 comment on column publication.project_id is
@@ -882,8 +889,8 @@ create or replace view project_status as
         upper(project.project_date_range) > now()
         then
           'active'
-      else
-        'inactive'
+        else
+          'inactive'
       end
     ) status
   from

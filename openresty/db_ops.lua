@@ -2,6 +2,7 @@
 local cjson = require 'cjson'
 local upload = require 'resty.upload'
 local util = require 'resty/dmao_i_utility'
+local http = require 'socket.http'
 
 debug = true
 debug = false
@@ -214,7 +215,7 @@ local function construct_c_query(db, inst, query)
         q = string.gsub(q, '#funder_id_filter_clause#', '')
     end
     q = string.gsub(q, '#variable_clauses#', vc)
-    -- unfortunately, special processing, todo: inprove this
+    -- unfortunately, special processing, todo: improve this
     if query == 'dataset_accesses' then
         if args['summary'] == 'true' then
             q = string.gsub(q, '#summary_column#',
@@ -284,7 +285,6 @@ end
 local function construct_u_query(db, inst, query)
     local institution = db:escape_literal(inst)
     local qt = read_templates()
-    local args = ngx.req.get_uri_args()
     local q = qt[query]['query']
     q = string.gsub(q, '#inst_id#', institution)
     q = clean_query(q)
@@ -312,6 +312,20 @@ local function do_cu_query(db, qtype)
 end
 
 
+local function check_api_key(db, inst, api_key)
+    local q = [[
+        select api_key from institution where inst_id =
+        ]] .. db:escape_literal(inst) .. ';'
+    local res, err = db:query(q)
+    local stored_api_key = res[1]['api_key']
+    ngx.log(ngx.ERR, api_key .. ' ' .. stored_api_key)
+    if not (api_key == stored_api_key) then
+        ngx.log(ngx.ERR, 'http_forbidden')
+        ngx.exit(ngx.HTTP_FORBIDDEN)
+    end
+end
+
+
 local function db_operation(db)
     local c_query = ngx.var.c_query
     local u_query = ngx.var.u_query
@@ -320,8 +334,10 @@ local function db_operation(db)
     if c_query == 'true' then
         return do_cu_query(db, construct_c_query)
     elseif u_query == 'true' then
+        check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
         return do_cu_query(db, construct_u_query)
     else
+        check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
         local inst = ngx.var.inst_id
         local object = ngx.var.object
         local method = ngx.req.get_method()

@@ -362,5 +362,11 @@ query_templates = {
             from department
             where inst_id = #inst_id#
         ]]
+    },
+    u_api_key_for_inst = {
+        query = [[
+            select api_key from institution
+            where inst_id = #inst_id#
+        ]]
     }
 }

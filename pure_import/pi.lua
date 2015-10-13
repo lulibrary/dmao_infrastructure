@@ -6,7 +6,7 @@ local xml = require 'xml'
 local lub = require 'lub'
 local cjson = require 'cjson'
 local curl = require 'cURL'
-http = require'socket.http'
+local http = require 'socket.http'
 
 environment = 'dev' -- or test or prod
 
@@ -25,18 +25,31 @@ local function extract_json(inst, xml_table, et, id_add, id_add_value)
                         field_value = field_value_pair[1]
                     end
                     local inc = field_value_pair[2]
-                    local value = xml.find(node, field_value)[1]
-                    if not value then value = '' end
-                    for f, w in pairs(et['want']) do
-                        if (f == field) and (w == value) then
-                            include_node = true
+                    local value_node = xml.find(node, field_value)
+                    local value
+                    if not value_node then
+                        value = ''
+                    else
+                        value = value_node[1]
+                        if not value then value = '' end
+                    end
+                    if et['want'] then
+                        for f, w in pairs(et['want']) do
+                            if (f == field) and (w == value) then
+                                include_node = true
+                                util.swallow(include_node)
+                            end
                         end
+                    else
+                        include_node = true
                     end
                     if inc == 'include' then
                         row[#row + 1] = '"'
                         row[#row + 1] = field
                         row[#row + 1] = '": '
                         if field_value_pair[3] then
+                            -- there is a function to apply to the data
+                            -- value, so execute it
                             value = field_value_pair[3](value)
                         end
                         row[#row + 1] = cjson.encode(util.trim(value))
@@ -96,6 +109,7 @@ local function date_reformat(d)
         local m = string.format('%02d', tonumber(string.sub(d, 4, 5)))
         local d = string.format('%02d', tonumber(string.sub(d, 1, 2)))
         nd = y .. '-' .. m .. '-' .. d
+        util.swallow(nd)
     else
         nd = 'null_value'
     end
@@ -154,7 +168,34 @@ local extract_fields = {
         dmao_table = 'publication',
         element = 'a:PublicationList',
         fields = {
-
+            cris_id = {'a:PublicationID', 'include'},
+            repo_id = {'a:EprintID', 'include'},
+            publication_pid = {'a:DOIName', 'include'},
+            inst_url = {'a:PortalURL', 'include'},
+            inst_pub_type = {'a:PublicationType', 'include'},
+            inst_pub_status = {'a:Status', 'include'},
+            inst_pub_year = {'a:PublicationYear', 'include'},
+            inst_pub_month = {'a:PublicationMonth', 'include'},
+            inst_pub_day = {'a:PublicationDay', 'include'},
+            inst_pub_title = {'a:Title', 'include'},
+            inst_pub_sub_title = {'a:SubTitle', 'include'}
+        }
+    },
+    pure_native_publication = {
+        dmao_table = 'publication',
+        element = 'a:PublicationList',
+        fields = {
+            cris_id = {'a:PublicationID', 'include'},
+            repo_id = {'a:EprintID', 'include'},
+            publication_pid = {'a:DOIName', 'include'},
+            inst_url = {'a:PortalURL', 'include'},
+            inst_pub_type = {'a:PublicationType', 'include'},
+            inst_pub_status = {'a:Status', 'include'},
+            inst_pub_year = {'a:PublicationYear', 'include'},
+            inst_pub_month = {'a:PublicationMonth', 'include'},
+            inst_pub_day = {'a:PublicationDay', 'include'},
+            inst_pub_title = {'a:Title', 'include'},
+            inst_pub_sub_title = {'a:SubTitle', 'include'}
         }
     },
     pure_project = {
@@ -179,6 +220,7 @@ local extract_fields = {
 }
 
 for _, org_type in ipairs({'pure_org_institution', 'pure_org_faculty'}) do
+    print('Loading ' .. org_type .. '.....')
     local f = assert(io.open('data/pure_orgs.xml'))
     local xml_table = xml.load(f:read'*a')
     local json = extract_json('lancaster', xml_table,
@@ -195,6 +237,7 @@ local json = get_json_query('lancaster', q)
 local f_map = cjson.decode(json)
 
 -- load departments by faculty
+print('Loading departments......')
 for _, lf in pairs(f_map) do
     local f_id, lf_id = lf['faculty_id'], lf['inst_local_id']
     local f = assert(io.open(
@@ -203,12 +246,14 @@ for _, lf in pairs(f_map) do
     local json = extract_json('lancaster', xml_table,
         extract_fields['pure_org_department'], 'faculty_id', f_id)
     if not (json == '[]') then
-        json_load(extract_fields['pure_org_department']['dmao_table'], json)
+        json_load(extract_fields['pure_org_department']['dmao_table'],
+            json)
     end
     f:close()
 end
 
 -- load projects
+print('Loading projects......')
 local f = assert(io.open('data/pure_projects.xml'))
 local xml_table = xml.load(f:read'*a')
 local json = extract_json('lancaster', xml_table,
@@ -223,6 +268,23 @@ local json = get_json_query('lancaster', q)
 local d_map = cjson.decode(json)
 
 -- load publications by faculty, department
-for x, y in pairs(d_map) do
-    print(x, y['department_id'], y['faculty_id'], y['local_faculty_id'], y['dept_name'])
+print('Loading publications......')
+for _, y in pairs(d_map) do
+    print(y['department_id'], y['faculty_id'],
+        y['local_faculty_id'], y['dept_name'])
+    local f = assert(io.open(
+        'data/pure_pubs_for_orgid_' .. y['local_faculty_id'] .. '.xml'))
+    local xml_table = xml.load(f:read'*a')
+    local json = extract_json('lancaster', xml_table,
+        extract_fields['pure_publication'])
+    local pub_list = cjson.decode(json)
+    for _, j in pairs(pub_list) do
+        local json_fragment = cjson.encode(j)
+        json_fragment = '[' .. json_fragment ..']'
+        if not (json_fragment == '[]') then
+            json_load(extract_fields['pure_publication']['dmao_table'],
+                json_fragment)
+        end
+    end
+    f:close()
 end

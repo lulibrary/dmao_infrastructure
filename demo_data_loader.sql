@@ -1,30 +1,32 @@
 insert into institution values
   (
-    'lancaster', 'Lancaster University', 'John Krug',
+    'd_lancaster', 'Lancaster University', 'John Krug',
     'j.krug@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
-    'Fedora', 'Archivematica', 'GBP', '£'
+    'Fedora', 'Archivematica', 'GBP', '£', 'http://lancaster.ac.uk',
+    'The top university in the North West of the UK.',
+    gen_api_key('random stuff')
   )
 ;
 
 insert into faculty (inst_id, name, abbreviation) values
-  ('lancaster', 'Faculty of Arts and Social Sciences', 'FASS'),
-  ('lancaster', 'Faculty of Science and Technology', 'FST'),
-  ('lancaster', 'Faculty of Health and Medicine', 'FHM'),
-  ('lancaster', 'Management School', 'LUMS')
+  ('d_lancaster', 'Faculty of Arts and Social Sciences', 'FASS'),
+  ('d_lancaster', 'Faculty of Science and Technology', 'FST'),
+  ('d_lancaster', 'Faculty of Health and Medicine', 'FHM'),
+  ('d_lancaster', 'Management School', 'LUMS')
 ;
 
 insert into department (inst_id, faculty_id, name, abbreviation) values
-  ('lancaster', 1, 'History', ''),
-  ('lancaster', 3, 'Occupational Therapy', 'OT'),
-  ('lancaster', 2, 'Engineering', 'ENG'),
-  ('lancaster', 4, 'Organisation, Work & Technology', 'OWT'),
-  ('lancaster', 2, 'Mathematics and Statistics', ''),
-  ('lancaster', 3, 'Medical School', 'MED'),
-  ('lancaster', 2, 'Psychology', ''),
-  ('lancaster', 3, 'Biomedical and Life Sciences', 'BLS'),
-  ('lancaster', 2, 'Physics', ''),
-  ('lancaster', 4, 'Management Science', ''),
-  ('lancaster', 1, 'Politics, Philosophy and Religion', 'PPR')
+  ('d_lancaster', 1, 'History', ''),
+  ('d_lancaster', 3, 'Occupational Therapy', 'OT'),
+  ('d_lancaster', 2, 'Engineering', 'ENG'),
+  ('d_lancaster', 4, 'Organisation, Work & Technology', 'OWT'),
+  ('d_lancaster', 2, 'Mathematics and Statistics', ''),
+  ('d_lancaster', 3, 'Medical School', 'MED'),
+  ('d_lancaster', 2, 'Psychology', ''),
+  ('d_lancaster', 3, 'Biomedical and Life Sciences', 'BLS'),
+  ('d_lancaster', 2, 'Physics', ''),
+  ('d_lancaster', 4, 'Management Science', ''),
+  ('d_lancaster', 1, 'Politics, Philosophy and Religion', 'PPR')
 ;
 
 
@@ -73,9 +75,9 @@ insert into
 insert into inst_storage_platforms
   (inst_id, inst_storage_platform_id, inst_notes)
   values
-    ('lancaster', 'hcp', 'Hitachi Content Platform'),
-    ('lancaster', 'box', 'Box Cloud Storage'),
-    ('lancaster', 'ark', 'Arkivum')
+    ('d_lancaster', 'hcp', 'Hitachi Content Platform'),
+    ('d_lancaster', 'box', 'Box Cloud Storage'),
+    ('d_lancaster', 'ark', 'Arkivum')
 ;
 
 
@@ -83,12 +85,12 @@ insert into inst_storage_costs
   (inst_id, inst_storage_platform_id,
    cost_per_tb_pa, applicable_dates)
   values
-    ('lancaster', 'hcp', 8.76, '[2000-01-01,)'),
-    ('lancaster', 'box', 10.00, '[2000-01-01,2017-12-31)'),
-    ('lancaster', 'box', 9.00, '[2018-01-01,)'),
-    ('lancaster', 'ark', 100.00, '[2000-01-01,2015-07-01)'),
-    ('lancaster', 'ark', 90.00, '[2015-08-01,2017-06-30)'),
-    ('lancaster', 'ark', 85.00, '[2017-07-01,)')
+    ('d_lancaster', 'hcp', 8.76, '[2000-01-01,)'),
+    ('d_lancaster', 'box', 10.00, '[2000-01-01,2017-12-31)'),
+    ('d_lancaster', 'box', 9.00, '[2018-01-01,)'),
+    ('d_lancaster', 'ark', 100.00, '[2000-01-01,2015-07-01)'),
+    ('d_lancaster', 'ark', 90.00, '[2015-08-01,2017-06-30)'),
+    ('d_lancaster', 'ark', 85.00, '[2017-07-01,)')
 ;
 
 
@@ -110,7 +112,7 @@ insert into project
       'From Modern Applications (iLike)',
      'EP/K014463/1',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      5,
      'MAA7754',
@@ -122,7 +124,7 @@ insert into project
     ('FST CASE Studentship: Design and testing of a Novel Neutron Meter',
      null,
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      3,
      'EGA7804',
@@ -134,7 +136,7 @@ insert into project
     ('ESRC studentship Blything',
      'EP/J019585/1',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      7,
      '',
@@ -146,7 +148,7 @@ insert into project
     ('Orbit-based methods for Multielectron Systems in Strong Fields',
      'EP/J019585/1',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      9,
      'PYA7995',
@@ -158,7 +160,7 @@ insert into project
     ('GaInAsNSb quantum wells for GaAs-based Telecoms devices',
      'PYA7943',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      9,
      'PYA7943',
@@ -171,7 +173,7 @@ insert into project
      'ultralow temperatures',
      'EP/I028285/1',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      9,
      'PYA7955',
@@ -183,7 +185,7 @@ insert into project
     ('Superfluid 3He at UltraLow Temperatures',
      'EP/L000016/1',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      9,
      'PYA7018',
@@ -195,7 +197,7 @@ insert into project
     ('Islam on campus',
      '',
      false,
-     'lancaster',
+     'd_lancaster',
      1,
      11,
      '51263',
@@ -207,7 +209,7 @@ insert into project
     ('The effects of age on temporal coding in the auditory system',
      'BB/M007243/1',
      true,
-     'lancaster',
+     'd_lancaster',
      2,
      7,
      'PSA7830',
@@ -220,7 +222,7 @@ insert into project
      'conserved intracellular signalling pathway',
     null,
     false,
-    'lancaster',
+    'd_lancaster',
     3,
     6,
     '52501',
@@ -233,7 +235,7 @@ insert into project
      'flexibility and attention through tas',
     null,
     false,
-    'lancaster',
+    'd_lancaster',
     3,
     6,
     '52566',
@@ -252,69 +254,69 @@ insert into project_storage_requirement
     expected_storage,
     keep_until
   ) values
-    ('lancaster', 1, 'hcp', 2500, null),
-    ('lancaster', 2, 'hcp', 2, null),
-    ('lancaster', 3, 'box', 2, null),
-    ('lancaster', 4, 'hcp', 2, null),
-    ('lancaster', 5, 'hcp', 200, null),
-    ('lancaster', 5, 'box', 2000, null),
-    ('lancaster', 5, 'ark', 5, null),
-    ('lancaster', 6, 'box', 2, null),
-    ('lancaster', 7, 'box', 2, null),
-    ('lancaster', 8, 'box', 0, null),
-    ('lancaster', 9, 'hcp', 50, null),
-    ('lancaster', 10, 'ark', 10000, null),
-    ('lancaster', 10, 'hcp', 500, '2021-12-31'),
-    ('lancaster', 10, 'box', 20000, '2021-12-31'),
-    ('lancaster', 11, 'ark', 500, null)
+    ('d_lancaster', 1, 'hcp', 2500, null),
+    ('d_lancaster', 2, 'hcp', 2, null),
+    ('d_lancaster', 3, 'box', 2, null),
+    ('d_lancaster', 4, 'hcp', 2, null),
+    ('d_lancaster', 5, 'hcp', 200, null),
+    ('d_lancaster', 5, 'box', 2000, null),
+    ('d_lancaster', 5, 'ark', 5, null),
+    ('d_lancaster', 6, 'box', 2, null),
+    ('d_lancaster', 7, 'box', 2, null),
+    ('d_lancaster', 8, 'box', 0, null),
+    ('d_lancaster', 9, 'hcp', 50, null),
+    ('d_lancaster', 10, 'ark', 10000, null),
+    ('d_lancaster', 10, 'hcp', 500, '2021-12-31'),
+    ('d_lancaster', 10, 'box', 20000, '2021-12-31'),
+    ('d_lancaster', 11, 'ark', 500, null)
   ;
 
 
 insert into users values
   (
-    'krug', 'John Krug', 'lancaster', 'j.krug@lancaster.ac.uk',
-    '+441523593099', sha512('test_password')
+    'krug', 'John Krug', 'd_lancaster', 'j.krug@lancaster.ac.uk',
+    '+441523593099', encrypt_password('test_password')
   )
 ;
 
 
-insert into dataset (project_id, dataset_pid, dataset_link, dataset_size,
+insert into dataset (inst_id, project_id, dataset_pid, dataset_link, dataset_size,
                      dataset_name, dataset_format, dataset_notes,
                      inst_archive_status, storage_location,
                      lead_faculty_id, lead_department_id)
 values
-  (1, '10.17635/lancaster/researchdata/2',
+  ('d_lancaster', 1, '10.17635/lancaster/researchdata/2',
    'https://dx.doi.org/10.17635/lancaster/researchdata/2', 0.00051,
    'Single Locus Variant: Data and Code for Estimating '
    'Recombination Rates', 'tgz',
    'For full details of the description of the dataset, '
    'please follow the dataset link.',
    'archived', 'internal', 2, 5),
-  (2, '10.17635/lancaster/researchdata/7',
+  ('d_lancaster', 2, '10.17635/lancaster/researchdata/7',
    'https://dx.doi.org/10.17635/lancaster/researchdata/7', 0.693,
    'Neutron assay in mixed radiation fields with a 6Li-loaded '
    'plastic scintillator', 'zip',
    'Experimental data obtained at the National Physical Laboratory, '
    'Teddington, London. This work is collected under the work outlined '
    'in the title.', 'unknown', 'internal', 2, 3),
-  (null,'10.17635/lancaster/researchdata/1',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/1',
    'https://dx.doi.org/10.17635/lancaster/researchdata/1',0.00247,
    'AEGISS1. Syndromic surveillance of gastro-intestinal illness','txt',
    'See file AEGISS_explain.txt for information on this data-set',
    'not_archived','internal',3,6),
-  (3,'10.17635/lancaster/researchdata/3',
+  ('d_lancaster', 3,'10.17635/lancaster/researchdata/3',
    'https://dx.doi.org/10.17635/lancaster/researchdata/3',0.00448,
    'Temporal relations in children''s sentence comprehension',
    'csv','Column 1= subject (participant number).','not_archived',
    'internal',2,7),
-  (null,'10.17635/lancaster/researchdata/4',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/4',
    'https://dx.doi.org/10.17635/lancaster/researchdata/4',0.00031,
    'Counting Neutrons from the Spontaneous Fission of 238-U using '
    'Scintillation','zip',
    'Data used in ''Counting Neutrons from the Spontaneous Fission of '
    '238-U using Scintillation Detectors and Mixed Field Analysers'', '
    'presented at Animma 2015.','unknown','internal',2,9),
-  (null,'10.17635/lancaster/researchdata/5',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/5',
    'https://dx.doi.org/10.17635/lancaster/researchdata/5',0.005,
    'Corrosion Behaviour of AGR SIMFUELs [Dataset]','xlsx',
    'Data for extended in-situ Raman of SIMFUEL''s, data for cyclic '
@@ -323,18 +325,18 @@ values
    'damage peak intensities, data for open circuit potential taken '
    'separately for UO2 and 43 burn-up, and also coupled.',
    'not_archived','internal',2,9),
-  (null,'10.17635/lancaster/researchdata/6',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/6',
    'https://dx.doi.org/10.17635/lancaster/researchdata/6',0.004,
    'Ebolavirus evolution 2013-2015','zip',
    'Data used for analysis of selection and evolutionary rate in '
    'Zaire Ebolavirus variant Makona','not_archived','internal',3,9),
-  (4,'10.17635/lancaster/researchdata/8',
+  ('d_lancaster', 4,'10.17635/lancaster/researchdata/8',
    'https://dx.doi.org/10.17635/lancaster/researchdata/8',0.003167,
    'Numerical data on coulomb-corrected strong field approximation for '
    'hydrogen','zip',
    'Numerical data on coulomb-corrected strong field approximation '
    'for hydrogen','not_archived','internal',2,9),
-  (5,'10.17635/lancaster/researchdata/9',
+  ('d_lancaster', 5,'10.17635/lancaster/researchdata/9',
    'https://dx.doi.org/10.17635/lancaster/researchdata/9',0.000065,
    'Data set for AIP advances 2015 on GaAs quantum dots',
    'xlsx',
@@ -343,17 +345,17 @@ values
    'are clearly labelled, and fulfil EPSRC requirements. Full details of '
    'how the data was generated are given in the associated publication',
    'unknown','internal',2,9),
-  (null,'10.17635/lancaster/researchdata/10',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/10',
    'https://dx.doi.org/10.17635/lancaster/researchdata/10',0.000786,
    'M3 segmented monthly data','xlsx',
    'Data used for analysis of selection and evolutionary rate in Zaire '
    'Ebolavirus variant Makona','not_archived','internal',3,8),
-  (null,'10.17635/lancaster/researchdata/11',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/11',
    'https://dx.doi.org/10.17635/lancaster/researchdata/11',0.03,
    'Tortoise herpesvirus evolution','zip',
    'Supplementary and raw data information for paper on TeHV3 evolution',
    'unknown','internal',3,8),
-  (6,'10.17635/lancaster/r/researchdata/12',
+  ('d_lancaster', 6,'10.17635/lancaster/r/researchdata/12',
    'https://dx.doi.org/10.17635/lancaster/researchdata/12',0.002276,
    'Dataset for Visualizing Pure Quantum Turbulence in Superfluid 3He: '
    'Andreev Reflection and its Spectral Properties','xlsx',
@@ -362,7 +364,7 @@ values
    'are clearly labelled, and fulfil EPSRC requirements. Full details of '
    'how the data was generated are given in the associated publication.',
    'not_archived','internal',2,9),
-  (null,'10.17635/lancaster/researchdata/13',
+  ('d_lancaster', null,'10.17635/lancaster/researchdata/13',
    'https://dx.doi.org/10.17635/lancaster/researchdata/13',0.044,
    'Blood flow data','zip','Blood flow data used in ''Dynamical markers '
    'based on blood perfusion fluctuations for selecting skin melanocytic '
@@ -442,29 +444,29 @@ $$ language plpgsql;
 select * from populate_dataset_accesses();
 
 
-insert into publication (project_id, cris_id, repo_id, publication_pid,
-                         funder_project_code, lead_inst_id, lead_faculty_id,
+insert into publication (inst_id, project_id, cris_id, repo_id, publication_pid,
+                         funder_project_code, lead_faculty_id,
                          lead_department_id, publication_date,
                          data_access_statement)
 values
-  (1, '68975423', '71672', '10.1214/14-AOAS795',
-    'EP/K014463/1', 'lancaster', 2, 5,
+  ('d_lancaster', 1, '68975423', '71672', '10.1214/14-AOAS795',
+    'EP/K014463/1', 2, 5,
     '2015-03-01', false),
-  (null, '289125', '2438', '10.1002/env.712', null, 'lancaster', 3, 6,
+  ('d_lancaster', null, '289125', '2438', '10.1002/env.712', null, 3, 6,
     '2008-05-01', false),
-  (3, '81303601', '73749', null, null, 'lancaster', 2, 7,
+  ('d_lancaster', 3, '81303601', '73749', null, null, 2, 7,
     '2015-01-01', true),
-  (null, '56480293', '69441', '10.1099/vir.0.067199-0', null,
-    'lancaster', 3, 8,
+  ('d_lancaster', null, '56480293', '69441', '10.1099/vir.0.067199-0', null,
+    3, 8,
     '2014-08-01', 'n'),
-  (5, '72017672', '72289', '10.1136/ebmed-2014-110127', null,
-    'lancaster', 3, 8,
+  ('d_lancaster', 5, '72017672', '72289', '10.1136/ebmed-2014-110127', null,
+    3, 8,
     '2015-02-01', true),
-  (5, '85850308', '74419', '10.1063/1.4922950', 'PYA7943',
-    'lancaster', 2, 8,
+  ('d_lancaster', 5, '85850308', '74419', '10.1063/1.4922950', 'PYA7943',
+    2, 8,
     '2015-06-10', false),
-  (null, '41842996', '67274', '10.1016/j.jbusres.2015.03.028', null,
-    'lancaster', 4, 10,
+  ('d_lancaster', null, '41842996', '67274', '10.1016/j.jbusres.2015.03.028', null,
+    4, 10,
     '2015-08-01', false)
 ;
 
@@ -522,19 +524,19 @@ insert into map_funder_project values
 
 insert into map_inst_ds
 values
-  ('lancaster', 1),
-  ('lancaster', 2),
-  ('lancaster', 3),
-  ('lancaster', 4),
-  ('lancaster', 5),
-  ('lancaster', 6),
-  ('lancaster', 7),
-  ('lancaster', 8),
-  ('lancaster', 9),
-  ('lancaster', 10),
-  ('lancaster', 11),
-  ('lancaster', 12),
-  ('lancaster', 13)
+  ('d_lancaster', 1),
+  ('d_lancaster', 2),
+  ('d_lancaster', 3),
+  ('d_lancaster', 4),
+  ('d_lancaster', 5),
+  ('d_lancaster', 6),
+  ('d_lancaster', 7),
+  ('d_lancaster', 8),
+  ('d_lancaster', 9),
+  ('d_lancaster', 10),
+  ('d_lancaster', 11),
+  ('d_lancaster', 12),
+  ('d_lancaster', 13)
 ;
 
 
