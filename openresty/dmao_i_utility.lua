@@ -29,10 +29,10 @@ function M.open_dmaonline_db()
     local u, p = M.get_connection_details()
     local d = pg.new(
         {
-            host='127.0.0.1',
-            port='5432',
-            database='DMAonline',
-            user=u, password=p
+            host = '127.0.0.1',
+            port = '5432',
+            database = 'DMAonline',
+            user = u, password = p
         }
     )
     assert(d:connect())

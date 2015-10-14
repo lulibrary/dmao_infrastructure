@@ -104,7 +104,7 @@ end
 
 local function date_reformat(d)
     local nd
-    if not (d == '') then
+    if d ~= '' then
         local y = string.format('%4d', tonumber(string.sub(d, 7, 10)))
         local m = string.format('%02d', tonumber(string.sub(d, 4, 5)))
         local d = string.format('%02d', tonumber(string.sub(d, 1, 2)))
@@ -225,7 +225,7 @@ for _, org_type in ipairs({'pure_org_institution', 'pure_org_faculty'}) do
     local xml_table = xml.load(f:read'*a')
     local json = extract_json('lancaster', xml_table,
         extract_fields[org_type])
-    if not (json== '[]') then
+    if json ~= '[]' then
         json_load(extract_fields[org_type]['dmao_table'], json)
     end
     f:close()
@@ -245,7 +245,7 @@ for _, lf in pairs(f_map) do
     local xml_table = xml.load(f:read'*a')
     local json = extract_json('lancaster', xml_table,
         extract_fields['pure_org_department'], 'faculty_id', f_id)
-    if not (json == '[]') then
+    if json ~= '[]' then
         json_load(extract_fields['pure_org_department']['dmao_table'],
             json)
     end
@@ -258,7 +258,7 @@ local f = assert(io.open('data/pure_projects.xml'))
 local xml_table = xml.load(f:read'*a')
 local json = extract_json('lancaster', xml_table,
         extract_fields['pure_project'])
-if not (json== '[]') then
+if json ~= '[]' then
     json_load(extract_fields['pure_project']['dmao_table'], json)
 end
 f:close()
@@ -281,7 +281,7 @@ for _, y in pairs(d_map) do
     for _, j in pairs(pub_list) do
         local json_fragment = cjson.encode(j)
         json_fragment = '[' .. json_fragment ..']'
-        if not (json_fragment == '[]') then
+        if json_fragment ~= '[]' then
             json_load(extract_fields['pure_publication']['dmao_table'],
                 json_fragment)
         end

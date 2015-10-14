@@ -368,5 +368,32 @@ query_templates = {
             select api_key from institution
             where inst_id = #inst_id#
         ]]
+    },
+    -- open queries for summary information and login
+    o_inst_list = {
+        query = [[
+            select inst_id, name from institution
+        ]]
+    },
+    o_get_api_key = {
+        query = [[
+            select
+                api_key
+            from
+                institution
+            where inst_id in
+                (
+                    select
+                        inst_id
+                    from
+                        users
+                    where
+                        inst_id = #inst_id#
+                    and
+                        username = #username#
+                    and
+                        passwd = encrypt_password(#passwd#)
+                )
+        ]]
     }
 }

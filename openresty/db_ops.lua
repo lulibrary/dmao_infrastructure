@@ -59,7 +59,6 @@ end
 local function do_db_operation(d, query, method)
     local return_code
     if debug then
-        util.swallow(d, method)
         return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
     else
         local res, err = d:query(query)
@@ -69,7 +68,6 @@ local function do_db_operation(d, query, method)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
-            util.swallow(return_code)
         else
             return_code = ngx.HTTP_OK
         end
@@ -150,7 +148,7 @@ local function populate_var_clauses(q, db, args, template)
                         db:escape_literal(args['sd']))
                     clause = string.gsub(clause, '#el_ed#',
                         db:escape_literal(args['ed']))
-                    if (q == 'datasets') then
+                    if q == 'datasets' then
                         if args['filter'] == 'rcuk' then
                             clause = string.gsub(clause,
                                 '#project_null_dates#', '')
@@ -161,7 +159,7 @@ local function populate_var_clauses(q, db, args, template)
                         end
                     end
                 elseif (var == 'has_dmp') or (var == 'is_awarded') then
-                    if (value == 'true') then
+                    if value == 'true' then
                         clause = string.gsub(clause, '#not#', '')
                     else
                         clause = string.gsub(clause, '#not#', 'not')
@@ -203,7 +201,7 @@ local function construct_c_query(db, inst, query)
         q = string.gsub(q, '#group_by_clause#', '')
     else
         q = string.gsub(q, '#columns_list#', qt[query]['columns_list'])
-        if not (query == 'dataset_accesses') then
+        if (query ~= 'dataset_accesses') then
             q = string.gsub(q, '#order_clause#', qt[query]['output_order'])
             q = string.gsub(q, '#group_by_clause#', qt[query]['group_by'])
         end
@@ -277,8 +275,7 @@ local function construct_c_query(db, inst, query)
 
     end
     q = string.gsub(q, '#inst_id#', institution)
-    q = clean_query(q)
-    return q
+    return clean_query(q)
 end
 
 
@@ -287,22 +284,38 @@ local function construct_u_query(db, inst, query)
     local qt = read_templates()
     local q = qt[query]['query']
     q = string.gsub(q, '#inst_id#', institution)
-    q = clean_query(q)
-    return q
+    return clean_query(q)
+end
+
+-- todo: not working
+local function construct_o_query(db, inst, query)
+    local qt = read_templates()
+    local q
+    if query == 'o_get_api_key' then
+        q = qt[query]['query']
+        local args = ngx.req.get_uri_args()
+        local user = db:escape_literal(args['user'])
+        local passwd = db:escape_literal(args['passwd'])
+        local institution = db:escape_literal(inst)
+        q = string.gsub(q, '#inst_id#', institution)
+        q = string.gsub(q, '#username#', user)
+        q = string.gsub(q, '#passwd#', passwd)
+    else
+        q = qt[query]['query']
+    end
+    return clean_query(q)
 end
 
 
--- pre-defined 'canned' and utility queries
-local function do_cu_query(db, qtype)
-    util.swallow(qtype)
+-- pre-defined 'canned', 'utility' and 'open' queries
+local function do_cuo_query(db, qtype)
     local inst = ngx.var.inst_id
     local query = ngx.var.query
     local method = ngx.req.get_method()
-    if not (method == 'GET') then
+    if method ~= 'GET' then
         local e = method .. ' not supported for query on '
             .. query .. ' in ' .. inst
         ngx.log(ngx.ERR, e)
-        util.swallow(db)
         return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     else
         return do_db_operation(
@@ -316,11 +329,11 @@ local function check_api_key(db, inst, api_key)
     local q = [[
         select api_key from institution where inst_id =
         ]] .. db:escape_literal(inst) .. ';'
-    local res, err = db:query(q)
+    local res = db:query(q)
     local stored_api_key = res[1]['api_key']
-    ngx.log(ngx.ERR, api_key .. ' ' .. stored_api_key)
-    if not (api_key == stored_api_key) then
-        ngx.log(ngx.ERR, 'http_forbidden')
+    if api_key ~= stored_api_key then
+        ngx.log(ngx.ERR, 'HTTP_FORBIDDEN to '
+            .. ngx.var.remote_addr .. ' with api_key = ' .. api_key)
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
 end
@@ -329,13 +342,14 @@ end
 local function db_operation(db)
     local c_query = ngx.var.c_query
     local u_query = ngx.var.u_query
-    util.swallow(u_query)
-    util.swallow(c_query)
+    local o_query = ngx.var.o_query
     if c_query == 'true' then
-        return do_cu_query(db, construct_c_query)
+        return do_cuo_query(db, construct_c_query)
+    elseif o_query == 'true' then
+        return do_cuo_query(db, construct_o_query)
     elseif u_query == 'true' then
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
-        return do_cu_query(db, construct_u_query)
+        return do_cuo_query(db, construct_u_query)
     else
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
         local inst = ngx.var.inst_id
@@ -355,7 +369,6 @@ local function db_operation(db)
                 ' values ', values,
                 ';'
             )
-            util.swallow(query)
         elseif method == 'PUT' then
             local data_table = form_to_table()
             local columns, values, pkey, pkey_val =
@@ -374,7 +387,6 @@ local function db_operation(db)
                 pkey, ' = ', pkey_val,
                 ' returning *;'
             )
-            util.swallow(query)
         elseif method == 'DELETE' then
             if k and v then
                 query = make_sql(
@@ -384,7 +396,6 @@ local function db_operation(db)
                     k, ' = ', db:escape_literal(v),
                     ';'
                 )
-                util.swallow(query)
             else
                 local e = 'No pkey and value specified ' ..
                         'for for http_method = '
@@ -401,14 +412,12 @@ local function db_operation(db)
                     k, ' = ', db:escape_literal(v),
                     ';'
                 )
-                util.swallow(query)
             else
                 query = make_sql(
                     'select * from ', object,
                     ' where inst_id = ', db:escape_literal(inst),
                     ';'
                 )
-                util.swallow(query)
             end
         else
             local e = 'No defined action for http_method = ' .. method
