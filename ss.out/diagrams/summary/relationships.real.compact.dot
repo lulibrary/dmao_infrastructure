@@ -1,4 +1,4 @@
-// dot 2.38.0 on Linux 3.16.0-4-amd64
+// dot 2.36.0 on Linux 3.13.0-63-generic
 // SchemaSpy rev 590
 digraph "compactRelationshipsDiagram" {
   graph [
@@ -24,11 +24,12 @@ digraph "compactRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dataset</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">dataset_id</TD></TR>
+      <TR><TD PORT="inst_id" COLSPAN="3" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" ALIGN="LEFT">project_id</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="3" ALIGN="LEFT">lead_faculty_id</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="tables/dataset.html"
     tooltip="dataset"
@@ -41,7 +42,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="access_type" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">access_type</TD></TR>
       <TR><TD PORT="access_date" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">access_date</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6,656 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/dataset_accesses.html"
     tooltip="dataset_accesses"
@@ -55,7 +56,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="faculty_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">faculty_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">35 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="tables/department.html"
     tooltip="department"
@@ -69,7 +70,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="dmp_ss_pid" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dmp_ss_pid</TD></TR>
       <TR><TD PORT="dmp_state" COLSPAN="3" ALIGN="LEFT">dmp_state</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">9 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="tables/dmp.html"
     tooltip="dmp"
@@ -82,7 +83,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/faculty.html"
     tooltip="faculty"
@@ -93,7 +94,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">funder</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/funder.html"
     tooltip="funder"
@@ -107,7 +108,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="funder_state_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_state_code</TD></TR>
       <TR><TD PORT="funder_state_name" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_state_name</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="tables/funder_dmp_states.html"
     tooltip="funder_dmp_states"
@@ -120,7 +121,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="inst_storage_platform_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_storage_platform_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/inst_storage_costs.html"
     tooltip="inst_storage_costs"
@@ -132,7 +133,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="inst_storage_platform_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">inst_storage_platform_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/inst_storage_platforms.html"
     tooltip="inst_storage_platforms"
@@ -143,7 +144,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">institution</TD></TR>
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">9 &gt;</TD></TR>
     </TABLE>>
     URL="tables/institution.html"
     tooltip="institution"
@@ -176,7 +177,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_funder_ds</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/map_funder_ds.html"
     tooltip="map_funder_ds"
@@ -187,7 +188,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_funder_project</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/map_funder_project.html"
     tooltip="map_funder_project"
@@ -198,7 +199,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_funder_pub</TD></TR>
       <TR><TD PORT="funder_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">funder_id</TD></TR>
       <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/map_funder_pub.html"
     tooltip="map_funder_pub"
@@ -209,7 +210,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_inst_ds</TD></TR>
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/map_inst_ds.html"
     tooltip="map_inst_ds"
@@ -242,7 +243,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">map_pub_ds</TD></TR>
       <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">publication_id</TD></TR>
       <TR><TD PORT="dataset_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">dataset_id</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/map_pub_ds.html"
     tooltip="map_pub_ds"
@@ -257,7 +258,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
       <TR><TD PORT="dmp_id" COLSPAN="3" ALIGN="LEFT">dmp_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">421 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="tables/project.html"
     tooltip="project"
@@ -270,7 +271,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="inst_storage_platform_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_storage_platform_id</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">project_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">15 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/project_storage_requirement.html"
     tooltip="project_storage_requirement"
@@ -280,13 +281,13 @@ digraph "compactRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">publication</TD></TR>
       <TR><TD PORT="publication_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">publication_id</TD></TR>
+      <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="project_id" COLSPAN="3" ALIGN="LEFT">project_id</TD></TR>
       <TR><TD PORT="cris_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">cris_id</TD></TR>
-      <TR><TD PORT="lead_inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">lead_inst_id</TD></TR>
       <TR><TD PORT="lead_faculty_id" COLSPAN="3" ALIGN="LEFT">lead_faculty_id</TD></TR>
       <TR><TD PORT="lead_department_id" COLSPAN="3" ALIGN="LEFT">lead_department_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/publication.html"
     tooltip="publication"
@@ -298,11 +299,12 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="username" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">username</TD></TR>
       <TR><TD PORT="inst_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">inst_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 row</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/users.html"
     tooltip="users"
   ];
+  "dataset":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "dataset":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -313,6 +315,7 @@ digraph "compactRelationshipsDiagram" {
   "faculty":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "funder_dmp_states":"funder_id":w -> "funder":"funder_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "inst_storage_costs":"inst_id":w -> "inst_storage_platforms":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "inst_storage_costs":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "inst_storage_costs":"inst_storage_platform_id":w -> "inst_storage_platforms":"inst_storage_platform_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "inst_storage_platforms":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "map_dept_ds":"dataset_id":w -> "dataset":"dataset_id":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -340,9 +343,9 @@ digraph "compactRelationshipsDiagram" {
   "project_storage_requirement":"inst_id":w -> "inst_storage_platforms":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_storage_requirement":"inst_storage_platform_id":w -> "inst_storage_platforms":"inst_storage_platform_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "project_storage_requirement":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "publication":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_department_id":w -> "department":"department_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"lead_faculty_id":w -> "faculty":"faculty_id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "publication":"lead_inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "publication":"project_id":w -> "project":"project_id":e [arrowhead=none dir=back arrowtail=crowodot];
   "users":"inst_id":w -> "institution":"inst_id":e [arrowhead=none dir=back arrowtail=crowodot];
 }

@@ -1,4 +1,5 @@
 project_storage_requirement
+inst_storage_costs
 map_pub_ds
 map_project_pub
 map_project_ds
@@ -8,7 +9,6 @@ map_funder_project
 map_funder_ds
 map_dept_pub
 map_dept_ds
-inst_storage_costs
 users
 dataset_accesses
 publication

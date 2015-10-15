@@ -392,7 +392,7 @@ query_templates = {
                     and
                         username = #username#
                     and
-                        passwd = encrypt_password(#passwd#)
+                        passwd = #passwd#
                 )
         ]]
     }

@@ -32,7 +32,7 @@
 <div class='indent'>
 <table width='100%'>
 <tr><td class='container' valign='bottom'><b>
-40 Foreign Key Constraints:</b>
+42 Foreign Key Constraints:</b>
 </td><td class='container' align='right'>
 <table>
   <tr><td class='container' align='right' valign='top'><a href='http://sourceforge.net' target='_blank'><img src='http://sourceforge.net/sflogo.php?group_id=137197&amp;type=1' alt='SourceForge.net' border='0' height='31' width='88'></a></td></tr>
@@ -79,63 +79,77 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
   <tr class='odd'>
+  <td class='detail'>dataset_inst_id_fkey</td>
+  <td class='detail'><a href='tables/dataset.html'>dataset</a>.inst_id</td>
+  <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
+  <td class='detail'><span title='Cascade on delete:
+ Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
+ </tr>
+  <tr class='even'>
   <td class='detail'>dataset_lead_department_id_fkey</td>
   <td class='detail'><a href='tables/dataset.html'>dataset</a>.lead_department_id</td>
   <td class='detail'><a href='tables/department.html'>department</a>.department_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='even'>
+  <tr class='odd'>
   <td class='detail'>dataset_lead_faculty_id_fkey</td>
   <td class='detail'><a href='tables/dataset.html'>dataset</a>.lead_faculty_id</td>
   <td class='detail'><a href='tables/faculty.html'>faculty</a>.faculty_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='odd'>
+  <tr class='even'>
   <td class='detail'>dataset_project_id_fkey</td>
   <td class='detail'><a href='tables/dataset.html'>dataset</a>.project_id</td>
   <td class='detail'><a href='tables/project.html'>project</a>.project_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='even'>
+  <tr class='odd'>
   <td class='detail'>department_faculty_id_fkey</td>
   <td class='detail'><a href='tables/department.html'>department</a>.faculty_id</td>
   <td class='detail'><a href='tables/faculty.html'>faculty</a>.faculty_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='odd'>
+  <tr class='even'>
   <td class='detail'>department_inst_id_fkey</td>
   <td class='detail'><a href='tables/department.html'>department</a>.inst_id</td>
   <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='even'>
+  <tr class='odd'>
   <td class='detail'>dmp_dmp_state_fkey</td>
   <td class='detail'><a href='tables/dmp.html'>dmp</a>.dmp_state</td>
   <td class='detail'><a href='tables/funder_dmp_states.html'>funder_dmp_states</a>.dmp_state_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='odd'>
+  <tr class='even'>
   <td class='detail'>faculty_inst_id_fkey</td>
   <td class='detail'><a href='tables/faculty.html'>faculty</a>.inst_id</td>
   <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='even'>
+  <tr class='odd'>
   <td class='detail'>funder_dmp_states_funder_id_fkey</td>
   <td class='detail'><a href='tables/funder_dmp_states.html'>funder_dmp_states</a>.funder_id</td>
   <td class='detail'><a href='tables/funder.html'>funder</a>.funder_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='odd'>
+  <tr class='even'>
   <td class='detail'>inst_storage_costs_inst_id_fkey</td>
+  <td class='detail'><a href='tables/inst_storage_costs.html'>inst_storage_costs</a>.inst_id</td>
+  <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
+  <td class='detail'><span title='Cascade on delete:
+ Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
+ </tr>
+  <tr class='odd'>
+  <td class='detail'>inst_storage_costs_inst_id_fkey1</td>
   <td class='detail'><a href='tables/inst_storage_costs.html'>inst_storage_costs</a>.inst_id<br><a href='tables/inst_storage_costs.html'>inst_storage_costs</a>.inst_storage_platform_id</td>
   <td class='detail'><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_id<br><a href='tables/inst_storage_platforms.html'>inst_storage_platforms</a>.inst_storage_platform_id</td>
   <td class='detail'><span title='Cascade on delete:
@@ -317,23 +331,23 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
   <tr class='odd'>
+  <td class='detail'>publication_inst_id_fkey</td>
+  <td class='detail'><a href='tables/publication.html'>publication</a>.inst_id</td>
+  <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
+  <td class='detail'><span title='Cascade on delete:
+ Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
+ </tr>
+  <tr class='even'>
   <td class='detail'>publication_lead_department_id_fkey</td>
   <td class='detail'><a href='tables/publication.html'>publication</a>.lead_department_id</td>
   <td class='detail'><a href='tables/department.html'>department</a>.department_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>
-  <tr class='even'>
+  <tr class='odd'>
   <td class='detail'>publication_lead_faculty_id_fkey</td>
   <td class='detail'><a href='tables/publication.html'>publication</a>.lead_faculty_id</td>
   <td class='detail'><a href='tables/faculty.html'>faculty</a>.faculty_id</td>
-  <td class='detail'><span title='Cascade on delete:
- Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
- </tr>
-  <tr class='odd'>
-  <td class='detail'>publication_lead_inst_id_fkey</td>
-  <td class='detail'><a href='tables/publication.html'>publication</a>.lead_inst_id</td>
-  <td class='detail'><a href='tables/institution.html'>institution</a>.inst_id</td>
   <td class='detail'><span title='Cascade on delete:
  Deletion of parent deletes child'>Cascade on delete&nbsp;</span></td>
  </tr>

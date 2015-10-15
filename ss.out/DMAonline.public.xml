@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<database name="DMAonline" schema="public" type="PostgreSQL - 9.4.3">
+<database name="DMAonline" schema="public" type="PostgreSQL - 9.3.9">
    <tables>
-      <table name="dataset" numRows="0" remarks="Describes datasets" schema="public" type="TABLE">
+      <table name="dataset" numRows="13" remarks="Describes datasets" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('dataset_dataset_id_seq'::regclass)" digits="0" id="0" name="dataset_id" nullable="false" remarks="" size="10" type="serial">
             <child column="dataset_id" foreignKey="dataset_accesses_dataset_id_fkey" implied="false" onDeleteCascade="true" table="dataset_accesses"/>
             <child column="dataset_id" foreignKey="map_dept_ds_dataset_id_fkey" implied="false" onDeleteCascade="true" table="map_dept_ds"/>
@@ -10,33 +10,36 @@
             <child column="dataset_id" foreignKey="map_project_ds_dataset_id_fkey" implied="false" onDeleteCascade="true" table="map_project_ds"/>
             <child column="dataset_id" foreignKey="map_pub_ds_dataset_id_fkey" implied="false" onDeleteCascade="true" table="map_pub_ds"/>
          </column>
-         <column autoUpdated="false" digits="0" id="1" name="project_id" nullable="true" remarks="" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="1" name="inst_id" nullable="true" remarks="" size="2147483647" type="inst_id_t">
+            <parent column="inst_id" foreignKey="dataset_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="project_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="project_id" foreignKey="dataset_project_id_fkey" implied="false" onDeleteCascade="true" table="project"/>
          </column>
-         <column autoUpdated="false" digits="0" id="2" name="dataset_pid" nullable="true" remarks="The persistent id for the dataset" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="3" name="dataset_link" nullable="true" remarks="The persistent url for the dataset" size="8192" type="varchar"/>
-         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="dataset_size" nullable="true" remarks="The current size of the dataset in GB for the dataset" size="131089" type="numeric"/>
-         <column autoUpdated="false" digits="0" id="5" name="dataset_name" nullable="true" remarks="" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="6" name="dataset_format" nullable="true" remarks="" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="7" name="dataset_notes" nullable="true" remarks="" size="2048" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="8" name="repository_pid" nullable="true" remarks="" size="2048" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="9" name="inst_archive_status" nullable="true" remarks="" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="10" name="archive_pid" nullable="true" remarks="" size="2048" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="11" name="storage_location" nullable="true" remarks="Can be either 'internal' or 'external' to the institution." size="50" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="12" name="lead_faculty_id" nullable="true" remarks="" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="3" name="dataset_pid" nullable="true" remarks="The persistent id for the dataset" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="4" name="dataset_link" nullable="true" remarks="The persistent url for the dataset" size="8192" type="varchar"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="5" name="dataset_size" nullable="true" remarks="The current size of the dataset in GB for the dataset" size="131089" type="numeric"/>
+         <column autoUpdated="false" digits="0" id="6" name="dataset_name" nullable="true" remarks="" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="7" name="dataset_format" nullable="true" remarks="" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="8" name="dataset_notes" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="9" name="repository_pid" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="10" name="inst_archive_status" nullable="true" remarks="" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="11" name="archive_pid" nullable="true" remarks="" size="2048" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="12" name="storage_location" nullable="true" remarks="Can be either 'internal' or 'external' to the institution." size="50" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="13" name="lead_faculty_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="faculty_id" foreignKey="dataset_lead_faculty_id_fkey" implied="false" onDeleteCascade="true" table="faculty"/>
          </column>
-         <column autoUpdated="false" digits="0" id="13" name="lead_department_id" nullable="true" remarks="" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="14" name="lead_department_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="department_id" foreignKey="dataset_lead_department_id_fkey" implied="false" onDeleteCascade="true" table="department"/>
          </column>
-         <column autoUpdated="false" digits="6" id="14" name="load_date" nullable="true" remarks="" size="29" type="timestamp"/>
-         <column autoUpdated="false" digits="6" id="15" name="mod_date" nullable="true" remarks="" size="29" type="timestamp"/>
+         <column autoUpdated="false" digits="6" id="15" name="load_date" nullable="true" remarks="" size="29" type="timestamp"/>
+         <column autoUpdated="false" digits="6" id="16" name="mod_date" nullable="true" remarks="" size="29" type="timestamp"/>
          <primaryKey column="dataset_id" sequenceNumberInPK="1"/>
          <index name="dataset_pkey" unique="true">
             <column ascending="true" name="dataset_id"/>
          </index>
       </table>
-      <table name="dataset_accesses" numRows="0" remarks="" schema="public" type="TABLE">
+      <table name="dataset_accesses" numRows="6656" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="dataset_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="dataset_id" foreignKey="dataset_accesses_dataset_id_fkey" implied="false" onDeleteCascade="true" table="dataset"/>
          </column>
@@ -55,7 +58,7 @@
             <column ascending="true" name="dataset_id"/>
          </index>
       </table>
-      <table name="department" numRows="35" remarks="Describes a department within a faculty. The combination&#10;  of institution id, faculty id and name must be unique." schema="public" type="TABLE">
+      <table name="department" numRows="11" remarks="Describes a department within a faculty. The combination&#10;  of institution id, faculty id and name must be unique." schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('department_department_id_seq'::regclass)" digits="0" id="0" name="department_id" nullable="false" remarks="" size="10" type="serial">
             <child column="lead_department_id" foreignKey="dataset_lead_department_id_fkey" implied="false" onDeleteCascade="true" table="dataset"/>
             <child column="department_id" foreignKey="map_dept_ds_department_id_fkey" implied="false" onDeleteCascade="true" table="map_dept_ds"/>
@@ -86,7 +89,7 @@
             <column ascending="true" name="name"/>
          </index>
       </table>
-      <table name="dmp" numRows="0" remarks="Describes data management plans" schema="public" type="TABLE">
+      <table name="dmp" numRows="9" remarks="Describes data management plans" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('dmp_dmp_id_seq'::regclass)" digits="0" id="0" name="dmp_id" nullable="false" remarks="" size="10" type="serial">
             <child column="dmp_id" foreignKey="project_dmp_id_fkey" implied="false" onDeleteCascade="true" table="project"/>
          </column>
@@ -108,7 +111,7 @@
             <column ascending="true" name="dmp_ss_pid"/>
          </index>
       </table>
-      <table name="faculty" numRows="7" remarks="Describes a faculty, the combination of the&#10;  institution id and the faculty name must be unique." schema="public" type="TABLE">
+      <table name="faculty" numRows="4" remarks="Describes a faculty, the combination of the&#10;  institution id and the faculty name must be unique." schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('faculty_faculty_id_seq'::regclass)" digits="0" id="0" name="faculty_id" nullable="false" remarks="" size="10" type="serial">
             <child column="lead_faculty_id" foreignKey="dataset_lead_faculty_id_fkey" implied="false" onDeleteCascade="true" table="dataset"/>
             <child column="faculty_id" foreignKey="department_faculty_id_fkey" implied="false" onDeleteCascade="true" table="department"/>
@@ -134,7 +137,7 @@
             <column ascending="true" name="name"/>
          </index>
       </table>
-      <table name="funder" numRows="0" remarks="Describes a funding body." schema="public" type="TABLE">
+      <table name="funder" numRows="11" remarks="Describes a funding body." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="funder_id" nullable="false" remarks="" size="2147483647" type="funder_id_t">
             <child column="funder_id" foreignKey="funder_dmp_states_funder_id_fkey" implied="false" onDeleteCascade="true" table="funder_dmp_states"/>
             <child column="funder_id" foreignKey="map_funder_ds_funder_id_fkey" implied="false" onDeleteCascade="true" table="map_funder_ds"/>
@@ -151,7 +154,7 @@
             <column ascending="true" name="funder_id"/>
          </index>
       </table>
-      <table name="funder_dmp_states" numRows="0" remarks="Describes the states that a funder specifies for DMPs" schema="public" type="TABLE">
+      <table name="funder_dmp_states" numRows="7" remarks="Describes the states that a funder specifies for DMPs" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('funder_dmp_states_dmp_state_id_seq'::regclass)" digits="0" id="0" name="dmp_state_id" nullable="false" remarks="" size="10" type="serial">
             <child column="dmp_state" foreignKey="dmp_dmp_state_fkey" implied="false" onDeleteCascade="true" table="dmp"/>
          </column>
@@ -176,13 +179,14 @@
             <column ascending="true" name="funder_state_name"/>
          </index>
       </table>
-      <table name="inst_storage_costs" numRows="0" remarks="Describes storage costs for institutional storage platforms" schema="public" type="TABLE">
+      <table name="inst_storage_costs" numRows="6" remarks="Describes storage costs for institutional storage platforms" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('inst_storage_costs_sc_id_seq'::regclass)" digits="0" id="0" name="sc_id" nullable="false" remarks="" size="10" type="serial"/>
          <column autoUpdated="false" digits="0" id="1" name="inst_id" nullable="true" remarks="" size="2147483647" type="inst_id_t">
-            <parent column="inst_id" foreignKey="inst_storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_storage_platforms"/>
+            <parent column="inst_id" foreignKey="inst_storage_costs_inst_id_fkey1" implied="false" onDeleteCascade="true" table="inst_storage_platforms"/>
+            <parent column="inst_id" foreignKey="inst_storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
          </column>
          <column autoUpdated="false" digits="0" id="2" name="inst_storage_platform_id" nullable="true" remarks="" size="2147483647" type="inst_storage_platform_id_t">
-            <parent column="inst_storage_platform_id" foreignKey="inst_storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_storage_platforms"/>
+            <parent column="inst_storage_platform_id" foreignKey="inst_storage_costs_inst_id_fkey1" implied="false" onDeleteCascade="true" table="inst_storage_platforms"/>
          </column>
          <column autoUpdated="false" defaultValue="0" digits="0" id="3" name="cost_per_tb_pa" nullable="true" remarks="" size="131089" type="numeric"/>
          <column autoUpdated="false" digits="0" id="4" name="applicable_dates" nullable="true" remarks="" size="2147483647" type="daterange"/>
@@ -203,14 +207,14 @@
             <column ascending="true" name="inst_storage_platform_id"/>
          </index>
       </table>
-      <table name="inst_storage_platforms" numRows="0" remarks="" schema="public" type="TABLE">
+      <table name="inst_storage_platforms" numRows="3" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="inst_id" nullable="false" remarks="" size="2147483647" type="inst_id_t">
-            <child column="inst_id" foreignKey="inst_storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_storage_costs"/>
+            <child column="inst_id" foreignKey="inst_storage_costs_inst_id_fkey1" implied="false" onDeleteCascade="true" table="inst_storage_costs"/>
             <child column="inst_id" foreignKey="project_storage_requirement_inst_id_fkey" implied="false" onDeleteCascade="false" table="project_storage_requirement"/>
             <parent column="inst_id" foreignKey="inst_storage_platforms_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
          </column>
          <column autoUpdated="false" digits="0" id="1" name="inst_storage_platform_id" nullable="false" remarks="" size="2147483647" type="inst_storage_platform_id_t">
-            <child column="inst_storage_platform_id" foreignKey="inst_storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_storage_costs"/>
+            <child column="inst_storage_platform_id" foreignKey="inst_storage_costs_inst_id_fkey1" implied="false" onDeleteCascade="true" table="inst_storage_costs"/>
             <child column="inst_storage_platform_id" foreignKey="project_storage_requirement_inst_id_fkey" implied="false" onDeleteCascade="false" table="project_storage_requirement"/>
          </column>
          <column autoUpdated="false" digits="0" id="2" name="inst_notes" nullable="true" remarks="" size="1024" type="varchar"/>
@@ -232,15 +236,17 @@
       </table>
       <table name="institution" numRows="1" remarks="Describes an institution." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="inst_id" nullable="false" remarks="" size="2147483647" type="inst_id_t">
+            <child column="inst_id" foreignKey="dataset_inst_id_fkey" implied="false" onDeleteCascade="true" table="dataset"/>
             <child column="inst_id" foreignKey="department_inst_id_fkey" implied="false" onDeleteCascade="true" table="department"/>
             <child column="inst_id" foreignKey="faculty_inst_id_fkey" implied="false" onDeleteCascade="true" table="faculty"/>
+            <child column="inst_id" foreignKey="inst_storage_costs_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_storage_costs"/>
             <child column="inst_id" foreignKey="inst_storage_platforms_inst_id_fkey" implied="false" onDeleteCascade="true" table="inst_storage_platforms"/>
             <child column="inst_id" foreignKey="map_inst_ds_inst_id_fkey" implied="false" onDeleteCascade="true" table="map_inst_ds"/>
             <child column="inst_id" foreignKey="project_inst_id_fkey" implied="false" onDeleteCascade="true" table="project"/>
             <child column="inst_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" table="project_expected_storage"/>
             <child column="inst_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" table="project_storage_costs_breakdown"/>
             <child column="inst_id" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" table="project_storage_costs_intermediate"/>
-            <child column="lead_inst_id" foreignKey="publication_lead_inst_id_fkey" implied="false" onDeleteCascade="true" table="publication"/>
+            <child column="inst_id" foreignKey="publication_inst_id_fkey" implied="false" onDeleteCascade="true" table="publication"/>
             <child column="inst_id" foreignKey="users_inst_id_fkey" implied="false" onDeleteCascade="true" table="users"/>
          </column>
          <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="256" type="varchar"/>
@@ -254,8 +260,8 @@
          <column autoUpdated="false" digits="0" id="9" name="currency" nullable="true" remarks="" size="3" type="varchar"/>
          <column autoUpdated="false" digits="0" id="10" name="currency_symbol" nullable="true" remarks="" size="32" type="varchar"/>
          <column autoUpdated="false" digits="0" id="11" name="url" nullable="true" remarks="" size="2048" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="12" name="inst_local_id" nullable="true" remarks="" size="64" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="13" name="description" nullable="true" remarks="" size="2147483647" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="12" name="description" nullable="true" remarks="" size="2147483647" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="13" name="api_key" nullable="true" remarks="" size="128" type="varchar"/>
          <column autoUpdated="false" digits="6" id="14" name="load_date" nullable="true" remarks="" size="29" type="timestamp"/>
          <column autoUpdated="false" digits="6" id="15" name="mod_date" nullable="true" remarks="" size="29" type="timestamp"/>
          <primaryKey column="inst_id" sequenceNumberInPK="1"/>
@@ -295,7 +301,7 @@
             <column ascending="true" name="publication_id"/>
          </index>
       </table>
-      <table name="map_funder_ds" numRows="0" remarks="Maps funders to datasets." schema="public" type="TABLE">
+      <table name="map_funder_ds" numRows="13" remarks="Maps funders to datasets." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="funder_id" nullable="false" remarks="" size="2147483647" type="funder_id_t">
             <parent column="funder_id" foreignKey="map_funder_ds_funder_id_fkey" implied="false" onDeleteCascade="true" table="funder"/>
          </column>
@@ -309,7 +315,7 @@
             <column ascending="true" name="funder_id"/>
          </index>
       </table>
-      <table name="map_funder_project" numRows="0" remarks="Maps funders to projects." schema="public" type="TABLE">
+      <table name="map_funder_project" numRows="10" remarks="Maps funders to projects." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="funder_id" nullable="false" remarks="" size="2147483647" type="funder_id_t">
             <parent column="funder_id" foreignKey="map_funder_project_funder_id_fkey" implied="false" onDeleteCascade="true" table="funder"/>
          </column>
@@ -323,7 +329,7 @@
             <column ascending="true" name="project_id"/>
          </index>
       </table>
-      <table name="map_funder_pub" numRows="0" remarks="Maps funders to publications." schema="public" type="TABLE">
+      <table name="map_funder_pub" numRows="3" remarks="Maps funders to publications." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="funder_id" nullable="false" remarks="" size="2147483647" type="funder_id_t">
             <parent column="funder_id" foreignKey="map_funder_pub_funder_id_fkey" implied="false" onDeleteCascade="true" table="funder"/>
          </column>
@@ -337,7 +343,7 @@
             <column ascending="true" name="publication_id"/>
          </index>
       </table>
-      <table name="map_inst_ds" numRows="0" remarks="Maps institutions and datasets." schema="public" type="TABLE">
+      <table name="map_inst_ds" numRows="13" remarks="Maps institutions and datasets." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="inst_id" nullable="false" remarks="" size="2147483647" type="inst_id_t">
             <parent column="inst_id" foreignKey="map_inst_ds_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
          </column>
@@ -379,7 +385,7 @@
             <column ascending="true" name="publication_id"/>
          </index>
       </table>
-      <table name="map_pub_ds" numRows="0" remarks="Maps publications to datasets." schema="public" type="TABLE">
+      <table name="map_pub_ds" numRows="7" remarks="Maps publications to datasets." schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="publication_id" nullable="false" remarks="" size="10" type="int4">
             <parent column="publication_id" foreignKey="map_pub_ds_publication_id_fkey" implied="false" onDeleteCascade="true" table="publication"/>
          </column>
@@ -393,7 +399,7 @@
             <column ascending="true" name="publication_id"/>
          </index>
       </table>
-      <table name="project" numRows="421" remarks="Describes an institutions projects" schema="public" type="TABLE">
+      <table name="project" numRows="11" remarks="Describes an institutions projects" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('project_project_id_seq'::regclass)" digits="0" id="0" name="project_id" nullable="false" remarks="" size="10" type="serial">
             <child column="project_id" foreignKey="dataset_project_id_fkey" implied="false" onDeleteCascade="true" table="dataset"/>
             <child column="project_id" foreignKey="map_funder_project_project_id_fkey" implied="false" onDeleteCascade="true" table="map_funder_project"/>
@@ -470,7 +476,7 @@
          <column autoUpdated="false" digits="0" id="3" name="project_storage_dates" nullable="true" remarks="" size="2147483647" type="daterange"/>
          <column autoUpdated="false" digits="0" id="4" name="storage_cost_pa" nullable="true" remarks="" size="131089" type="numeric"/>
       </table>
-      <table name="project_storage_requirement" numRows="0" remarks="" schema="public" type="TABLE">
+      <table name="project_storage_requirement" numRows="15" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="inst_id" nullable="false" remarks="" size="2147483647" type="inst_id_t">
             <parent column="inst_id" foreignKey="project_storage_requirement_inst_id_fkey" implied="false" onDeleteCascade="false" table="inst_storage_platforms"/>
          </column>
@@ -495,23 +501,23 @@
             <column ascending="true" name="project_id"/>
          </index>
       </table>
-      <table name="publication" numRows="0" remarks="Describes publications" schema="public" type="TABLE">
+      <table name="publication" numRows="7" remarks="Describes publications" schema="public" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('publication_publication_id_seq'::regclass)" digits="0" id="0" name="publication_id" nullable="false" remarks="" size="10" type="serial">
             <child column="publication_id" foreignKey="map_dept_pub_publication_id_fkey" implied="false" onDeleteCascade="true" table="map_dept_pub"/>
             <child column="publication_id" foreignKey="map_funder_pub_publication_id_fkey" implied="false" onDeleteCascade="true" table="map_funder_pub"/>
             <child column="publication_id" foreignKey="map_project_pub_publication_id_fkey" implied="false" onDeleteCascade="true" table="map_project_pub"/>
             <child column="publication_id" foreignKey="map_pub_ds_publication_id_fkey" implied="false" onDeleteCascade="true" table="map_pub_ds"/>
          </column>
-         <column autoUpdated="false" digits="0" id="1" name="project_id" nullable="true" remarks="The institution project identifier" size="10" type="int4">
+         <column autoUpdated="false" digits="0" id="1" name="inst_id" nullable="true" remarks="" size="2147483647" type="inst_id_t">
+            <parent column="inst_id" foreignKey="publication_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="project_id" nullable="true" remarks="The institution project identifier" size="10" type="int4">
             <parent column="project_id" foreignKey="publication_project_id_fkey" implied="false" onDeleteCascade="true" table="project"/>
          </column>
-         <column autoUpdated="false" digits="0" id="2" name="cris_id" nullable="true" remarks="The institution repository identifier" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="3" name="repo_id" nullable="true" remarks="The institution repository identifier" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="4" name="publication_pid" nullable="true" remarks="The persistent identifier, e.g. a DOI, for the publication" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="5" name="funder_project_code" nullable="true" remarks="" size="256" type="varchar"/>
-         <column autoUpdated="false" digits="0" id="6" name="lead_inst_id" nullable="true" remarks="" size="2147483647" type="inst_id_t">
-            <parent column="inst_id" foreignKey="publication_lead_inst_id_fkey" implied="false" onDeleteCascade="true" table="institution"/>
-         </column>
+         <column autoUpdated="false" digits="0" id="3" name="cris_id" nullable="true" remarks="The institution repository identifier" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="4" name="repo_id" nullable="true" remarks="The institution repository identifier" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="5" name="publication_pid" nullable="true" remarks="The persistent identifier, e.g. a DOI, for the publication" size="256" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="6" name="funder_project_code" nullable="true" remarks="" size="256" type="varchar"/>
          <column autoUpdated="false" digits="0" id="7" name="lead_faculty_id" nullable="true" remarks="" size="10" type="int4">
             <parent column="faculty_id" foreignKey="publication_lead_faculty_id_fkey" implied="false" onDeleteCascade="true" table="faculty"/>
          </column>
@@ -537,12 +543,12 @@
          <index name="publication_pkey" unique="true">
             <column ascending="true" name="publication_id"/>
          </index>
-         <index name="publication_lead_inst_id_cris_id_key" unique="true">
-            <column ascending="true" name="lead_inst_id"/>
+         <index name="publication_inst_id_cris_id_key" unique="true">
+            <column ascending="true" name="inst_id"/>
             <column ascending="true" name="cris_id"/>
          </index>
       </table>
-      <table name="users" numRows="0" remarks="" schema="public" type="TABLE">
+      <table name="users" numRows="1" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" digits="0" id="0" name="username" nullable="true" remarks="" size="64" type="varchar"/>
          <column autoUpdated="false" digits="0" id="1" name="name" nullable="true" remarks="" size="256" type="varchar"/>
          <column autoUpdated="false" digits="0" id="2" name="inst_id" nullable="false" remarks="" size="2147483647" type="inst_id_t">

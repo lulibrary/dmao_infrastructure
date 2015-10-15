@@ -4,7 +4,7 @@ insert into institution values
     'j.krug@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
     'Fedora', 'Archivematica', 'GBP', '£', 'http://lancaster.ac.uk',
     'The top university in the North West of the UK.',
-    gen_api_key('random stuff')
+    gen_api_key()
   )
 ;
 

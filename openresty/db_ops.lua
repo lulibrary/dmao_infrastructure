@@ -287,7 +287,7 @@ local function construct_u_query(db, inst, query)
     return clean_query(q)
 end
 
--- todo: not working
+
 local function construct_o_query(db, inst, query)
     local qt = read_templates()
     local q
