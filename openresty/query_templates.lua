@@ -395,5 +395,46 @@ query_templates = {
                         passwd = #passwd#
                 )
         ]]
+    },
+    o_count_institutions = {
+        query = [[
+            select count(*) from institution
+        ]]
+    },
+    o_count_faculties = {
+        query = [[
+            select count(*) from faculty
+        ]]
+    },
+    o_count_departments = {
+        query = [[
+            select count(*) from department
+        ]]
+    },
+    o_count_dmps = {
+        query = [[
+            select count(*) from dmp
+        ]]
+    },
+    o_count_publications = {
+        query = [[
+            select count(*) from publication
+        ]]
+    },
+    o_count_datasets = {
+        query = [[
+            select count(*) from dataset
+        ]]
+    },
+    o_count_projects = {
+        query = [[
+            select count(*) from project
+        ]]
+    },
+    o_count_dataset_accesses = {
+        query = [[
+            select access_type, count(*)
+            from dataset_accesses group by access_type
+        ]]
     }
 }
