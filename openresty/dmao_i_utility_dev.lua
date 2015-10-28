@@ -1,5 +1,5 @@
 
-pg = require 'pgmoon'
+local pg = require 'pgmoon'
 
 local M = {}
 setmetatable(M, {__index = _G})
@@ -18,24 +18,29 @@ function M.swallow(v)
 end
 
 
-function M.get_connection_details()
-    local f = '/usr/local/openresty/lualib/connection.conf'
-    dofile(f)
-    return user, passwd
+function M.get_connection_details(conn_file)
+    dofile(conn_file)
+    return database, user, passwd
 end
 
 
-function M.open_dmaonline_db()
-    local u, p = M.get_connection_details()
+function M.open_dmaonline_db(conn_file)
+    local d
+    local u
+    local p
+    d, u, p = M.get_connection_details(conn_file)
     local d = pg.new(
         {
             host = '127.0.0.1',
             port = '5432',
-            database = 'DMAonline',
-            user = u, password = p
+            database = d,
+            user = u,
+            password = p
         }
     )
     assert(d:connect())
+    d.convert_null = true
+    d.NULL = 'null'
     return d
 end
 

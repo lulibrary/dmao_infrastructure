@@ -88,6 +88,66 @@ query_templates = {
             #order_clause#
         ]],
     },
+    project_dmps_modifiable = {
+        columns_list = '*',
+        group_by = '',
+        order_by = '',
+        output_order = '',
+        variable_clauses = '',
+        query = [[
+            select #columns_list# from project_dmps_view_modifiables
+        ]]
+    },
+    project_dmps_view = {
+        columns_list = [[
+            *
+        ]],
+        group_by = '',
+        output_order = 'order by project_id asc',
+        columns_list_count = [[
+            count(*) num_project_dmps
+        ]],
+        variable_clauses = {
+            project_id = 'and project_id = #el_var_value#',
+            date = [[
+                and
+                (
+                    #var_value# >= #el_sd# and #var_value# <= #el_ed#
+                )
+            ]],
+            faculty = 'and lead_faculty_id = #el_var_value#',
+            dept = 'and lead_department_id = #el_var_value#',
+            has_dmp = 'and #not# has_dmp',
+            dmp_reviewed = 'and has_dmp_been_reviewed = #el_var_value#',
+            is_awarded = 'and #not# is_awarded'
+        },
+        query = [[
+            select
+                #columns_list#
+            from
+                project_dmps_view
+            where
+                inst_id = #inst_id#
+            #variable_clauses#
+            #group_by_clause#
+            #order_clause#
+        ]]
+    },
+    project_dmps_view_put = {
+        query = [[
+            update
+                project_dmps_view
+            set
+                #dmp_id#
+                #has_dmp#
+                #has_dmp_been_reviewed#
+            where
+                project_id = #project_id#
+            and
+                inst_id = #inst_id#
+            returning *
+        ]]
+    },
     project_dmps = {
         columns_list = [[
             p.*,
