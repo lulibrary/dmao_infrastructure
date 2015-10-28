@@ -42,7 +42,7 @@ create domain funder_id_t varchar(256);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create or replace function encrypt_password(bytea) returns text as $$
-  select encode(digest($1, 'sha224'), 'hex')
+  select encode(cast (digest(cast ($1 as text), cast('sha224' as text)) as bytea), cast('hex' as text))
 $$ language sql strict immutable;
 
 create or replace function gen_api_key() returns text as $$
@@ -843,7 +843,7 @@ create or replace function aggregate_project_costs_during_daterange
     cost_pa numeric
   )
 as
-  $$
+$$
   select
     d::date as day,
     sum(v.cost_pa) as cost_pa
@@ -885,6 +885,7 @@ $$
 $$
 language sql strict immutable;
 
+
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
 create or replace view project_status as
@@ -902,5 +903,60 @@ create or replace view project_status as
   from
     project
 ;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view project_dmps_view as
+  select
+    p.*,
+    f.abbreviation lead_faculty_abbrev,
+    f.name         lead_faculty_name,
+    d.abbreviation lead_dept_abbrev,
+    d.name         lead_dept_name
+  from project p
+    join
+    faculty f
+      on
+        (p.lead_faculty_id = f.faculty_id)
+    join
+    department d
+      on
+        (p.lead_department_id = d.department_id);
+
+drop table if exists project_dmps_view_modifiables;
+create table project_dmps_view_modifiables (
+  c_name varchar(128)
+);
+
+insert into project_dmps_view_modifiables values
+  ('has_dmp'),
+  ('has_dmp_been_reviewed'),
+  ('dmp_id')
+;
+
+
+create or replace function project_dmps_view_update()
+  returns trigger
+language plpgsql
+as $$
+begin
+  if TG_OP = 'UPDATE'
+  then
+    update project set
+      has_dmp = NEW.has_dmp,
+      has_dmp_been_reviewed = NEW.has_dmp_been_reviewed,
+      dmp_id = NEW.dmp_id
+    where project_id = OLD.project_id;
+  end if;
+  return NEW;
+end;
+$$;
+
+create trigger project_dmps_view_update_trigger
+instead of update on
+  project_dmps_view
+for each row execute procedure project_dmps_view_update();
+
 
 
