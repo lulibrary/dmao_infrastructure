@@ -935,7 +935,6 @@ insert into project_dmps_view_modifiables values
   ('dmp_id')
 ;
 
-
 create or replace function project_dmps_view_update()
   returns trigger
 language plpgsql
