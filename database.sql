@@ -42,7 +42,7 @@ create domain funder_id_t varchar(256);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create or replace function encrypt_password(bytea) returns text as $$
-  select encode(cast (digest(cast ($1 as text), cast('sha224' as text)) as bytea), cast('hex' as text))
+  select encode(digest($1, 'sha224'), 'hex' )
 $$ language sql strict immutable;
 
 create or replace function gen_api_key() returns text as $$
