@@ -1,0 +1,7 @@
+/openresty/connection_jhk_dev.lua
+/openresty/connection_dev.lua
+/openresty/connection_test.lua
+/openresty/connection_live.lua
+/misc/*
+# Created by .ignore support plugin (hsz.mobi)
+ss.out/*

@@ -1,23 +1,44 @@
--- db_ops.lua
+
 local cjson = require 'cjson'
 local upload = require 'resty.upload'
 local http = require 'socket.http'
 
+local debug_flag
+local print_sql
+
+local function get_inst()
+    local inst = ngx.var.inst_id
+    if not inst then
+        inst = 'none'
+    end
+    return inst
+end
+
+local function logit(t, m, l, s)
+    ngx.log(t, m .. ' at line ' .. l .. ' in '
+        .. s .. ' for ' .. get_inst())
+end
 
 local function log_debug(m)
-    if debug then
-        ngx.log(ngx.DEBUG, m)
+    if debug_flag then
+        local l = debug.getinfo(2).currentline
+        local s = debug.getinfo(2).short_src
+        logit(ngx.DEBUG, m, l, s)
     end
 end
 
 
-local function log_error(m)
-    ngx.log(ngx.ERR, m)
+local function log_error(m, l, s)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    logit(ngx.ERR, m, l, s)
 end
 
 
 local function log_info(m)
-    ngx.log(ngx.INFO, m)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    logit(ngx.INFO, m, l, s)
 end
 
 
@@ -56,19 +77,22 @@ end
 
 
 local function error_to_json(e)
-    return '[{"error": ' .. cjson.encode(e) .. '}]'
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    return '{"error": ' .. cjson.encode(
+        e .. ' at line ' .. l .. ' in ' .. s .. ' for ' .. get_inst()
+    ) .. '}'
 end
 
 
 local function do_db_operation(d, query, method)
     local return_code
     if print_sql then
-        return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
+        return ngx.HTTP_OK, '{"query": ' .. cjson.encode(query) .. '}'
     else
         local res, err = d:query(query)
         if not res then
-            return ngx.HTTP_BAD_REQUEST,
-                '[{"error": ' .. cjson.encode(err) .. '}]'
+            return ngx.HTTP_BAD_REQUEST, error_to_json(err)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
@@ -152,7 +176,7 @@ local function populate_var_clauses(q, db, args, template)
                         db:escape_literal(args['sd']))
                     clause = string.gsub(clause, '#el_ed#',
                         db:escape_literal(args['ed']))
-                    if q == 'datasets' then
+                    if (q == 'datasets') or (q == 'dmp_status') then
                         if args['filter'] == 'rcuk' then
                             clause = string.gsub(clause,
                                 '#project_null_dates#', '')
@@ -168,6 +192,8 @@ local function populate_var_clauses(q, db, args, template)
                     else
                         clause = string.gsub(clause, '#not#', 'not')
                     end
+                elseif (var == 'modifiable') then -- todo: get rid of this
+                    clause = ''
                 else
                     clause = string.gsub(clause, '#el_var_value#',
                         db:escape_literal(value))
@@ -196,10 +222,11 @@ local function construct_c_query(db, inst, query, method, qtf)
     local args = ngx.req.get_uri_args()
     local q
     if method == 'PUT' then
-        q = qt[query]['query']
-        if query == 'project_dmps_view_put' then
+        q = qt[query]['put']
+        local pkey = q['put_pkey']
+        if query == 'project_dmps' then
+            -- todo: Use a required pkey feature in the query template
             if not args['project_id'] then
-                -- todo: need a func for returning something more informative
                 log_error('project_dmps_view_put requires a '
                     .. 'project_id parameter')
                 ngx.exit(ngx.HTTP_BAD_REQUEST)
@@ -240,7 +267,11 @@ local function construct_c_query(db, inst, query, method, qtf)
             q = string.gsub(q, '#has_dmp_been_reviewed#', '')
         end
     else
-        q = qt[query]['query']
+        if args['modifiable'] then
+            q = qt[query .. '_modifiable']['query']
+        else
+            q = qt[query]['query']
+        end
         local vc = populate_var_clauses(
             query, db, args, qt[query]['variable_clauses']
         )
@@ -509,8 +540,6 @@ else
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
 
-local debug
-local print_sql
 local base_uri
 local base_path
 local conn_file
@@ -519,7 +548,7 @@ local util
 
 if environment == 'jhk_dev' then
     local host = 'localhost'
-    debug = true
+    debug_flag = true
     print_sql = false
     base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
     base_path = '/Users/krug/projects/dmao_infrastructure'
@@ -530,7 +559,7 @@ if environment == 'jhk_dev' then
     util = require 'dmao_i_utility_jhk_dev'
 elseif environment == 'dev' then
     local host = 'localhost'
-    debug = false
+    debug_flag = true
     print_sql = false
     base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
     base_path = '/home/dmao_infrastructure/deploy'
@@ -541,7 +570,7 @@ elseif environment == 'dev' then
     util = require 'dmao_i_utility_dev'
 elseif environment == 'test' then
     local host = 'localhost'
-    debug = false
+    debug_flag = true
     print_sql = false
     base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
     base_path = '/home/dmao_infrastructure/deploy'
@@ -552,7 +581,7 @@ elseif environment == 'test' then
     util = require 'dmao_i_utility_test'
 elseif environment == 'live' then
     local host = 'localhost'
-    debug = false
+    debug_flag = false
     print_sql = false
     base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
     base_path = '/home/dmao_infrastructure/deploy'
