@@ -117,7 +117,7 @@ insert into project
      5,
      'MAA7754',
      false,
-     'no',
+     'unknown',
      null,
      '2012-12-01',
      '[2013-01-01,2017-12-31)'),
@@ -276,6 +276,10 @@ insert into users values
   (
     'krug', 'John Krug', 'd_lancaster', 'j.krug@lancaster.ac.uk',
     '+441523593099', encrypt_password('test_password')
+  ),
+  (
+    'aac', 'Adrian Albin-Clark', 'd_lancaster', 'a.albin-clark@lancaster.ac.uk',
+    '+441523593099', encrypt_password('letmein')
   )
 ;
 

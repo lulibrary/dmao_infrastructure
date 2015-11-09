@@ -90,15 +90,14 @@ query_templates = {
     },
     project_dmps_modifiable = {
         columns_list = '*',
-        group_by = '',
-        order_by = '',
-        output_order = '',
-        variable_clauses = '',
+        variable_clauses = {
+            modifiable = ''
+        },
         query = [[
             select #columns_list# from project_dmps_view_modifiables
         ]]
     },
-    project_dmps_view = {
+    project_dmps = {
         columns_list = [[
             *
         ]],
@@ -131,10 +130,9 @@ query_templates = {
             #variable_clauses#
             #group_by_clause#
             #order_clause#
-        ]]
-    },
-    project_dmps_view_put = {
-        query = [[
+        ]],
+        put_pkey = 'project_id',
+        put = [[
             update
                 project_dmps_view
             set
@@ -148,53 +146,69 @@ query_templates = {
             returning *
         ]]
     },
-    project_dmps = {
-        columns_list = [[
-            p.*,
-            f.abbreviation lead_faculty_abbrev,
-            f.name lead_faculty_name,
-            d.abbreviation lead_dept_abbrev,
-            d.name lead_dept_name
-        ]],
-        group_by = '',
-        output_order = 'order by p.project_id asc',
-        columns_list_count = [[
-            count(*) num_project_dmps
-        ]],
-        variable_clauses = {
-            project_id = 'and d.project_id = #el_var_value#',
-            date = [[
-                and
-                (
-                    p.#var_value# >= #el_sd# and p.#var_value# <= #el_ed#
-                )
-            ]],
-            faculty = 'and p.lead_faculty_id = #el_var_value#',
-            dept = 'and p.lead_department_id = #el_var_value#',
-            has_dmp = 'and #not# p.has_dmp',
-            dmp_reviewed = 'and p.has_dmp_been_reviewed = #el_var_value#',
-            is_awarded = 'and #not# d.is_awarded'
-        },
-        query = [[
-            select
-                #columns_list#
-            from
-                project p
-            join
-                faculty f
-            on
-                (p.lead_faculty_id = f.faculty_id)
-            join
-                department d
-            on
-                (p.lead_department_id = d.department_id)
-            where
-                p.inst_id = #inst_id#
-            #variable_clauses#
-            #group_by_clause#
-            #order_clause#
-        ]]
-    },
+--    project_dmps_put = {
+--        pkey = 'project_id',
+--        query = [[
+--            update
+--                project_dmps_view
+--            set
+--                #dmp_id#
+--                #has_dmp#
+--                #has_dmp_been_reviewed#
+--            where
+--                project_id = #project_id#
+--            and
+--                inst_id = #inst_id#
+--            returning *
+--        ]]
+--    },
+--    project_dmps = {
+--        columns_list = [[
+--            p.*,
+--            f.abbreviation lead_faculty_abbrev,
+--            f.name lead_faculty_name,
+--            d.abbreviation lead_dept_abbrev,
+--            d.name lead_dept_name
+--        ]],
+--        group_by = '',
+--        output_order = 'order by p.project_id asc',
+--        columns_list_count = [[
+--            count(*) num_project_dmps
+--        ]],
+--        variable_clauses = {
+--            project_id = 'and d.project_id = #el_var_value#',
+--            date = [[
+--                and
+--                (
+--                    p.#var_value# >= #el_sd# and p.#var_value# <= #el_ed#
+--                )
+--            ]],
+--            faculty = 'and p.lead_faculty_id = #el_var_value#',
+--            dept = 'and p.lead_department_id = #el_var_value#',
+--            has_dmp = 'and #not# p.has_dmp',
+--            dmp_reviewed = 'and p.has_dmp_been_reviewed = #el_var_value#',
+--            is_awarded = 'and #not# d.is_awarded'
+--        },
+--        query = [[
+--            select
+--                #columns_list#
+--            from
+--                project p
+--            join
+--                faculty f
+--            on
+--                (p.lead_faculty_id = f.faculty_id)
+--            join
+--                department d
+--            on
+--                (p.lead_department_id = d.department_id)
+--            where
+--                p.inst_id = #inst_id#
+--            #variable_clauses#
+--            #group_by_clause#
+--            #order_clause#
+--        ]]
+--    },
     dmp_status = {
         columns_list = [[
             p.*,
@@ -203,12 +217,13 @@ query_templates = {
             dmp.dmp_state,
             dmp.dmp_status
         ]],
+        group_by = '',
         output_order = 'order by p.project_id asc',
         columns_list_count = [[
             count(*) num_dmp_status
         ]],
         variable_clauses = {
-            project = 'and p.project_id = #el_var_value#',
+            project_id = 'and p.project_id = #el_var_value#',
             date = [[
                 and
                 (
@@ -304,10 +319,11 @@ query_templates = {
             proj.project_start,
             proj.project_end
         ]],
-        output_order = 'order by pup.publication_id asc',
+        output_order = 'order by pub.publication_id asc',
         columns_list_count = [[
             count(*) num_pubs
         ]],
+        group_by = '',
         variable_clauses = {
             project = 'and pub.project_id = #el_var_value#',
             date = [[
@@ -332,7 +348,7 @@ query_templates = {
                 (
                     pub.publication_id = fpm.publication_id
                     and
-                    pub.lead_inst_id = #inst_id#
+                    pub.inst_id = #inst_id#
                 )
             join
                 funder f
@@ -343,7 +359,10 @@ query_templates = {
             on
                (pub.project_id = proj.project_id)
             where
-                fpm.funder_id in $rcuk_funder_list
+                fpm.funder_id in (
+                    'ahrc', 'bbsrc', 'epsrc',
+                    'esrc', 'mrc', 'nerc', 'stfc'
+                )
             #variable_clauses#
             #order_clause#
         ]]

@@ -926,13 +926,14 @@ create or replace view project_dmps_view as
 
 drop table if exists project_dmps_view_modifiables;
 create table project_dmps_view_modifiables (
-  c_name varchar(128)
+  c_name varchar(128),
+  c_vals varchar(128)
 );
 
 insert into project_dmps_view_modifiables values
-  ('has_dmp'),
-  ('has_dmp_been_reviewed'),
-  ('dmp_id')
+  ('has_dmp', 'true|false'),
+  ('has_dmp_been_reviewed', 'yes|no|unknown'),
+  ('dmp_id', 'integer')
 ;
 
 create or replace function project_dmps_view_update()
@@ -958,4 +959,39 @@ instead of update on
 for each row execute procedure project_dmps_view_update();
 
 
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view storage_view as
+  select
+    p.project_id,
+    p.project_awarded,
+    p.project_start,
+    p.project_end,
+    p.project_name,
+    p.lead_faculty_id,
+    p.lead_department_id,
+    sum(pes.expected_storage) expected_storage,
+    d.dataset_id,
+    d.dataset_pid,
+    d.dataset_size
+  from
+    project p
+  left outer join
+    dataset d
+  on
+    (p.project_id = d.project_id)
+  join
+    project_expected_storage pes
+  on
+    (p.project_id = pes.project_id)
+  group by p.project_id, d.dataset_id
+;
 
+drop table if exists storage_view_modifiables;
+create table storage_view_modifiables (
+  c_name varchar(128)
+);
+
+insert into storage_view_modifiables values
+  ('expected_storage')
+;

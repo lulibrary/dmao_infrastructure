@@ -1,59 +1,52 @@
 
--- determine environment based on port number the request is received at
-
-local port = ngx.var.port
-local environment
-if port == '8070' then
-    environment = 'jhk_dev'
-elseif port == '8090' then
-    environment = 'dev'
-elseif port == '8080' then
-    environment = 'test'
-elseif port == '80' then
-    environment = 'live'
-else
-    ngx.log(ngx.ERR, 'No environment available')
-    ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
-end
-
-local debug
-local base_uri
-local base_path
-local conn_file
-local q_template_file
-local util
-
-if environment == 'jhk_dev' then
-    local host = 'localhost'
-    debug = false
-    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
-    base_path = '/Users/krug/projects/dmao_infrastructure'
-    package.path = package.path .. ';' .. base_path
-        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks-5.1/?.lua'
-    conn_file = base_path .. '/openresty/connection_jhk_dev.lua'
-    q_template_file = base_path .. '/openresty/query_templates_jhk_dev.lua'
-    util = require 'dmao_i_utility_jhk_dev'
-elseif environment == 'dev' then
-    local host = 'localhost'
-    debug = false
-    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
-    base_path = '/home/dmao_infrastructure/deploy'
-    package.path = package.path .. ';' .. base_path
-        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks/?.lua'
-    conn_file = base_path .. '/openresty/connection_dev.lua'
-    q_template_file = base_path .. '/openresty/query_templates_dev.lua'
-    util = require 'dmao_i_utility_dev'
-end
-
 local cjson = require 'cjson'
 local upload = require 'resty.upload'
 local http = require 'socket.http'
+
+local debug_flag
+local print_sql
+
+local function get_inst()
+    local inst = ngx.var.inst_id
+    if not inst then
+        inst = 'none'
+    end
+    return inst
+end
+
+local function logit(t, m, l, s)
+    ngx.log(t, m .. ' at line ' .. l .. ' in '
+        .. s .. ' for ' .. get_inst())
+end
+
+local function log_debug(m)
+    if debug_flag then
+        local l = debug.getinfo(2).currentline
+        local s = debug.getinfo(2).short_src
+        logit(ngx.DEBUG, m, l, s)
+    end
+end
+
+
+local function log_error(m, l, s)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    logit(ngx.ERR, m, l, s)
+end
+
+
+local function log_info(m)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    logit(ngx.INFO, m, l, s)
+end
+
 
 -- put json data from form into lua table
 local function form_to_table()
     local form, err = upload:new(1048576)
     if not form then
-        ngx.log(ngx.ERR, 'failed to upload:new -  ', err)
+        log_error('failed to upload:new -  ', err)
         ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
     form:set_timeout(2000) -- 2 seconds
@@ -77,26 +70,29 @@ local function form_to_table()
 end
 
 
-local function read_templates()
-    dofile(q_template_file)
+local function read_templates(qtf)
+    dofile(qtf)
     return query_templates
 end
 
 
 local function error_to_json(e)
-    return '[{"error": ' .. cjson.encode(e) .. '}]'
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    return '{"error": ' .. cjson.encode(
+        e .. ' at line ' .. l .. ' in ' .. s .. ' for ' .. get_inst()
+    ) .. '}'
 end
 
 
 local function do_db_operation(d, query, method)
     local return_code
-    if debug then
-        return ngx.HTTP_OK, '[{"query": ' .. cjson.encode(query) .. '}]'
+    if print_sql then
+        return ngx.HTTP_OK, '{"query": ' .. cjson.encode(query) .. '}'
     else
         local res, err = d:query(query)
         if not res then
-            return ngx.HTTP_BAD_REQUEST,
-                '[{"error": ' .. cjson.encode(err) .. '}]'
+            return ngx.HTTP_BAD_REQUEST, error_to_json(err)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
@@ -180,7 +176,7 @@ local function populate_var_clauses(q, db, args, template)
                         db:escape_literal(args['sd']))
                     clause = string.gsub(clause, '#el_ed#',
                         db:escape_literal(args['ed']))
-                    if q == 'datasets' then
+                    if (q == 'datasets') or (q == 'dmp_status') then
                         if args['filter'] == 'rcuk' then
                             clause = string.gsub(clause,
                                 '#project_null_dates#', '')
@@ -196,6 +192,8 @@ local function populate_var_clauses(q, db, args, template)
                     else
                         clause = string.gsub(clause, '#not#', 'not')
                     end
+                elseif (var == 'modifiable') then -- todo: get rid of this
+                    clause = ''
                 else
                     clause = string.gsub(clause, '#el_var_value#',
                         db:escape_literal(value))
@@ -218,15 +216,19 @@ local function clean_query(q)
 end
 
 
-local function construct_c_query(db, inst, query, method)
+local function construct_c_query(db, inst, query, method, qtf)
     local institution = db:escape_literal(inst)
-    local qt = read_templates()
+    local qt = read_templates(qtf)
     local args = ngx.req.get_uri_args()
     local q
     if method == 'PUT' then
-        q = qt[query]['query']
-        if query == 'project_dmps_view_put' then
+        q = qt[query]['put']
+        local pkey = q['put_pkey']
+        if query == 'project_dmps' then
+            -- todo: Use a required pkey feature in the query template
             if not args['project_id'] then
+                log_error('project_dmps_view_put requires a '
+                    .. 'project_id parameter')
                 ngx.exit(ngx.HTTP_BAD_REQUEST)
             else
                 q = string.gsub(q, '#project_id#',
@@ -265,7 +267,11 @@ local function construct_c_query(db, inst, query, method)
             q = string.gsub(q, '#has_dmp_been_reviewed#', '')
         end
     else
-        q = qt[query]['query']
+        if args['modifiable'] then
+            q = qt[query .. '_modifiable']['query']
+        else
+            q = qt[query]['query']
+        end
         local vc = populate_var_clauses(
             query, db, args, qt[query]['variable_clauses']
         )
@@ -354,17 +360,17 @@ local function construct_c_query(db, inst, query, method)
 end
 
 
-local function construct_u_query(db, inst, query)
+local function construct_u_query(db, inst, query, method, qtf)
     local institution = db:escape_literal(inst)
-    local qt = read_templates()
+    local qt = read_templates(qtf)
     local q = qt[query]['query']
     q = string.gsub(q, '#inst_id#', institution)
     return clean_query(q)
 end
 
 
-local function construct_o_query(db, inst, query)
-    local qt = read_templates()
+local function construct_o_query(db, inst, query, method, qtf)
+    local qt = read_templates(qtf)
     local q
     if query == 'o_get_api_key' then
         q = qt[query]['query']
@@ -383,18 +389,18 @@ end
 
 
 -- pre-defined 'canned', 'utility' and 'open' queries
-local function do_cuo_query(db, qtype)
+local function do_cuo_query(db, qtype, qtf)
     local inst = ngx.var.inst_id
     local query = ngx.var.query
     local method = ngx.req.get_method()
     if (qtype ~= construct_c_query) and (method ~= 'GET') then
         local e = method .. ' not supported for query on '
             .. query .. ' in ' .. inst
-        ngx.log(ngx.ERR, e)
+        log_error(e)
         return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
     else
         return do_db_operation(
-            db, qtype(db, inst, query, method), method
+            db, qtype(db, inst, query, method, qtf), method
         )
     end
 end
@@ -411,28 +417,28 @@ local function check_api_key(db, inst, api_key)
         ]] .. db:escape_literal(inst) .. ';'
     local res = db:query(q)
     local stored_api_key = res[1]['api_key']
-    ngx.log(ngx.INFO, 'api_key = ' .. stored_api_key)
+    log_debug('api_key for ' .. inst ..' = ' .. stored_api_key)
     if api_key ~= stored_api_key then
-        ngx.log(ngx.ERR, 'HTTP_FORBIDDEN to '
+        log_error('HTTP_FORBIDDEN to '
             .. ngx.var.remote_addr .. ' with api_key = ' .. api_key)
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
 end
 
 
-local function db_operation(db)
+local function db_operation(db, query_template_file)
     local c_query = ngx.var.c_query
     local u_query = ngx.var.u_query
     local o_query = ngx.var.o_query
-    if c_query == 'true' then
+    if o_query == 'true' then
+        return do_cuo_query(db, construct_o_query, query_template_file)
+    elseif c_query == 'true' then
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
-        return do_cuo_query(db, construct_c_query)
-    elseif o_query == 'true' then
-        return do_cuo_query(db, construct_o_query)
+        return do_cuo_query(db, construct_c_query, query_template_file)
     elseif u_query == 'true' then
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
-        return do_cuo_query(db, construct_u_query)
-    else
+        return do_cuo_query(db, construct_u_query, query_template_file)
+    else -- direct operations on database tables
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
         local inst = ngx.var.inst_id
         local object = ngx.var.object
@@ -458,7 +464,7 @@ local function db_operation(db)
             if not pkey then
                 local e = 'Incorrect data specification ' ..
                         'for update (no pkey specified)'
-                ngx.log(ngx.ERR, e)
+                log_error(e)
                 return ngx.HTTP_BAD_REQUEST, error_to_json(e)
             end
             query = make_sql(
@@ -482,7 +488,7 @@ local function db_operation(db)
                 local e = 'No pkey and value specified ' ..
                         'for for http_method = '
                         .. method .. ' on object ' .. object
-                ngx.log(ngx.ERR, e)
+                log_error(e)
                 return ngx.BAD_REQUEST, error_to_json(e)
             end
         elseif method == 'GET' then
@@ -503,7 +509,7 @@ local function db_operation(db)
             end
         else
             local e = 'No defined action for http_method = ' .. method
-            ngx.log(ngx.ERR, e)
+            log_error(e)
             return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
         end
         local status, result = do_db_operation(db, query, method)
@@ -517,8 +523,79 @@ end
 
 
 -- main
+
+-- determine environment based on port number the request is received at
+local port = ngx.var.port
+local environment
+if port == '8070' then
+    environment = 'jhk_dev'
+elseif port == '8090' then
+    environment = 'dev'
+elseif port == '8080' then
+    environment = 'test'
+elseif port == '80' then
+    environment = 'live'
+else
+    log_error('No environment available')
+    ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+end
+
+local base_uri
+local base_path
+local conn_file
+local q_template_file
+local util
+
+if environment == 'jhk_dev' then
+    local host = 'localhost'
+    debug_flag = true
+    print_sql = false
+    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
+    base_path = '/Users/krug/projects/dmao_infrastructure'
+    package.path = package.path .. ';' .. base_path
+        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks-5.1/?.lua'
+    conn_file = base_path .. '/openresty/connection_jhk_dev.lua'
+    q_template_file = base_path .. '/openresty/query_templates_jhk_dev.lua'
+    util = require 'dmao_i_utility_jhk_dev'
+elseif environment == 'dev' then
+    local host = 'localhost'
+    debug_flag = true
+    print_sql = false
+    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
+    base_path = '/home/dmao_infrastructure/deploy'
+    package.path = package.path .. ';' .. base_path
+        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks/?.lua'
+    conn_file = base_path .. '/openresty/connection_dev.lua'
+    q_template_file = base_path .. '/openresty/query_templates_dev.lua'
+    util = require 'dmao_i_utility_dev'
+elseif environment == 'test' then
+    local host = 'localhost'
+    debug_flag = true
+    print_sql = false
+    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
+    base_path = '/home/dmao_infrastructure/deploy'
+    package.path = package.path .. ';' .. base_path
+        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks/?.lua'
+    conn_file = base_path .. '/openresty/connection_test.lua'
+    q_template_file = base_path .. '/openresty/query_templates_test.lua'
+    util = require 'dmao_i_utility_test'
+elseif environment == 'live' then
+    local host = 'localhost'
+    debug_flag = false
+    print_sql = false
+    base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
+    base_path = '/home/dmao_infrastructure/deploy'
+    package.path = package.path .. ';' .. base_path
+        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks/?.lua'
+    conn_file = base_path .. '/openresty/connection_live.lua'
+    q_template_file = base_path .. '/openresty/query_templates_live.lua'
+    util = require 'dmao_i_utility_live'
+else
+    ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+end
+
 local db = util.open_dmaonline_db(conn_file)
-local status, result = db_operation(db)
+local status, result = db_operation(db, q_template_file)
 util.close_dmaonline_db(db)
 ngx.header.content_type = 'application/json';
 ngx.status = status
