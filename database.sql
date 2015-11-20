@@ -205,7 +205,7 @@ create index on dmp(dmp_source_system, dmp_ss_pid);
 comment on table dmp is 'Describes data management plans';
 comment on column dmp.dmp_source_system is
   'Describes the source system for the data management
-  plan, e.g. ''DMPonline''.';
+  plan, e.g. ''DMPOnline''.';
 comment on column dmp.dmp_ss_pid is
   'The DMP source system persistent identifier for this data management
   plan.';
@@ -331,7 +331,8 @@ create table project_storage_requirement (
     on delete restrict on update cascade,
   keep_until date,
   load_date timestamp,
-  mod_date timestamp
+  mod_date timestamp,
+  unique(inst_id, inst_storage_platform_id, project_id)
 );
 create index on project_storage_requirement(inst_id,
                                             inst_storage_platform_id);
@@ -657,6 +658,14 @@ create or replace view project_expected_storage as
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+create or replace function days_in_date_range(daterange)
+  returns integer as
+$$
+  select upper($1) - lower($1);
+$$ language sql;
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
 create or replace view project_storage_costs_breakdown as
   select
     pes.inst_id,
@@ -664,10 +673,15 @@ create or replace view project_storage_costs_breakdown as
     pes.inst_storage_platform_id,
     pes.inst_notes,
     pes.project_date_range,
-    sc.applicable_dates,
-    cost_per_tb_pa,
-    round(pes.expected_storage / 1024 * sc.cost_per_tb_pa, 2)
-      storage_cost_pa
+    pes.expected_storage,
+    sc.applicable_dates sc_applicable_dates,
+    cost_per_tb_pa sp_cost_per_tb_pa,
+    cost_per_tb_pa/365, 5 sp_cost_per_tb_pd,
+    (
+      pes.expected_storage/1024 *
+      cost_per_tb_pa/365 *
+      days_in_date_range(pes.project_date_range)
+    ) sp_cost_over_project
   from
     project_expected_storage pes
   join
@@ -685,205 +699,231 @@ create or replace view project_storage_costs_breakdown as
     sc.applicable_dates asc
 ;
 
-
--------------------------------------------------------------------
--------------------------------------------------------------------
-create or replace view project_storage_costs_intermediate as
+create or replace view project_storage_costs_over_sp as
   select
-    pscb.inst_id,
-    pscb.project_id,
-    pscb.inst_storage_platform_id,
-    pscb.applicable_dates * pscb.project_date_range project_storage_dates,
-    sum(pscb.storage_cost_pa) storage_cost_pa
+    inst_id,
+    project_id,
+    inst_storage_platform_id,
+    sum(sp_cost_over_project) sp_cost
   from
-    project_storage_costs_breakdown pscb
-  join
-    project p
-  on
-    (pscb.project_id = p.project_id)
-  where
-    not isempty(pscb.applicable_dates * pscb.project_date_range)
+    project_storage_costs_breakdown
   group by
-    pscb.inst_id,
-    pscb.project_id,
-    pscb.inst_storage_platform_id,
-    project_storage_dates
+    inst_id, project_id, inst_storage_platform_id
+  order by project_id asc
+;
+
+create or replace view expected_project_storage_costs as
+  select
+    inst_id,
+    project_id,
+    sum(sp_cost) eps_cost
+  from
+    project_storage_costs_over_sp
+  group by
+    inst_id, project_id
   order by
-    pscb.inst_id,
-    pscb.project_id
+    project_id asc
 ;
 
 
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace function project_costs_at_date
-  (
-    i_id inst_id_t,
-    p_id int,
-    d date
-  )
-  returns table (
-    inst_storage_platform_id inst_storage_platform_id_t,
-    cost_pa numeric
-  )
-as
-$$
-  select
-    inst_storage_platform_id,
-    storage_cost_pa
-  from
-    project_storage_costs_intermediate
-  where
-    inst_id = i_id
-  and
-    project_id = p_id
-  and
-    project_storage_dates @> d
-$$
-language sql strict immutable;
-
-
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace function all_project_costs_at_date
-  (
-    i_id inst_id_t,
-    d date
-  )
-  returns table(
-    project_id int,
-    inst_storage_platform_id inst_storage_platform_id_t,
-    cost_pa numeric
-  )
-as
-$$
-  select
-    project_id,
-    inst_storage_platform_id,
-    storage_cost_pa
-  from
-    project_storage_costs_intermediate
-  where
-    inst_id = i_id
-  and
-    project_storage_dates @> d
-$$
-language sql strict immutable;
-
-
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace function project_costs_during_daterange
-  (
-    i_id inst_id_t,
-    p_id int,
-    d daterange
-  )
-  returns table(
-    project_storage_dates daterange,
-    inst_storage_platform_id inst_storage_platform_id_t,
-    cost_pa numeric
-  )
-as
-$$
-  select
-    project_storage_dates,
-    inst_storage_platform_id,
-    storage_cost_pa
-  from
-    project_storage_costs_intermediate
-  where
-    inst_id = i_id
-  and
-    project_id = p_id
-  and
-    project_storage_dates && d
-$$
-language sql strict immutable;
-
-
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace function expand_project_costs_during_daterange
-  (
-    i_id inst_id_t,
-    p_id int,
-    dr daterange
-  )
-  returns table (
-    day date,
-    isp_id inst_storage_platform_id_t,
-    cost_pa numeric
-  )
-as
-$$
-  select
-    d::date as day,
-    v.inst_storage_platform_id as isp_id,
-    v.cost_pa as cost_pa
-  from
-    generate_series(lower(dr)::date, upper(dr)::date, '1 day'::interval) d,
-    project_costs_at_date(i_id, p_id, d::date) v
-  order by
-    day, isp_id asc
-$$
-language sql strict immutable;
-
-
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace function aggregate_project_costs_during_daterange
-  (
-    i_id inst_id_t,
-    p_id int,
-    dr daterange
-  )
-  returns table (
-    day date,
-    cost_pa numeric
-  )
-as
-$$
-  select
-    d::date as day,
-    sum(v.cost_pa) as cost_pa
-  from
-    generate_series(lower(dr)::date, upper(dr)::date, '1 day'::interval) d,
-    project_costs_at_date(i_id, p_id, d::date) v
-  group by day
-  order by day asc
-$$
-language sql strict immutable;
-
-
----------------------------------------------------------------------
----------------------------------------------------------------------
-create or replace function all_project_costs_during_daterange
-  (
-    i_id inst_id_t,
-    d daterange
-  )
-  returns table(
-    p_id int,
-    project_storage_dates daterange,
-    inst_storage_platform_id inst_storage_platform_id_t,
-    cost numeric
-  )
-as
-$$
-  select
-    project_id,
-    project_storage_dates,
-    inst_storage_platform_id,
-    storage_cost_pa
-  from
-    project_storage_costs_intermediate
-  where
-    inst_id = i_id
-  and
-    project_storage_dates && d
-$$
-language sql strict immutable;
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- create or replace view project_storage_costs_intermediate as
+--   select
+--     pscb.inst_id,
+--     pscb.project_id,
+--     pscb.inst_storage_platform_id,
+--     pscb.applicable_dates * pscb.project_date_range project_storage_dates,
+--     sum(pscb.storage_cost_pa) storage_cost_pa
+--   from
+--     project_storage_costs_breakdown pscb
+--   join
+--     project p
+--   on
+--     (pscb.project_id = p.project_id)
+--   where
+--     not isempty(pscb.applicable_dates * pscb.project_date_range)
+--   group by
+--     pscb.inst_id,
+--     pscb.project_id,
+--     pscb.inst_storage_platform_id,
+--     project_storage_dates
+--   order by
+--     pscb.inst_id,
+--     pscb.project_id
+-- ;
+--
+--
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- create or replace function project_costs_at_date
+--   (
+--     i_id inst_id_t,
+--     p_id int,
+--     d date
+--   )
+--   returns table (
+--     inst_storage_platform_id inst_storage_platform_id_t,
+--     cost_pa numeric
+--   )
+-- as
+-- $$
+--   select
+--     inst_storage_platform_id,
+--     storage_cost_pa
+--   from
+--     project_storage_costs_intermediate
+--   where
+--     inst_id = i_id
+--   and
+--     project_id = p_id
+--   and
+--     project_storage_dates @> d
+-- $$
+-- language sql strict immutable;
+--
+--
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- create or replace function all_project_costs_at_date
+--   (
+--     i_id inst_id_t,
+--     d date
+--   )
+--   returns table(
+--     project_id int,
+--     inst_storage_platform_id inst_storage_platform_id_t,
+--     cost_pa numeric
+--   )
+-- as
+-- $$
+--   select
+--     project_id,
+--     inst_storage_platform_id,
+--     storage_cost_pa
+--   from
+--     project_storage_costs_intermediate
+--   where
+--     inst_id = i_id
+--   and
+--     project_storage_dates @> d
+-- $$
+-- language sql strict immutable;
+--
+--
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- create or replace function project_costs_during_daterange
+--   (
+--     i_id inst_id_t,
+--     p_id int,
+--     d daterange
+--   )
+--   returns table(
+--     project_storage_dates daterange,
+--     inst_storage_platform_id inst_storage_platform_id_t,
+--     cost_pa numeric
+--   )
+-- as
+-- $$
+--   select
+--     project_storage_dates,
+--     inst_storage_platform_id,
+--     storage_cost_pa
+--   from
+--     project_storage_costs_intermediate
+--   where
+--     inst_id = i_id
+--   and
+--     project_id = p_id
+--   and
+--     project_storage_dates && d
+-- $$
+-- language sql strict immutable;
+--
+--
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- create or replace function expand_project_costs_during_daterange
+--   (
+--     i_id inst_id_t,
+--     p_id int,
+--     dr daterange
+--   )
+--   returns table (
+--     day date,
+--     isp_id inst_storage_platform_id_t,
+--     cost_pa numeric
+--   )
+-- as
+-- $$
+--   select
+--     d::date as day,
+--     v.inst_storage_platform_id as isp_id,
+--     v.cost_pa as cost_pa
+--   from
+--     generate_series(lower(dr)::date, upper(dr)::date, '1 day'::interval) d,
+--     project_costs_at_date(i_id, p_id, d::date) v
+--   order by
+--     day, isp_id asc
+-- $$
+-- language sql strict immutable;
+--
+--
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- create or replace function aggregate_project_costs_during_daterange
+--   (
+--     i_id inst_id_t,
+--     p_id int,
+--     dr daterange
+--   )
+--   returns table (
+--     day date,
+--     cost_pa numeric
+--   )
+-- as
+-- $$
+--   select
+--     d::date as day,
+--     sum(v.cost_pa) as cost_pa
+--   from
+--     generate_series(lower(dr)::date, upper(dr)::date, '1 day'::interval) d,
+--     project_costs_at_date(i_id, p_id, d::date) v
+--   group by day
+--   order by day asc
+-- $$
+-- language sql strict immutable;
+--
+--
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- create or replace function all_project_costs_during_daterange
+--   (
+--     i_id inst_id_t,
+--     d daterange
+--   )
+--   returns table(
+--     p_id int,
+--     project_storage_dates daterange,
+--     inst_storage_platform_id inst_storage_platform_id_t,
+--     cost numeric
+--   )
+-- as
+-- $$
+--   select
+--     project_id,
+--     project_storage_dates,
+--     inst_storage_platform_id,
+--     storage_cost_pa
+--   from
+--     project_storage_costs_intermediate
+--   where
+--     inst_id = i_id
+--   and
+--     project_storage_dates && d
+-- $$
+-- language sql strict immutable;
 
 
 ---------------------------------------------------------------------
@@ -963,6 +1003,7 @@ for each row execute procedure project_dmps_view_update();
 ---------------------------------------------------------------------
 create or replace view storage_view as
   select
+    p.inst_id,
     p.project_id,
     p.project_awarded,
     p.project_start,
@@ -970,7 +1011,10 @@ create or replace view storage_view as
     p.project_name,
     p.lead_faculty_id,
     p.lead_department_id,
-    sum(pes.expected_storage) expected_storage,
+    pes.expected_storage,
+    pscosp.sp_cost expected_storage_cost,
+    pes.inst_storage_platform_id,
+    pes.inst_notes,
     d.dataset_id,
     d.dataset_pid,
     d.dataset_size
@@ -980,18 +1024,176 @@ create or replace view storage_view as
     dataset d
   on
     (p.project_id = d.project_id)
-  join
+  left outer join
     project_expected_storage pes
   on
     (p.project_id = pes.project_id)
-  group by p.project_id, d.dataset_id
+  left outer join
+    project_storage_costs_over_sp pscosp
+  on
+    (
+      p.project_id = pscosp.project_id
+      and
+      pes.inst_storage_platform_id = pscosp.inst_storage_platform_id
+    )
+  order by
+    p.project_id asc
 ;
 
 drop table if exists storage_view_modifiables;
 create table storage_view_modifiables (
-  c_name varchar(128)
+  c_name varchar(128),
+  c_vals varchar(128)
 );
 
 insert into storage_view_modifiables values
-  ('expected_storage')
+  ('expected_storage', 'numeric'),
+  ('inst_storage_platform_id', 'string')
 ;
+
+create or replace view storage_ispi_list as
+  select inst_id, inst_storage_platform_id ispi, inst_notes ispn
+  from inst_storage_platforms;
+--   group by inst_id, inst_storage_platform_id;
+
+create or replace function storage_view_update()
+  returns trigger
+language plpgsql
+as $$
+begin
+  if (TG_OP = 'UPDATE') then
+    update project_storage_requirement set
+      expected_storage = NEW.expected_storage,
+      inst_storage_platform_id = NEW.inst_storage_platform_id
+    where
+      project_id = OLD.project_id
+    and
+      inst_storage_platform_id = OLD.inst_storage_platform_id;
+    return NEW;
+  elseif (TG_OP = 'DELETE') then
+    delete from project_storage_requirement
+      where
+        inst_storage_platform_id = OLD.inst_storage_platform_id
+      and
+        project_id = OLD.project_id;
+    if not found then return null; end if;
+    return OLD;
+  end if;
+end;
+$$;
+
+create trigger storage_view_update_trigger
+instead of update or delete on
+  storage_view
+for each row execute procedure storage_view_update();
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view datasets_view as
+  select
+    f.funder_id,
+    f.name funder_name,
+    d.*,
+    fac.abbreviation lead_faculty_abbrev,
+    fac.name lead_faculty_name,
+    dept.abbreviation lead_dept_abbrev,
+    dept.name lead_dept_name,
+    p.project_awarded,
+    p.project_start,
+    p.project_end,
+    p.project_name
+  from
+    dataset d
+  left outer join
+    map_funder_ds fdm
+  on
+    (d.dataset_id = fdm.dataset_id)
+  left outer join
+    funder f
+  on
+    (fdm.funder_id = f.funder_id)
+  left outer join
+    faculty fac
+  on
+    (d.lead_faculty_id = fac.faculty_id)
+  left outer join
+    department dept
+  on
+    (d.lead_department_id = dept.department_id)
+  left outer join
+    project p
+  on
+    (d.project_id = p.project_id)
+  order by
+    d.dataset_id asc
+;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view dmp_status_view as
+  select
+    p.*,
+    mfp.funder_id funder_id,
+    dmp.dmp_source_system,
+    dmp.dmp_ss_pid dmp_source_system_id,
+    dmp.dmp_state,
+    dmp.dmp_status,
+    dmp.author_orcid,
+    f.name funder_name,
+    fds.funder_state_code,
+    fds.funder_state_name
+  from
+    project p
+  left outer join
+    map_funder_project mfp
+    on
+      (p.project_id = mfp.project_id)
+    left outer join
+      dmp
+    on
+      (p.dmp_id = dmp.dmp_id)
+    left outer join
+      funder_dmp_states fds
+    on
+      (dmp.dmp_state = fds.dmp_state_id)
+    left outer join
+      funder f
+    on
+      (fds.funder_id = f.funder_id)
+;
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+create or replace view rcuk_as_view as
+  select
+    pub.*,
+    mfp.funder_id,
+    f.name funder_name,
+    proj.project_name,
+    proj.project_awarded,
+    proj.project_start,
+    proj.project_end
+  from
+    publication pub
+  join
+    map_funder_pub mfp
+  on
+    (pub.publication_id = mfp.publication_id)
+  join
+    funder f
+  on
+    (f.funder_id = mfp.funder_id)
+  left outer join
+    project proj
+  on
+    (pub.project_id = proj.project_id)
+  where
+    mfp.funder_id in (
+      select funder_id
+      from funder where is_rcuk_funder is true
+    )
+;
+

@@ -1,5 +1,6 @@
 
 local pg = require 'pgmoon'
+local cjson = require 'cjson'
 
 local M = {}
 setmetatable(M, {__index = _G})
@@ -40,7 +41,7 @@ function M.open_dmaonline_db(conn_file)
     )
     assert(d:connect())
     d.convert_null = true
-    d.NULL = 'null'
+    d.NULL = ngx.null
     return d
 end
 
@@ -86,8 +87,55 @@ function M.tprint(tbl, pf, indent)
     end
 end
 
+
 function M.trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+
+function M.get_inst()
+    local inst = ngx.var.inst_id
+    if not inst then
+        inst = 'none'
+    end
+    return inst
+end
+
+
+function M.logit(t, m, l, s)
+    ngx.log(t, m .. ' at line ' .. l .. ' in '
+        .. s .. ' for ' .. M.get_inst())
+end
+
+
+function M.log_debug(m)
+    if debug_flag then
+        local l = debug.getinfo(2).currentline
+        local s = debug.getinfo(2).short_src
+        M.logit(ngx.DEBUG, m, l, s)
+    end
+end
+
+
+function M.log_error(m)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    M.logit(ngx.ERR, m, l, s)
+end
+
+
+function M.log_info(m)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    M.logit(ngx.INFO, m, l, s)
+end
+
+function M.error_to_json(e)
+    local l = debug.getinfo(2).currentline
+    local s = debug.getinfo(2).short_src
+    return '{"error": ' .. cjson.encode(
+        e .. ' at line ' .. l .. ' in ' .. s .. ' for ' .. M.get_inst()
+    ) .. '}'
 end
 
 return M

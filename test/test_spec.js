@@ -1,11 +1,15 @@
 var frisby = require('frisby');
-var base_url = 'http://localhost:8070/dmaonline/v0.3';
+var hostname = 'localhost:8070';
+//var hostname = 'lib-dmao.lancs.ac.uk:8090';
+var base_url = 'http://' + hostname +'/dmaonline/v0.3';
+var inst = 'luve_u';
 var o_tests = [
     'institutions', 'faculties', 'departments',
     'dmps', 'publications', 'datasets', 'dataset_accesses'
 ];
 var index;
 
+// open_apis
 for (index = 0; index < o_tests.length; index++)
     frisby.create('Test count ' + o_tests[index])
         .get(base_url + '/o/o_count_' + o_tests[index])
@@ -14,23 +18,26 @@ for (index = 0; index < o_tests.length; index++)
         .expectJSONTypes('?', {count: Number})
         .toss();
 
+// o_inst_list
 frisby.create('Test o_inst_list')
     .get(base_url + '/o/o_inst_list')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
-    .expectJSONTypes('?', {inst_id: "d_lancaster"})
+    .expectJSONTypes('?', {inst_id: "luve_u"})
     .toss();
 
+// o_get_api_key
 frisby.create('Test o_get_api_key with wrong password')
-    .get(base_url + '/o/d_lancaster/o_get_api_key?user=krug&passwd=' +
+    .get(base_url + '/o/' + inst +'/o_get_api_key?user=krug&passwd=' +
     'some_junk')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectBodyContains('{}')
     .toss();
 
+
 frisby.create('Test o_get_api_key')
-    .get(base_url + '/o/d_lancaster/o_get_api_key?user=krug&passwd=' +
+    .get(base_url + '/o/' + inst + '/o_get_api_key?user=krug&passwd=' +
     '3598976bfd77124e19b8af1e37c9e424a3cefdabdcb68b7e0385d01f')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
@@ -39,236 +46,181 @@ frisby.create('Test o_get_api_key')
         // all subsequent tests use the api_key
         var ak = json[0]['api_key'];
 
-        frisby.create('Test project_dmps with bad api_key')
-            .get(base_url + '/c/d_lancaster/' + 'junk' +
-            '/project_dmps?project_id=1')
-            .expectStatus(403)
+        // uca - use case APIs
+        var standard_date_parameter_tests = [
+            'date=project_awarded&sd=20150501&ed=20251231',
+            'date=project_start&sd=20150501&ed=20251231',
+            'date=project_end&sd=20150501&ed=20251231'
+        ];
+        var rcuk_date_parameter_tests = [
+            'date=pub.publication_date&sd=20150501&ed=20251231',
+            'date=proj.project_awarded&sd=20150501&ed=20251231',
+            'date=proj.project_start&sd=20150501&ed=20251231',
+            'date=proj.project_end&sd=20150501&ed=20251231'
+        ];
+        var standard_faculty_dept_parameter_tests = [
+            'faculty=1', 'faculty=2', 'faculty=3', 'faculty=4', 'faculty=5',
+            'faculty=6', 'faculty=7', 'dept=1',
+            'dept=2', 'dept=3', 'dept=4', 'dept=5', 'dept=6',
+            'dept=7', 'dept=8'
+        ];
+        var uca = [
+            {
+                api_call: 'datasets',
+                parameter_tests:
+                    standard_date_parameter_tests.concat(
+                        standard_faculty_dept_parameter_tests
+                    ).concat(
+                        'dataset_id=1',
+                        'dataset_id=1999',
+                        'arch_status=archived',
+                        'arch_status=not_archived',
+                        'arch_status=unknown',
+                        'location=internal',
+                        'location=external',
+                        'filter=rcuk'
+                    )
+            },
+            {
+                api_call: 'project_dmps',
+                parameter_tests:
+                    standard_date_parameter_tests.concat(
+                        standard_faculty_dept_parameter_tests
+                    ).concat(
+                        'modifiable=true',
+                        'project_id=1',
+                        'has_dmp=true',
+                        'has_dmp=false',
+                        'dmp_reviewed=yes',
+                        'dmp_reviewed=no',
+                        'dmp_reviewed=unknown',
+                        'is_awarded=true',
+                        'is_awarded=false'
+                    )
+            },
+            {
+                api_call: 'dmp_status',
+                parameter_tests:
+                    standard_date_parameter_tests.concat(
+                        standard_faculty_dept_parameter_tests
+                    ).concat(
+                        'project_id=1',
+                        'has_dmp=true',
+                        'has_dmp=false',
+                        'dmp_reviewed=yes',
+                        'dmp_reviewed=no',
+                        'dmp_reviewed=unknown'
+                        // todo: dmp_status & dmp_state tests required
+                    )
+            },
+            {
+                api_call: 'storage',
+                parameter_tests:
+                    standard_date_parameter_tests.concat(
+                        standard_faculty_dept_parameter_tests
+                    ).concat(
+                        'modifiable=true',
+                        'ispi_list=true',
+                        'project_id=2',
+                        'dataset_id=4'
+                    )
+            },
+            {
+                api_call: 'rcuk_as',
+                parameter_tests:
+                    standard_date_parameter_tests.concat(
+                        standard_faculty_dept_parameter_tests
+                    ).concat(
+                        'project_id=1',
+                        'funder=ahrc',
+                        'funder_project_code=EP/K014463/1'
+                    ).concat(
+                        rcuk_date_parameter_tests
+                    )
+            },
+            {
+                api_call: 'dataset_accesses',
+                parameter_tests: [
+                    'sd=20150501&ed=20251231',
+                    'sd=20150501&ed=20251231',
+                    'sd=20150501&ed=20251231'
+                ].concat(standard_faculty_dept_parameter_tests)
+            }
+        ];
+
+        var api_keys = [
+            {
+                api_key: ak,
+                expected_status: 200,
+                expected_content: 'application/json'
+            },
+            {
+                api_key: 'junk_key',
+                expected_status: 403,
+                expected_content: 'text/html'
+            }
+        ];
+
+        for (var t = 0; t < uca.length; t++) {
+            var test = uca[t].api_call;
+            var p_tests = uca[t].parameter_tests;
+            for (var a = 0; a < api_keys.length; a++) {
+                var bu = base_url + '/c/' + inst + '/' +
+                    api_keys[a].api_key + '/' + test;
+                var expected_status = api_keys[a].expected_status;
+                var expected_content = api_keys[a].expected_content;
+                frisby.create('Test ' + test)
+                    .get(bu)
+                    .expectStatus(expected_status)
+                    .expectHeaderContains('content-type', expected_content)
+                    .toss();
+                for (var p = 0; p < p_tests.length; p++) {
+                    var parameter = p_tests[p];
+                    frisby.create('Test ' + test +
+                        ' with parameters ' + parameter)
+                        .get(bu + '?' + parameter)
+                        .expectStatus(expected_status)
+                        .expectHeaderContains('content-type', expected_content)
+                        .toss();
+                }
+            }
+        }
+
+        frisby.create('test project_dmps put')
+            .put(base_url + '/c/' + inst + '/' + ak + '/project_dmps' +
+                '?project_id=1&has_dmp=true&has_dmp_been_reviewed=unknown')
+            .expectStatus(200)
+            .expectHeaderContains('content-type', 'application/json')
+            .toss();
+
+        frisby.create('test project_dmps put')
+            .put(base_url + '/c/' + inst + '/' + ak + '/project_dmps' +
+                '?project_id=1&has_dmp_been_reviewed=unknown')
+            .expectStatus(200)
+            .expectHeaderContains('content-type', 'application/json')
+            .toss();
+
+        frisby.create('test project_dmps put')
+            .put(base_url + '/c/' + inst + '/' + ak + '/project_dmps' +
+                '?project_id=1&has_dmp=true')
+            .expectStatus(200)
+            .expectHeaderContains('content-type', 'application/json')
+            .toss();
+
+        frisby.create('test storage put')
+            .put(base_url + '/c/' + inst + '/' + ak + '/storage' +
+                '?project_id=1' + '&inst_storage_platform_id=hcp' +
+                '&expected_storage=99')
+            .expectStatus(200)
+            .expectHeaderContains('content-type', 'application/json')
+            .toss();
+
+        frisby.create('test storage put with no storage platform specified')
+            .put(base_url + '/c/' + inst + '/' + ak + '/storage' +
+                '?project_id=1' +
+                '&expected_storage=99')
+            .expectStatus(400)
             .expectHeaderContains('content-type', 'text/html')
-            .toss();
-
-        frisby.create('Test project_dmps modifiables')
-            .get(base_url + '/c/d_lancaster/' + ak +
-            '/project_dmps?modifiable=true')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test project_dmps')
-            .get(base_url + '/c/d_lancaster/' + ak + '/project_dmps')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .expectJSONTypes('?', {has_dmp_been_reviewed: String})
-            .expectJSONTypes('?', {project_acronym: String})
-            .expectJSONTypes('?', {project_id: Number})
-            .toss();
-
-        frisby.create('Test project_dmps with project_id filter')
-            .get(base_url + '/c/d_lancaster/' + ak +
-            '/project_dmps?project_id=1')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .expectJSONTypes('?', {has_dmp_been_reviewed: String})
-            .expectJSONTypes('?', {project_acronym: String})
-            .expectJSONTypes('?', {project_id: Number})
-            .toss();
-
-        frisby.create('Test project_dmps with count filter')
-            .get(base_url + '/c/d_lancaster/' + ak +
-            '/project_dmps?count=true&project_id=1')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .expectJSON([{"num_project_dmps": 1}])
-            .toss();
-
-        var dmp_reviewed = ["yes", "no", "unknown"];
-        for (index = 0; index < dmp_reviewed.length; index++)
-            frisby.create('Test project_dmps with filter dmp_reviewed = '
-                + dmp_reviewed[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/project_dmps?dmp_reviewed='
-                + dmp_reviewed[index])
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .expectJSONTypes('?', {project_id: Number})
-                .toss();
-
-        var has_dmp = ["true", "false"];
-        for (index = 0; index < has_dmp.length; index++)
-            frisby.create('Test project_dmps with filter has_dmp = '
-                + has_dmp[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/project_dmps?has_dmp=' + has_dmp[index])
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .toss();
-
-        var is_awarded = ["true", "false"];
-        for (index = 0; index < is_awarded.length; index++)
-            frisby.create('Test project_dmps with filter is_awarded = '
-                + has_dmp[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/project_dmps?is_awarded=' + is_awarded[index])
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .toss();
-
-        var project_dmps_date_types = [
-            "project_awarded", "project_start", "project_end"
-        ];
-        for (index = 0; index < project_dmps_date_types.length; index++)
-            frisby.create('Test project_dmps with filter date range = '
-                + project_dmps_date_types[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/project_dmps?date=' + project_dmps_date_types[index] +
-                '&sd=20000101&ed=20171231')
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .toss();
-
-        frisby.create('Test project_dmps with filter by faculty')
-            .get(base_url + '/c/d_lancaster/' + ak + '/project_dmps?faculty=2')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test project_dmps with filter by department')
-            .get(base_url + '/c/d_lancaster/' + ak + '/project_dmps?dept=2')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dmp_status')
-            .get(base_url + '/c/d_lancaster/' + ak + '/dmp_status')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dmp_status count')
-            .get(base_url + '/c/d_lancaster/' + ak + '/dmp_status?count=true')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        var dmp_status_date_types = [
-            "project_awarded", "project_start", "project_end"
-        ];
-        for (index = 0; index < dmp_status_date_types.length; index++)
-            frisby.create('Test dmp_status with filter date range = '
-                + dmp_status_date_types[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/dmp_status?date=' + dmp_status_date_types[index] +
-                '&sd=20000101&ed=20171231')
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .toss();
-
-        frisby.create('Test dmp_status with project_id filter')
-            .get(base_url + '/c/d_lancaster/' + ak + '/dmp_status?project_id=1')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        has_dmp = ["true", "false"];
-        for (index = 0; index < has_dmp.length; index++)
-            frisby.create('Test dmp_status with filter has_dmp = '
-                + has_dmp[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/dmp_status?has_dmp=' + has_dmp[index])
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .toss();
-
-        dmp_reviewed = ["yes", "no", "unknown"];
-        for (index = 0; index < dmp_reviewed.length; index++)
-            frisby.create('Test dmp_status with filter dmp_reviewed = '
-                + dmp_reviewed[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/dmp_status?dmp_reviewed='
-                + dmp_reviewed[index])
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .expectJSONTypes('?', {project_id: Number})
-                .toss();
-
-        frisby.create('Test datasets')
-            .get(base_url + '/c/d_lancaster/' + ak + '/datasets')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test storage')
-            .get(base_url + '/c/d_lancaster/' + ak + '/storage')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test rcuk_as')
-            .get(base_url + '/c/d_lancaster/' + ak + '/rcuk_as')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test rcuk_as count')
-            .get(base_url + '/c/d_lancaster/' + ak + '/rcuk_as?count=true')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        var rcuk_as_date_types = [
-            "pub.publication_date",
-            "proj.project_awarded",
-            "proj.project_start",
-            "proj.project_end"
-        ];
-        for (index = 0; index < rcuk_as_date_types.length; index++)
-            frisby.create('Test rcuk_as with filter date range = '
-                + rcuk_as_date_types[index])
-                .get(base_url + '/c/d_lancaster/' + ak +
-                '/rcuk_as?date=' + rcuk_as_date_types[index] +
-                '&sd=20000101&ed=20171231')
-                .expectStatus(200)
-                .expectHeaderContains('content-type', 'application/json')
-                .toss();
-
-        frisby.create('Test dataset_accesses')
-            .get(base_url + '/c/d_lancaster/' + ak + '/dataset_accesses')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dataset_accesses summary')
-            .get(base_url + '/c/d_lancaster/' + ak +
-                '/dataset_accesses?summary=true')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dataset_accesses summary_by_date')
-            .get(base_url + '/c/d_lancaster/' + ak +
-                '/dataset_accesses?summary_by_date=true')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dataset_accesses with filter date range')
-            .get(base_url + '/c/d_lancaster/' + ak +
-            '/dataset_accesses?sd=20000101&ed=20171231')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dataset_accesses with filter by faculty')
-            .get(base_url + '/c/d_lancaster/' + ak +
-            '/dataset_accesses?faculty=2')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .toss();
-
-        frisby.create('Test dataset_accesses with filter by department')
-            .get(base_url + '/c/d_lancaster/' + ak +
-            '/dataset_accesses?department=2')
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
             .toss();
 
     })
