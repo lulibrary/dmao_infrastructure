@@ -4,4 +4,8 @@
 /openresty/connection_live.lua
 /misc/*
 # Created by .ignore support plugin (hsz.mobi)
+.DS_Store
+.idea
+pure_import/data
+pure_import/pure_native_api_data
 ss.out/*

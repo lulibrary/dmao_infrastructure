@@ -5,48 +5,14 @@ local http = require 'socket.http'
 
 local debug_flag
 local print_sql
-
-local function get_inst()
-    local inst = ngx.var.inst_id
-    if not inst then
-        inst = 'none'
-    end
-    return inst
-end
-
-local function logit(t, m, l, s)
-    ngx.log(t, m .. ' at line ' .. l .. ' in '
-        .. s .. ' for ' .. get_inst())
-end
-
-local function log_debug(m)
-    if debug_flag then
-        local l = debug.getinfo(2).currentline
-        local s = debug.getinfo(2).short_src
-        logit(ngx.DEBUG, m, l, s)
-    end
-end
-
-
-local function log_error(m, l, s)
-    local l = debug.getinfo(2).currentline
-    local s = debug.getinfo(2).short_src
-    logit(ngx.ERR, m, l, s)
-end
-
-
-local function log_info(m)
-    local l = debug.getinfo(2).currentline
-    local s = debug.getinfo(2).short_src
-    logit(ngx.INFO, m, l, s)
-end
+local util
 
 
 -- put json data from form into lua table
 local function form_to_table()
     local form, err = upload:new(1048576)
     if not form then
-        log_error('failed to upload:new -  ', err)
+        util.log_error('failed to upload:new -  ' ..  err)
         ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
     form:set_timeout(2000) -- 2 seconds
@@ -76,15 +42,6 @@ local function read_templates(qtf)
 end
 
 
-local function error_to_json(e)
-    local l = debug.getinfo(2).currentline
-    local s = debug.getinfo(2).short_src
-    return '{"error": ' .. cjson.encode(
-        e .. ' at line ' .. l .. ' in ' .. s .. ' for ' .. get_inst()
-    ) .. '}'
-end
-
-
 local function do_db_operation(d, query, method)
     local return_code
     if print_sql then
@@ -92,10 +49,13 @@ local function do_db_operation(d, query, method)
     else
         local res, err = d:query(query)
         if not res then
-            return ngx.HTTP_BAD_REQUEST, error_to_json(err)
+            return ngx.HTTP_BAD_REQUEST, util.error_to_json(err .. ' query = '
+                .. query)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
+        elseif method == 'DELETE' then
+            return_code = 204
         else
             return_code = ngx.HTTP_OK
         end
@@ -143,6 +103,11 @@ local function columns_rows_maker(d, t_data)
 end
 
 
+--[[
+takes a variable number of paramter strings, puts them in a table and
+uses table.concat to make a string. It's much faster than
+string concatenation
+--]]
 local function make_sql(...)
     local t = {}
     for _, v in ipairs({...}) do
@@ -192,7 +157,7 @@ local function populate_var_clauses(q, db, args, template)
                     else
                         clause = string.gsub(clause, '#not#', 'not')
                     end
-                elseif (var == 'modifiable') then -- todo: get rid of this
+                elseif (var == 'modifiable' or var == 'ispi_list') then
                     clause = ''
                 else
                     clause = string.gsub(clause, '#el_var_value#',
@@ -206,13 +171,74 @@ local function populate_var_clauses(q, db, args, template)
     return table.concat(clauses)
 end
 
-
+-- tidy up the query string, removing extra space and end of lines
 local function clean_query(q)
     q = string.gsub(q, '\n', '')
     q = string.gsub(q, '  *', ' ')
-    q = string.gsub(q, '^ ', '')
-    q = string.gsub(q, ' $', ';')
+    q = util.trim(q)
     return q
+end
+
+
+local function dataset_accesses_special(query, q, qt, args, db)
+    if args['summary'] == 'true' then
+        q = string.gsub(q, '#summary_column#',
+            qt[query]['summary_column_1'])
+        q = string.gsub(q, '#summary_clause#',
+            qt[query]['summary_clause_2'])
+        q = string.gsub(q, '#group_by_clause#',
+            qt[query]['group_by_clause_2'])
+        q = string.gsub(q, '#order_clause#',
+            qt[query]['output_order_2'])
+    elseif args['summary_by_date'] == 'true' then
+        q = string.gsub(q, '#summary_column#',
+            qt[query]['summary_column_2'])
+        q = string.gsub(q, '#summary_clause#',
+            qt[query]['summary_clause_2'])
+        q = string.gsub(q, '#group_by_clause#',
+            qt[query]['group_by_clause_3'])
+        q = string.gsub(q, '#order_clause#',
+            qt[query]['output_order_3'])
+    else
+        q = string.gsub(q, '#summary_column#',
+            qt[query]['summary_column_1'])
+        q = string.gsub(q, '#summary_clause#',
+            qt[query]['summary_clause_1'])
+        q = string.gsub(q, '#group_by_clause#',
+            qt[query]['group_by_clause_1'])
+        q = string.gsub(q, '#order_clause#',
+            qt[query]['output_order_1'])
+    end
+    if not args['dataset_id'] and not args['sd'] then
+        q = string.gsub(q, '#and_clause_1#', '')
+        q = string.gsub(q, '#and_clause_2#', '')
+    end
+    if args['dataset_id'] then
+        q = string.gsub(q, '#and_clause_1#', 'and')
+        q = string.gsub(q, '#dataset_id#',
+            string.gsub(qt[query]['dataset_id'], '#el_var_value#',
+                db:escape_literal(args['dataset_id'])))
+    else
+        q = string.gsub(q, '#dataset_id#', '')
+    end
+    if args['sd'] then
+        q = string.gsub(q, '#and_clause_1#', 'and')
+        local date_range =
+        string.gsub(qt[query]['sd'], '#el_var_value#',
+            db:escape_literal(args['sd']))
+            .. ' ' ..
+            string.gsub(qt[query]['ed'], '#el_var_value#',
+                db:escape_literal(args['ed']))
+        q = string.gsub(q, '#date_range#', date_range)
+    else
+        q = string.gsub(q, '#date_range#', '')
+    end
+    if args['dataset_id'] and args['sd'] then
+        q = string.gsub(q, '#and_clause_2#', 'and')
+    else
+        q = string.gsub(q, '#and_clause_2#', '')
+    end
+    return(q)
 end
 
 
@@ -221,54 +247,57 @@ local function construct_c_query(db, inst, query, method, qtf)
     local qt = read_templates(qtf)
     local args = ngx.req.get_uri_args()
     local q
-    if method == 'PUT' then
-        q = qt[query]['put']
-        local pkey = q['put_pkey']
-        if query == 'project_dmps' then
-            -- todo: Use a required pkey feature in the query template
-            if not args['project_id'] then
-                log_error('project_dmps_view_put requires a '
-                    .. 'project_id parameter')
+    -- todo: delete and put procesing could be combined
+    if method == 'DELETE' then
+        q = qt[query]['delete']
+        local pkeys = qt[query]['delete_pkeys']
+        for _, k in pairs(pkeys) do
+            if not args[k] then
+                util.log_error(query .. ' delete requires a ' ..
+                    k .. ' parameter')
                 ngx.exit(ngx.HTTP_BAD_REQUEST)
             else
-                q = string.gsub(q, '#project_id#',
-                    db:escape_literal(args['project_id']))
+                q = string.gsub(q, '#' .. k .. '#',
+                    db:escape_literal(args[k]))
+            end
+        end
+        q = string.gsub(q, '#inst_id#', institution)
+    elseif method == 'PUT' then
+        q = qt[query]['put']
+        local pkeys= qt[query]['put_pkeys']
+        for _, k in pairs(pkeys) do
+            if not args[k] then
+                util.log_error(query .. ' put requires a ' ..
+                    k .. ' parameter.')
+                ngx.exit(ngx.HTTP_BAD_REQUEST)
+            else
+                q = string.gsub(q, '#' .. k .. '#',
+                    db:escape_literal(args[k]))
             end
         end
         local u_count = 0
         q = string.gsub(q, '#inst_id#', institution)
-        if args['dmp_id'] then
-            q = string.gsub(q, '#dmp_id#', 'dmp_id = ' ..
-                db:escape_literal(args['dmp_id']))
-            u_count = u_count + 1
-        else
-            q = string.gsub(q, '#dmp_id#', '')
-        end
-        if args['has_dmp'] then
-            local c_name = 'has_dmp'
-            if u_count > 0 then
-                c_name = ', ' .. c_name
+        local updateable_columns = qt[query]['put_updateable_columns']
+        for _, c in pairs(updateable_columns) do
+            if args[c] then
+                local c_name = c
+                if u_count > 0 then
+                    c_name = ', ' .. c_name
+                end
+                q = string.gsub(q, '#set_' .. c .. '#', c_name .. ' = ' ..
+                    db:escape_literal(args[c]))
+                u_count = u_count + 1
+            else
+                q = string.gsub(q, '#set_' .. c .. '#', '')
             end
-            q = string.gsub(q, '#has_dmp#', c_name .. ' = ' ..
-                db:escape_literal(args['has_dmp']))
-            u_count = u_count + 1
-        else
-            q = string.gsub(q, '#has_dmp#', '')
-        end
-        if args['has_dmp_been_reviewed'] then
-            local c_name = 'has_dmp_been_reviewed'
-            if u_count > 0 then
-                c_name = ', ' .. c_name
-            end
-            q = string.gsub(q, '#has_dmp_been_reviewed#', c_name .. ' = ' ..
-                db:escape_literal(args['has_dmp_been_reviewed']))
-            u_count = u_count + 1
-        else
-            q = string.gsub(q, '#has_dmp_been_reviewed#', '')
         end
     else
         if args['modifiable'] then
-            q = qt[query .. '_modifiable']['query']
+            query = query .. '_modifiable'
+            q = qt[query]['query']
+        elseif args['ispi_list'] then
+            query = query .. '_ispi_list'
+            q = qt[query]['query']
         else
             q = qt[query]['query']
         end
@@ -296,63 +325,7 @@ local function construct_c_query(db, inst, query, method, qtf)
         q = string.gsub(q, '#variable_clauses#', vc)
         -- unfortunately, special processing, todo: improve this
         if query == 'dataset_accesses' then
-            if args['summary'] == 'true' then
-                q = string.gsub(q, '#summary_column#',
-                    qt[query]['summary_column_1'])
-                q = string.gsub(q, '#summary_clause#',
-                    qt[query]['summary_clause_2'])
-                q = string.gsub(q, '#group_by_clause#',
-                    qt[query]['group_by_clause_2'])
-                q = string.gsub(q, '#order_clause#',
-                    qt[query]['output_order_2'])
-            elseif args['summary_by_date'] == 'true' then
-                q = string.gsub(q, '#summary_column#',
-                    qt[query]['summary_column_2'])
-                q = string.gsub(q, '#summary_clause#',
-                    qt[query]['summary_clause_2'])
-                q = string.gsub(q, '#group_by_clause#',
-                    qt[query]['group_by_clause_3'])
-                q = string.gsub(q, '#order_clause#',
-                    qt[query]['output_order_3'])
-            else
-                q = string.gsub(q, '#summary_column#',
-                    qt[query]['summary_column_1'])
-                q = string.gsub(q, '#summary_clause#',
-                    qt[query]['summary_clause_1'])
-                q = string.gsub(q, '#group_by_clause#',
-                    qt[query]['group_by_clause_1'])
-                q = string.gsub(q, '#order_clause#',
-                    qt[query]['output_order_1'])
-            end
-            if not args['dataset_id'] and not args['sd'] then
-                q = string.gsub(q, '#and_clause_1#', '')
-                q = string.gsub(q, '#and_clause_2#', '')
-            end
-            if args['dataset_id'] then
-                q = string.gsub(q, '#and_clause_1#', 'and')
-                q = string.gsub(q, '#dataset_id#',
-                    string.gsub(qt[query]['dataset_id'], '#el_var_value#',
-                        db:escape_literal(args['dataset_id'])))
-            else
-                q = string.gsub(q, '#dataset_id#', '')
-            end
-            if args['sd'] then
-                q = string.gsub(q, '#and_clause_1#', 'and')
-                local date_range =
-                    string.gsub(qt[query]['sd'], '#el_var_value#',
-                        db:escape_literal(args['sd']))
-                    .. ' ' ..
-                    string.gsub(qt[query]['ed'], '#el_var_value#',
-                        db:escape_literal(args['ed']))
-                q = string.gsub(q, '#date_range#', date_range)
-            else
-                q = string.gsub(q, '#date_range#', '')
-            end
-            if args['dataset_id'] and args['sd'] then
-                q = string.gsub(q, '#and_clause_2#', 'and')
-            else
-                q = string.gsub(q, '#and_clause_2#', '')
-            end
+            q = dataset_accesses_special(query, q, qt, args, db)
         end
         q = string.gsub(q, '#inst_id#', institution)
     end
@@ -390,14 +363,14 @@ end
 
 -- pre-defined 'canned', 'utility' and 'open' queries
 local function do_cuo_query(db, qtype, qtf)
-    local inst = ngx.var.inst_id
+    local inst = util.get_inst()
     local query = ngx.var.query
     local method = ngx.req.get_method()
     if (qtype ~= construct_c_query) and (method ~= 'GET') then
         local e = method .. ' not supported for query on '
             .. query .. ' in ' .. inst
-        log_error(e)
-        return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
+        util.log_error(e)
+        return ngx.HTTP_METHOD_NOT_IMPLEMENTED, util.error_to_json(e)
     else
         return do_db_operation(
             db, qtype(db, inst, query, method, qtf), method
@@ -417,9 +390,9 @@ local function check_api_key(db, inst, api_key)
         ]] .. db:escape_literal(inst) .. ';'
     local res = db:query(q)
     local stored_api_key = res[1]['api_key']
-    log_debug('api_key for ' .. inst ..' = ' .. stored_api_key)
+    util.log_debug('api_key for ' .. inst ..' = ' .. stored_api_key)
     if api_key ~= stored_api_key then
-        log_error('HTTP_FORBIDDEN to '
+        util.log_error('HTTP_FORBIDDEN to '
             .. ngx.var.remote_addr .. ' with api_key = ' .. api_key)
         ngx.exit(ngx.HTTP_FORBIDDEN)
     end
@@ -440,7 +413,7 @@ local function db_operation(db, query_template_file)
         return do_cuo_query(db, construct_u_query, query_template_file)
     else -- direct operations on database tables
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
-        local inst = ngx.var.inst_id
+        local inst = util.get_inst()
         local object = ngx.var.object
         local method = ngx.req.get_method()
         local k, v
@@ -464,8 +437,8 @@ local function db_operation(db, query_template_file)
             if not pkey then
                 local e = 'Incorrect data specification ' ..
                         'for update (no pkey specified)'
-                log_error(e)
-                return ngx.HTTP_BAD_REQUEST, error_to_json(e)
+                util.log_error(e)
+                return ngx.HTTP_BAD_REQUEST, util.error_to_json(e)
             end
             query = make_sql(
                 'update ', object,
@@ -488,8 +461,8 @@ local function db_operation(db, query_template_file)
                 local e = 'No pkey and value specified ' ..
                         'for for http_method = '
                         .. method .. ' on object ' .. object
-                log_error(e)
-                return ngx.BAD_REQUEST, error_to_json(e)
+                util.log_error(e)
+                return ngx.BAD_REQUEST, util.error_to_json(e)
             end
         elseif method == 'GET' then
             if k and v then
@@ -509,8 +482,8 @@ local function db_operation(db, query_template_file)
             end
         else
             local e = 'No defined action for http_method = ' .. method
-            log_error(e)
-            return ngx.HTTP_METHOD_NOT_IMPLEMENTED, error_to_json(e)
+            util.log_error(e)
+            return ngx.HTTP_METHOD_NOT_IMPLEMENTED, util.error_to_json(e)
         end
         local status, result = do_db_operation(db, query, method)
         if method == "POST" then
@@ -536,7 +509,7 @@ elseif port == '8080' then
 elseif port == '80' then
     environment = 'live'
 else
-    log_error('No environment available')
+    util.log_error('No environment available')
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
 
@@ -544,7 +517,6 @@ local base_uri
 local base_path
 local conn_file
 local q_template_file
-local util
 
 if environment == 'jhk_dev' then
     local host = 'localhost'
