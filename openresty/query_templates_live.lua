@@ -427,6 +427,39 @@ query_templates = {
             #order_clause#
         ]]
     },
+    faculties_departments = {
+        columns_list = '',
+        group_by = '',
+        variable_clauses = '',
+        output_order= '',
+        query= [[
+                    select
+                        faculty_id,
+                        abbreviation,
+                        name,
+                        (
+                            select
+                                array_to_json(array_agg(row_to_json(t)))
+                            from (
+                                select
+                                    department_id,
+                                    name,
+                                    abbreviation
+                                from
+                                    department
+                                where
+                                    faculty_id = faculty.faculty_id
+                                order by
+                                    department_id
+                            ) t
+                        ) as departments
+                    from
+                        faculty
+                    where
+                        inst_id = #inst_id#
+                    order by faculty_id
+        ]]
+    },
     -- utility queries for internal use
     u_dmao_faculty_ids_inst_ids_map = {
         query = [[

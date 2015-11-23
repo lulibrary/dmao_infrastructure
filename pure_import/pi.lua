@@ -63,8 +63,11 @@ local function extract_json(inst, xml_table, et, id_add, id_add_value)
                     r[#r + 1] = cjson.encode(inst)
                     r[#r + 1] = ','
                     if id_add then
-                        r[#r + 1] = '"' .. id_add .. '": '
-                                .. cjson.encode(id_add_value) .. ','
+                        r[#r + 1] = '"'
+                        r[#r + 1] = id_add
+                        r[#r + 1] = '": '
+                        r[#r + 1] = cjson.encode(id_add_value)
+                        r[#r + 1] = ','
                     end
                     r[#r + 1] = string.gsub(table.concat(row), ', $', '')
                     r[#r + 1] = '},'

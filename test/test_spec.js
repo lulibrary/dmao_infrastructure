@@ -148,6 +148,12 @@ frisby.create('Test o_get_api_key')
             }
         ];
 
+        frisby.create('Test faculty/department map')
+            .get(base_url + '/c/' + inst + '/' + ak + '/faculties_departments')
+            .expectStatus(200)
+            .expectHeaderContains('content-type', 'application/json')
+            .toss();
+
         var api_keys = [
             {
                 api_key: ak,
