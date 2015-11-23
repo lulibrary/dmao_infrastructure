@@ -35,13 +35,16 @@ local function form_to_table()
     end
 end
 
-
+-- gets the query templates
 local function read_templates(qtf)
     dofile(qtf)
     return query_templates
 end
 
-
+--[[
+Actually submits the query, returning the json encode result and an
+approriate return code.
+--]]
 local function do_db_operation(d, query, method)
     local return_code
     if print_sql then
@@ -117,6 +120,8 @@ local function make_sql(...)
 end
 
 
+-- populates the variable clauses for the query by iterating
+-- through the provide arguments
 local function populate_var_clauses(q, db, args, template)
     local clauses = {}
     if args then
@@ -333,6 +338,7 @@ local function construct_c_query(db, inst, query, method, qtf)
 end
 
 
+-- utility 'u' queries
 local function construct_u_query(db, inst, query, method, qtf)
     local institution = db:escape_literal(inst)
     local qt = read_templates(qtf)
@@ -342,6 +348,7 @@ local function construct_u_query(db, inst, query, method, qtf)
 end
 
 
+-- open 'o' queries, no api_key required
 local function construct_o_query(db, inst, query, method, qtf)
     local qt = read_templates(qtf)
     local q
