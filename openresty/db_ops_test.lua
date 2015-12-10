@@ -3,10 +3,11 @@ local cjson = require 'cjson'
 local upload = require 'resty.upload'
 local http = require 'socket.http'
 
-local debug_flag
+local debug_flag = ''
 local print_sql
 local util
 
+local base_uri
 
 -- put json data from form into lua table
 local function form_to_table()
@@ -62,7 +63,11 @@ local function do_db_operation(d, query, method)
         else
             return_code = ngx.HTTP_OK
         end
-        return return_code, cjson.encode(res)
+        if res[1] == nil then
+            return return_code, '[]'
+        else
+            return return_code, cjson.encode(res)
+        end
     end
 end
 
@@ -135,7 +140,8 @@ local function populate_var_clauses(q, db, args, template)
                         (
                             var == 'dataset_id' or
                             var == 'summary' or
-                            var == 'summary_by_date'
+                            var == 'summary_by_date' or
+                            var == 'summary_totals'
                         )
                     )
             ) then
@@ -153,7 +159,7 @@ local function populate_var_clauses(q, db, args, template)
                         else
                             clause = string.gsub(clause,
                                 '#project_null_dates#',
-                                'or p.project_date_range is null')
+                                'or project_date_range is null')
                         end
                     end
                 elseif (var == 'has_dmp') or (var == 'is_awarded') then
@@ -186,7 +192,16 @@ end
 
 
 local function dataset_accesses_special(query, q, qt, args, db)
-    if args['summary'] == 'true' then
+    if args['summary_totals'] == 'true' then
+        q = string.gsub(q, '#summary_column#',
+            qt[query]['summary_column_4'])
+        q = string.gsub(q, '#summary_clause#',
+            qt[query]['summary_clause_2'])
+        q = string.gsub(q, '#group_by_clause#',
+            qt[query]['group_by_clause_4'])
+        q = string.gsub(q, '#order_clause#',
+            qt[query]['output_order_4'])
+    elseif args['summary'] == 'true' then
         q = string.gsub(q, '#summary_column#',
             qt[query]['summary_column_1'])
         q = string.gsub(q, '#summary_clause#',
@@ -520,7 +535,6 @@ else
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
 
-local base_uri
 local base_path
 local conn_file
 local q_template_file

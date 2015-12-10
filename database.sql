@@ -73,6 +73,7 @@ create table institution (
   url varchar(2048),
   description varchar,
   api_key varchar(128),
+  datacite_id varchar(64),
   load_date timestamp,
   mod_date timestamp
 );
@@ -114,7 +115,7 @@ create table faculty (
   description varchar,
   load_date timestamp,
   mod_date timestamp,
-  unique (inst_id, name)
+  unique (inst_id, inst_local_id, name)
 );
 comment on table faculty is
   'Describes a faculty, the combination of the
@@ -153,8 +154,12 @@ create trigger action_date before insert or update on department
 -------------------------------------------------------------------
 create table funder (
   funder_id funder_id_t unique not null primary key,
-  name varchar(256) not null,
+  name varchar(2048) not null,
+  inst_alt_name varchar(2048),
+  inst_local_id varchar(64),
   is_rcuk_funder boolean default false,
+  inst_id inst_id_t references institution(inst_id)
+    on delete cascade on update cascade not null,
   url varchar(2048),
   load_date timestamp,
   mod_date timestamp
@@ -265,6 +270,10 @@ create table project (
   project_id serial primary key,
   project_name varchar(2048),
   project_acronym varchar(512),
+  inst_local_id varchar(64),
+  inst_project_status varchar(128),
+  inst_project_classification varchar(512),
+  inst_project_type varchar(128),
   description varchar,
   funder_project_code varchar(256),
   is_awarded boolean default false,
@@ -286,7 +295,8 @@ create table project (
   inst_url varchar(2048),
   load_date timestamp,
   mod_date timestamp,
-  check (has_dmp_been_reviewed in ('yes', 'no', 'unknown'))
+  check (has_dmp_been_reviewed in ('yes', 'no', 'unknown')),
+  unique(inst_id, inst_local_id)
 );
 comment on table project is 'Describes an institutions projects';
 comment on column project.funder_project_code is
@@ -375,12 +385,15 @@ create table dataset (
     on delete cascade on update cascade,
   project_id integer references project(project_id)
     on delete cascade on update cascade,
+  dataset_local_inst_id varchar(1024),
   dataset_pid varchar(256),
   dataset_link varchar(8192),
+  dataset_filename varchar,
   dataset_size numeric default 0,
-  dataset_name varchar(256),
-  dataset_format varchar(256),
-  dataset_notes varchar(2048),
+  dataset_name varchar,
+  dataset_format varchar,
+  dataset_notes varchar,
+  dataset_create_date date,
   repository_pid varchar(2048),
   inst_archive_status varchar(256),
   archive_pid varchar(2048),
@@ -392,7 +405,8 @@ create table dataset (
   load_date timestamp,
   mod_date timestamp,
   check (storage_location in ('internal', 'external')),
-  check (inst_archive_status in ('archived', 'not_archived', 'unknown'))
+  check (inst_archive_status in ('archived', 'not_archived', 'unknown')),
+  unique(inst_id, dataset_local_inst_id)
 );
 comment on table dataset is 'Describes datasets';
 comment on column dataset.dataset_pid is
@@ -458,7 +472,7 @@ create table publication (
   inst_pub_month int,
   inst_pub_day int,
   inst_pub_title varchar,
-  inst_pub_sub_title varchar,
+  inst_pub_abstract varchar,
   load_date timestamp,
   mod_date timestamp,
   unique(inst_id, cris_id)
@@ -1092,7 +1106,8 @@ for each row execute procedure storage_view_update();
 ---------------------------------------------------------------------
 create or replace view datasets_view as
   select
-    f.funder_id,
+    f.funder_id full_funder_id,
+    regexp_replace(f.funder_id, '^.*:', '') funder_id,
     f.name funder_name,
     d.*,
     fac.abbreviation lead_faculty_abbrev,
@@ -1102,7 +1117,8 @@ create or replace view datasets_view as
     p.project_awarded,
     p.project_start,
     p.project_end,
-    p.project_name
+    p.project_name,
+    p.project_date_range
   from
     dataset d
   left outer join
@@ -1135,7 +1151,8 @@ create or replace view datasets_view as
 create or replace view dmp_status_view as
   select
     p.*,
-    mfp.funder_id funder_id,
+    mfp.funder_id full_funder_id,
+    regexp_replace(mfp.funder_id, '^.*:', '') funder_id,
     dmp.dmp_source_system,
     dmp.dmp_ss_pid dmp_source_system_id,
     dmp.dmp_state,
@@ -1170,7 +1187,8 @@ create or replace view dmp_status_view as
 create or replace view rcuk_as_view as
   select
     pub.*,
-    mfp.funder_id,
+    mfp.funder_id full_funder_id,
+    regexp_replace(mfp.funder_id, '^.*:', '') funder_id,
     f.name funder_name,
     proj.project_name,
     proj.project_awarded,

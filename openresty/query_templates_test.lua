@@ -2,37 +2,27 @@
 query_templates = {
     datasets = {
         columns_list = [[
-            f.funder_id,
-            f.name funder_name,
-            d.*,
-            fac.abbreviation lead_faculty_abbrev,
-            fac.name lead_faculty_name,
-            dept.abbreviation lead_dept_abbrev,
-            dept.name lead_dept_name,
-            p.project_awarded,
-            p.project_start,
-            p.project_end,
-            p.project_name
+            *
         ]],
         group_by = '',
-        output_order = 'order by d.dataset_id asc',
+        output_order = 'order by dataset_id asc',
         columns_list_count = [[
             count(*) num_datasets
         ]],
         variable_clauses = {
-            dataset_id = 'and d.dataset_id = #el_var_value#',
+            dataset_id = 'and dataset_id = #el_var_value#',
             date = [[
                 and
                 ((
-                    p.#var_value# >= #el_sd# and p.#var_value# <= #el_ed#
+                    #var_value# >= #el_sd# and #var_value# <= #el_ed#
                 )
                 #project_null_dates#)
             ]],
-            faculty = 'and d.lead_faculty_id = #el_var_value#',
-            dept = 'and d.lead_department_id = #el_var_value#',
-            project = 'and d.project_id = #el_var_value#',
-            arch_status = 'and d.inst_archive_status = #el_var_value#',
-            location = 'and d.storage_location = #el_var_value#',
+            faculty = 'and lead_faculty_id = #el_var_value#',
+            dept = 'and lead_department_id = #el_var_value#',
+            project = 'and project_id = #el_var_value#',
+            arch_status = 'and inst_archive_status = #el_var_value#',
+            location = 'and storage_location = #el_var_value#',
             filter = [[
                 where funder_id in (
                 select funder_id from funder
@@ -44,45 +34,9 @@ query_templates = {
             select
                 #columns_list#
             from
-                dataset d
-            left outer join
-                map_funder_ds fdm
-            on
-                (d.dataset_id = fdm.dataset_id)
-            left outer join
-                funder f
-            on
-                (fdm.funder_id = f.funder_id)
-            left outer join
-                faculty fac
-            on
-                (d.lead_faculty_id = fac.faculty_id)
-            left outer join
-                department dept
-            on
-                (d.lead_department_id = dept.department_id)
-            left outer join
-                project p
-            on
-                (d.project_id = p.project_id)
-            where (
-                d.dataset_id in (
-                    select
-                        dataset_id
-                    from
-                        map_funder_ds
-                    #funder_id_filter_clause#
-                )
-            and
-                d.dataset_id in (
-                    select
-                        dataset_id
-                    from
-                        map_inst_ds
-                    where
-                        inst_id = #inst_id#
-                )
-            )
+                datasets_view
+            where
+                inst_id = #inst_id#
             #variable_clauses#
             #group_by_clause#
             #order_clause#
@@ -157,62 +111,36 @@ query_templates = {
     },
     dmp_status = {
         columns_list = [[
-            p.*,
-            fpm.funder_id funder_id,
-            dmp.dmp_source_system,
-            dmp.dmp_ss_pid dmp_source_system_id,
-            dmp.dmp_state,
-            dmp.dmp_status,
-            dmp.author_orcid,
-            f.name funder_name,
-            fds.funder_id,
-            fds.funder_state_code,
-            fds.funder_state_name
+            *
         ]],
         group_by = '',
-        output_order = 'order by p.project_id asc',
+        output_order = 'order by project_id asc',
         columns_list_count = [[
             count(*) num_dmp_status
         ]],
         variable_clauses = {
-            project_id = 'and p.project_id = #el_var_value#',
+            project_id = 'and project_id = #el_var_value#',
             date = [[
                 and
                 ((
-                    p.#var_value# >= #el_sd# and p.#var_value# <= #el_ed#
+                    #var_value# >= #el_sd# and #var_value# <= #el_ed#
                 )
                 #project_null_dates#)
             ]],
-            faculty = 'and p.lead_faculty_id = #el_var_value#',
-            dept = 'and p.lead_department_id = #el_var_value#',
-            dmp_state = 'and dmp.state = #el_var_value#',
-            dmp_status = 'and dmp.status = #el_var_value#',
-            has_dmp = 'and #not# p.has_dmp',
-            dmp_reviewed = 'and p.has_dmp_been_reviewed = #el_var_value#',
+            faculty = 'and lead_faculty_id = #el_var_value#',
+            dept = 'and lead_department_id = #el_var_value#',
+            dmp_state = 'and state = #el_var_value#',
+            dmp_status = 'and status = #el_var_value#',
+            has_dmp = 'and #not# has_dmp',
+            dmp_reviewed = 'and has_dmp_been_reviewed = #el_var_value#',
         },
         query = [[
             select
                 #columns_list#
             from
-                project p
-            left outer join
-                map_funder_project fpm
-            on
-                (p.project_id = fpm.project_id)
-            left outer join
-                dmp
-            on
-                (p.dmp_id = dmp.dmp_id)
-            left outer join
-                funder_dmp_states fds
-            on
-                (dmp.dmp_state = fds.dmp_state_id)
-            left outer join
-                funder f
-            on
-                (fds.funder_id = f.funder_id)
+                dmp_status_view
             where
-                p.inst_id = #inst_id#
+                inst_id = #inst_id#
             #variable_clauses#
             #group_by_clause#
             #order_clause#
@@ -256,6 +184,7 @@ query_templates = {
             faculty = 'and lead_faculty_id = #el_var_value#',
             dept = 'and lead_department_id = #el_var_value#',
             dataset_id = 'and dataset_id = #el_var_value#',
+            inst_storage_platform_id = 'and inst_storage_platform_id = #el_var_value#',
             date = [[
                 and
                 (
@@ -285,6 +214,10 @@ query_templates = {
         put_updateable_columns = {
             'expected_storage'
         },
+        -- todo: The second part of the statement below is to return the
+        -- todo: computed value for expected storage cost to the calling
+        -- todo: application. Which postgres does not seem to do
+        -- todo: There must be a better way. xrefed with database.sql todo
         put = [[
             update
                 storage_view
@@ -296,7 +229,13 @@ query_templates = {
                 inst_storage_platform_id = #inst_storage_platform_id#
             and
                 inst_id = #inst_id#
-            returning *
+            ;
+            select * from storage_view where project_id = #project_id#
+            and
+                inst_storage_platform_id = #inst_storage_platform_id#
+            and
+                inst_id = #inst_id#
+            ;
         ]],
         delete = [[
             delete from
@@ -312,58 +251,33 @@ query_templates = {
     },
     rcuk_as = {
         columns_list = [[
-            pub.*,
-            fpm.funder_id,
-            f.name funder_name,
-            proj.project_name,
-            proj.project_awarded,
-            proj.project_start,
-            proj.project_end
+            *
         ]],
-        output_order = 'order by pub.publication_id asc',
+        output_order = 'order by publication_id asc',
         columns_list_count = [[
             count(*) num_pubs
         ]],
         group_by = '',
         variable_clauses = {
-            project_id = 'and pub.project_id = #el_var_value#',
+            project_id = 'and project_id = #el_var_value#',
             date = [[
                 and
                 (
                     #var_value# >= #el_sd# and #var_value# <= #el_ed#
                 )
             ]],
-            faculty = 'and pub.lead_faculty_id = #el_var_value#',
-            dept = 'and pub.lead_department_id = #el_var_value#',
-            funder_project_code = 'and pub.funder_project_code = #el_var_value#',
-            funder = 'and fpm.funder_id = #el_var_value#'
+            faculty = 'and lead_faculty_id = #el_var_value#',
+            dept = 'and lead_department_id = #el_var_value#',
+            funder_project_code = 'and funder_project_code = #el_var_value#',
+            funder = 'and funder_id = #inst_id#||\':\'||#el_var_value#'
         },
         query = [[
             select
                 #columns_list#
             from
-                publication pub
-            join
-                map_funder_pub fpm
-            on
-                (
-                    pub.publication_id = fpm.publication_id
-                    and
-                    pub.inst_id = #inst_id#
-                )
-            join
-                funder f
-            on
-                (f.funder_id = fpm.funder_id)
-            left outer join
-                project proj
-            on
-               (pub.project_id = proj.project_id)
+                rcuk_as_view
             where
-                fpm.funder_id in (
-                    'ahrc', 'bbsrc', 'epsrc',
-                    'esrc', 'mrc', 'nerc', 'stfc'
-                )
+                inst_id = #inst_id#
             #variable_clauses#
             #order_clause#
         ]]
@@ -372,11 +286,14 @@ query_templates = {
         columns_list =  '',
         summary_column_1 = 'd.dataset_id,',
         summary_column_2 = 'd.access_date,',
+        summary_column_3 = 'd.access_type',
+        summary_column_4 = '',
         summary_clause_1 = 'd.access_date, d.counter',
         summary_clause_2 = 'sum(d.counter)',
         group_by_clause_1 = '',
         group_by_clause_2 = 'group by d.dataset_id, d.access_type',
         group_by_clause_3 = 'group by d.access_date, d.access_type',
+        group_by_clause_4 = 'group by d.access_type',
         output_order_1 = [[
             order by d.access_date, d.dataset_id asc, d.access_type asc
         ]],
@@ -385,6 +302,9 @@ query_templates = {
         ]],
         output_order_3 = [[
             order by d.access_date, d.access_type asc
+        ]],
+        output_order_4 = [[
+            order by d.access_type asc
         ]],
         dataset_id = 'd.dataset_id = #el_var_value#',
         sd = 'd.access_date >= #el_var_value#',

@@ -74,7 +74,7 @@ end
 -- iterate through a lua table to print via print function pf
 function M.tprint(tbl, pf, indent)
     if not indent then indent = 0 end
-    for k, v in M.spairs(tbl) do
+    for k, v in ipairs(tbl) do
         local formatting = string.rep('  ', indent) .. k .. ': '
         if type(v) == 'table' then
             pf(formatting)
@@ -109,11 +109,11 @@ end
 
 
 function M.log_debug(m)
-    if debug_flag then
+    -- if debug_flag then
         local l = debug.getinfo(2).currentline
         local s = debug.getinfo(2).short_src
         M.logit(ngx.DEBUG, m, l, s)
-    end
+    -- end
 end
 
 

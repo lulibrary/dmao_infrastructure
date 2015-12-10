@@ -3,10 +3,11 @@ local cjson = require 'cjson'
 local upload = require 'resty.upload'
 local http = require 'socket.http'
 
-local debug_flag
+local debug_flag = ''
 local print_sql
 local util
 
+local base_uri
 
 -- put json data from form into lua table
 local function form_to_table()
@@ -57,12 +58,18 @@ local function do_db_operation(d, query, method)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
+            return return_code, cjson.encode(res)
         elseif method == 'DELETE' then
             return_code = 204
+            return return_code, cjson.encode(res)
         else
             return_code = ngx.HTTP_OK
+            if res[1] == nil then
+                return return_code, '[]'
+            else
+                return return_code, cjson.encode(res)
+            end
         end
-        return return_code, cjson.encode(res)
     end
 end
 
@@ -135,7 +142,8 @@ local function populate_var_clauses(q, db, args, template)
                         (
                             var == 'dataset_id' or
                             var == 'summary' or
-                            var == 'summary_by_date'
+                            var == 'summary_by_date' or
+                            var == 'summary_totals'
                         )
                     )
             ) then
@@ -153,7 +161,7 @@ local function populate_var_clauses(q, db, args, template)
                         else
                             clause = string.gsub(clause,
                                 '#project_null_dates#',
-                                'or p.project_date_range is null')
+                                'or project_date_range is null')
                         end
                     end
                 elseif (var == 'has_dmp') or (var == 'is_awarded') then
@@ -186,7 +194,16 @@ end
 
 
 local function dataset_accesses_special(query, q, qt, args, db)
-    if args['summary'] == 'true' then
+    if args['summary_totals'] == 'true' then
+        q = string.gsub(q, '#summary_column#',
+            qt[query]['summary_column_4'])
+        q = string.gsub(q, '#summary_clause#',
+            qt[query]['summary_clause_2'])
+        q = string.gsub(q, '#group_by_clause#',
+            qt[query]['group_by_clause_4'])
+        q = string.gsub(q, '#order_clause#',
+            qt[query]['output_order_4'])
+    elseif args['summary'] == 'true' then
         q = string.gsub(q, '#summary_column#',
             qt[query]['summary_column_1'])
         q = string.gsub(q, '#summary_clause#',
@@ -416,7 +433,7 @@ local function db_operation(db, query_template_file)
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
         return do_cuo_query(db, construct_c_query, query_template_file)
     elseif u_query == 'true' then
-        check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
+        --check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
         return do_cuo_query(db, construct_u_query, query_template_file)
     else -- direct operations on database tables
         check_api_key(db, ngx.var.inst_id, ngx.var.api_key)
@@ -520,7 +537,6 @@ else
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
 
-local base_uri
 local base_path
 local conn_file
 local q_template_file
