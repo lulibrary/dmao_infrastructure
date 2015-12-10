@@ -4,14 +4,28 @@ insert into institution values
     'j.krug@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
     'Fedora', 'Arkivum', 'GBP', '£', 'http://lancaster.ac.uk',
     'The bottom university in the North West of the UK.',
-    gen_api_key()
+    gen_api_key(), '10.17635'
+  ),
+  (
+    'birmingham', 'University of Birmingham', '',
+    '', '', 'Pure', '',
+    'Fedora', 'Arkivum', 'GBP', '£', 'http://bham.ac.uk',
+    '',
+    gen_api_key(), '10.13140'
+  ),
+  (
+    'york', 'University of York', '',
+                  '', '', 'Pure', '',
+                  'Fedora', 'Archivematica', 'GBP', '£', 'http://york.ac.uk',
+    '',
+    gen_api_key(), '10.15124'
   ),
   (
     'lancaster', 'Lancaster University', 'Hardy Schwamm',
     'h.schwamm@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
     'Fedora', 'Archivematica', 'GBP', '£', 'http://lancaster.ac.uk',
     'The top university in the North West of the UK.',
-    gen_api_key()
+    gen_api_key(), '10.17635'
 )
 ;
 
@@ -38,30 +52,30 @@ insert into department (inst_id, faculty_id, name, abbreviation) values
 
 
 insert into funder values
-  ('ahrc', 'Arts & Humanities Research Council', true),
-  ('bbsrc', 'Biotechnology and Biological Sciences Research Council', true),
-  ('epsrc', 'Engineering and Physical Sciences Research Council', true),
-  ('esrc', 'Economic and Social Research Council', true),
-  ('mrc', 'Medical Research Council', true),
-  ('nerc', 'Natural Environment Research Council', true),
-  ('stfc', 'Science and Technology Facilities Council', true),
-  ('h2020', 'Horizon 2020', false),
-  ('npl', 'National Physical Laboratory', false),
-  ('oclaro', 'Oclaro Inc', false),
-  ('none', 'Not funded', false)
+  ('luve_u:'||'ahrc', 'Arts & Humanities Research Council', '', 'AA', true, 'luve_u'),
+  ('luve_u:'||'bbsrc', 'Biotechnology and Biological Sciences Research Council', '', 'BB', true, 'luve_u'),
+  ('luve_u:'||'epsrc', 'Engineering and Physical Sciences Research Council', '', 'BB', true, 'luve_u'),
+  ('luve_u:'||'esrc', 'Economic and Social Research Council', '', 'DD', true, 'luve_u'),
+  ('luve_u:'||'mrc', 'Medical Research Council', '', 'EE', true, 'luve_u'),
+  ('luve_u:'||'nerc', 'Natural Environment Research Council', '', 'FF', true, 'luve_u'),
+  ('luve_u:'||'stfc', 'Science and Technology Facilities Council', '', 'GG', true, 'luve_u'),
+  ('luve_u:'||'h2020', 'Horizon 2020', '', 'HH', false, 'luve_u'),
+  ('luve_u:'||'npl', 'National Physical Laboratory', '', 'II', false, 'luve_u'),
+  ('luve_u:'||'oclaro', 'Oclaro Inc', '', 'JJ', false, 'luve_u'),
+  ('luve_u:'||'none', 'Not funded', '', 'KK', false, 'luve_u')
 ;
 
 
 insert into funder_dmp_states(funder_id, funder_state_code,
                               funder_state_name)
 values
-  ('h2020', 'version1', 'DMP version 1'),
-  ('h2020', 'version2', 'DMP version 2'),
-  ('h2020', 'version3', 'DMP version 3'),
-  ('nerc', 'outline_dmp', 'Outline DMP'),
-  ('nerc', 'full_dmp', 'Full DMP'),
-  ('ahrc', 'application_dmp',  'DMP required at application stage'),
-  ('bbsrc', 'application_dmp',  'DMP required at application stage')
+  ('luve_u:'||'h2020', 'version1', 'DMP version 1'),
+  ('luve_u:'||'h2020', 'version2', 'DMP version 2'),
+  ('luve_u:'||'h2020', 'version3', 'DMP version 3'),
+  ('luve_u:'||'nerc', 'outline_dmp', 'Outline DMP'),
+  ('luve_u:'||'nerc', 'full_dmp', 'Full DMP'),
+  ('luve_u:'||'ahrc', 'application_dmp',  'DMP required at application stage'),
+  ('luve_u:'||'bbsrc', 'application_dmp',  'DMP required at application stage')
 ;
 
 
@@ -109,6 +123,7 @@ insert into project
    funder_project_code,
    is_awarded,
    inst_id,
+   inst_local_id,
    lead_faculty_id,
    lead_department_id,
    institution_project_code,
@@ -122,7 +137,7 @@ insert into project
       'From Modern Applications (iLike)',
      'EP/K014463/1',
      true,
-     'luve_u',
+     'luve_u', '1',
      2,
      5,
      'MAA7754',
@@ -134,7 +149,7 @@ insert into project
     ('FST CASE Studentship: Design and testing of a Novel Neutron Meter',
      null,
      true,
-     'luve_u',
+     'luve_u', '2',
      2,
      3,
      'EGA7804',
@@ -146,7 +161,7 @@ insert into project
     ('ESRC studentship Blything',
      'EP/J019585/1',
      true,
-     'luve_u',
+     'luve_u', '3',
      2,
      7,
      '',
@@ -158,7 +173,7 @@ insert into project
     ('Orbit-based methods for Multielectron Systems in Strong Fields',
      'EP/J019585/1',
      true,
-     'luve_u',
+     'luve_u', '4',
      2,
      9,
      'PYA7995',
@@ -170,7 +185,7 @@ insert into project
     ('GaInAsNSb quantum wells for GaAs-based Telecoms devices',
      'PYA7943',
      true,
-     'luve_u',
+     'luve_u', '5',
      2,
      9,
      'PYA7943',
@@ -183,7 +198,7 @@ insert into project
      'ultralow temperatures',
      'EP/I028285/1',
      true,
-     'luve_u',
+     'luve_u', '6',
      2,
      9,
      'PYA7955',
@@ -195,7 +210,7 @@ insert into project
     ('Superfluid 3He at UltraLow Temperatures',
      'EP/L000016/1',
      true,
-     'luve_u',
+     'luve_u', '7',
      2,
      9,
      'PYA7018',
@@ -207,7 +222,7 @@ insert into project
     ('Islam on campus',
      '',
      false,
-     'luve_u',
+     'luve_u', '8',
      1,
      11,
      '51263',
@@ -219,7 +234,7 @@ insert into project
     ('The effects of age on temporal coding in the auditory system',
      'BB/M007243/1',
      true,
-     'luve_u',
+     'luve_u', '9',
      2,
      7,
      'PSA7830',
@@ -232,7 +247,7 @@ insert into project
      'conserved intracellular signalling pathway',
     null,
     false,
-    'luve_u',
+    'luve_u', '10',
     3,
     6,
     '52501',
@@ -245,7 +260,7 @@ insert into project
      'flexibility and attention through tas',
     null,
     false,
-    'luve_u',
+    'luve_u', '11',
     3,
     6,
     '52566',
@@ -306,8 +321,16 @@ insert into users values
     '+441523593099', encrypt_password('test_password')
   ),
   (
-    'krug', 'John Krug', 'lancaster', 'j.krug@lancaster.ac.uk',
-    '+441523593099', '66f932609d0197b43e4e556ecbd346ace42f50ae492158592445e7b9'
+    'admin', 'John Krug', 'lancaster', 'j.krug@lancaster.ac.uk',
+    '+441523593099', encrypt_password('admin')
+  ),
+  (
+    'admin', 'John Krug', 'birmingham', '',
+    '', encrypt_password('admin')
+  ),
+  (
+    'admin', 'John Krug', 'york', '',
+    '', encrypt_password('admin')
   ),
   (
     'aac', 'Adrian Albin-Clark', 'luve_u', 'a.albin-clark@lancaster.ac.uk',
@@ -521,41 +544,41 @@ insert into map_pub_ds values
 
 
 insert into map_funder_pub values
-  ('epsrc', 1),
-  ('esrc', 3),
-  ('epsrc', 5)
+  ('luve_u:'||'epsrc', 1),
+  ('luve_u:'||'esrc', 3),
+  ('luve_u:'||'epsrc', 5)
 ;
 
 
 insert into map_funder_ds
 values
-  ('epsrc', 1),
-  ('npl', 2),
-  ('none', 3),
-  ('esrc', 4),
-  ('none', 5),
-  ('none', 6),
-  ('none', 7),
-  ('epsrc', 8),
-  ('oclaro', 9),
-  ('none', 10),
-  ('none', 11),
-  ('epsrc', 12),
-  ('none', 13)
+  ('luve_u:'||'epsrc', 1),
+  ('luve_u:'||'npl', 2),
+  ('luve_u:'||'none', 3),
+  ('luve_u:'||'esrc', 4),
+  ('luve_u:'||'none', 5),
+  ('luve_u:'||'none', 6),
+  ('luve_u:'||'none', 7),
+  ('luve_u:'||'epsrc', 8),
+  ('luve_u:'||'oclaro', 9),
+  ('luve_u:'||'none', 10),
+  ('luve_u:'||'none', 11),
+  ('luve_u:'||'epsrc', 12),
+  ('luve_u:'||'none', 13)
 ;
 
 
 insert into map_funder_project values
-  ('epsrc', 1),
-  ('npl', 2),
-  ('esrc', 3),
-  ('epsrc', 4),
-  ('oclaro', 5),
-  ('epsrc', 6),
-  ('epsrc', 7),
-  ('ahrc', 8),
-  ('bbsrc', 9),
-  ('bbsrc', 10)
+  ('luve_u:'||'epsrc', 1),
+  ('luve_u:'||'npl', 2),
+  ('luve_u:'||'esrc', 3),
+  ('luve_u:'||'epsrc', 4),
+  ('luve_u:'||'oclaro', 5),
+  ('luve_u:'||'epsrc', 6),
+  ('luve_u:'||'epsrc', 7),
+  ('luve_u:'||'ahrc', 8),
+  ('luve_u:'||'bbsrc', 9),
+  ('luve_u:'||'bbsrc', 10)
 ;
 
 

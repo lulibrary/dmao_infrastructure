@@ -8,4 +8,5 @@
 .idea
 pure_import/data
 pure_import/pure_native_api_data
+pure_import/saved_xml
 ss.out/*
