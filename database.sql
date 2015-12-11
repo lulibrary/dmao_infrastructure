@@ -488,11 +488,6 @@ comment on column publication.repo_id is
   'The institution repository identifier';
 comment on column publication.publication_pid is
   'The persistent identifier, e.g. a DOI, for the publication';
-comment on column publication.data_access_statement is
-  'Describes the state of the publications Data Access Statement.
-  Permissible values are ''exists with no dataset'', ''does not exist'',
-  ''exists without link'', ''exists with link'',
-  ''exists with persistent link''';
 
 create trigger action_date before insert or update on publication
   for each row execute procedure load_date_action();
