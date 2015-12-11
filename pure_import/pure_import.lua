@@ -118,9 +118,10 @@ local institutional_variables = {
 
 local extract_parameters = {
     pure_datasets = {
+        window_size = 20,
         extract_name = 'Pure datasets',
         url = '/datasets?rendering=xml_long&managingOrganisationUuids.uuid=',
-        --url = '/datasets?rendering=xml_long',
+        birmingham_all_datasets_url = '/datasets?rendering=xml_long',
         count_tag = extract_variables['pure']['count_tag'],
         result_tag = extract_variables['pure']['result_tag'],
         content_tag = extract_variables['pure']['content_tag'],
@@ -181,6 +182,7 @@ local extract_parameters = {
         }
     },
     pure_faculties = {
+        window_size = 20,
         extract_name = 'Pure faculties',
         count_tag = extract_variables['pure']['count_tag'],
         result_tag = extract_variables['pure']['result_tag'],
@@ -226,6 +228,7 @@ local extract_parameters = {
         }
     },
     pure_departments = {
+        window_size = 20,
         extract_name = 'Pure departments',
         url = '/organisation?rendering=xml_long&typeClassificationUris.uri=' ..
             '/dk/atira/pure/organisation/organisationtypes/organisation' ..
@@ -274,6 +277,7 @@ local extract_parameters = {
         }
     },
     pure_external_funders = {
+        window_size = 20,
         extract_name = 'Pure external funders',
         url = '/externalorganisation?typeClassificationUris.uri=' ..
             '/dk/atira/pure/ueoexternalorganisation/' ..
@@ -318,6 +322,7 @@ local extract_parameters = {
         }
     },
     pure_projects = {
+        window_size = 20,
         extract_name = 'Pure projects',
         url = '/project?rendering=xml_long&createdDate.fromDate=2015-01-01' ..
             '&owningOrganisationUuids.uuid=',
@@ -396,6 +401,7 @@ local extract_parameters = {
         }
     },
     pure_publications = {
+        window_size = 1,
         extract_name = 'Pure publications',
         url = '/publication?rendering=xml_long&' ..
             'publicationDate.fromDate=2015-01-01&' ..
@@ -556,7 +562,7 @@ local function make_json(data_table, map, additional_fields)
 end
 
 local function get_xml_url(u)
-    if progress_print then print(u) end
+    --if progress_print then print(u) end
     local resp = {}
     local res, code, headers, status = http.request
         {
@@ -596,7 +602,7 @@ local function split_string(str, delimiter)
     return t
 end
 
-local function extract_field_from_content_node (
+local function extract_field_from_content_node(
         content_node, content_xpath,
         field_xpath, sfxp
     )
@@ -667,7 +673,7 @@ end
 
 local function collect_from_pure(url, object, arg)
     local data_table = {}
-    local window_size, window_offset = 1, 0
+    local window_size, window_offset = object['window_size'], 0
     local dt, nr = {}, 9999
     local collected_so_far = 0
     local current_fetch_url
@@ -684,7 +690,7 @@ local function collect_from_pure(url, object, arg)
         local current_nr = nr
         pc_rc, nr, dt = pure_collector(current_fetch_url, object)
         if (nr == 0) and (pc_rc == 1) then
-            nr = current_nr - 1
+            nr = current_nr - window_size
         else
             if not (current_nr == 9999) then
                 nr = current_nr
@@ -720,160 +726,186 @@ end
 
 local institutions = {
     'lancaster',
-    --'birmingham',
+    'birmingham',
     --'york'
 }
 
-for _, inst in pairs(institutions) do
-    current_institution = inst
-    local url
-    local api_key = get_api_key(inst)
-    -- first extract the funder list
-    local url = populate_url(institutional_variables[inst]['pure_url'] ..
-        extract_parameters['pure_external_funders']['url'], get_upp())
-    local num_records, pure_external_funders =
-    collect_from_pure(url, extract_parameters['pure_external_funders'])
-    local json = make_json(pure_external_funders,
-        extract_parameters['pure_external_funders']['table_map'],
-        {
-            inst_id = inst
-        })
-    local r = json_loader(extract_parameters['pure_external_funders']['table'],
-        extract_parameters['pure_external_funders']['load_url'] .. '/' .. inst,
-        api_key,
-        json)
+--for _, inst in pairs(institutions) do
+--    current_institution = inst
+--    local url
+--    local api_key = get_api_key(inst)
+--    -- first extract the funder list
+--    local url = populate_url(institutional_variables[inst]['pure_url'] ..
+--        extract_parameters['pure_external_funders']['url'], get_upp())
+--    local num_records, pure_external_funders =
+--    collect_from_pure(url, extract_parameters['pure_external_funders'])
+--    local json = make_json(pure_external_funders,
+--        extract_parameters['pure_external_funders']['table_map'],
+--        {
+--            inst_id = inst
+--        })
+--    local r = json_loader(extract_parameters['pure_external_funders']['table'],
+--        extract_parameters['pure_external_funders']['load_url'] .. '/' .. inst,
+--        api_key,
+--        json)
+--
+--    -- next, extract the faculties
+--    url = populate_url(institutional_variables[inst]['faculties_url'],
+--        get_upp())
+--    local num_records, pure_faculties =
+--        collect_from_pure(url, extract_parameters['pure_faculties'])
+--    local json = make_json(
+--        pure_faculties,
+--        extract_parameters['pure_faculties']['table_map'],
+--        {
+--            inst_id = inst
+--        })
+--    local r = json_loader(
+--        extract_parameters['pure_faculties']['table'],
+--        extract_parameters['pure_faculties']['load_url'] .. '/' .. inst,
+--        api_key,
+--        json
+--    )
+--
+--    local json = get_json_query(inst, 'u_dmao_faculty_ids_inst_ids_map')
+--    local f_map = cjson.decode(json)
+--
+--    -- now we have the faculties, extract departments
+--    for _, v in pairs(pure_faculties) do
+--        local faculty_uuid = v['uuid']
+--        url = populate_url(institutional_variables[inst]['pure_url'] ..
+--            extract_parameters['pure_departments']['url'], get_upp())
+--        local num_records, pure_departments =
+--            collect_from_pure(url, extract_parameters['pure_departments'],
+--                faculty_uuid)
+--        if num_records > 0 then
+--            local faculty_name = v['name']
+--            for k, department in pairs(pure_departments) do
+--                local sd = {}
+--                table.insert(sd, department)
+--                local faculty_id = get_faculty_id(f_map, faculty_uuid)
+--                local json = make_json(
+--                    sd,
+--                    extract_parameters['pure_departments']['table_map'],
+--                    {
+--                        inst_id = inst,
+--                        faculty_id = faculty_id
+--                    })
+--                local r = json_loader(
+--                    extract_parameters['pure_departments']['table'],
+--                    extract_parameters['pure_departments']['load_url'] ..
+--                        '/' .. inst,
+--                    api_key,
+--                    json
+--                )
+--            end
+--        end
+--    end
+--    -- now for each department find projects, datasets, publications
+--    -- by department
+--    local json = get_json_query(inst, 'u_dmao_department_ids_faculty_ids_map')
+--    local d_map = cjson.decode(json)
+--    for k, v in ipairs(d_map) do
+--        local pure_dept_uuid = v['local_department_id']
+--        local dmao_dept_id = v['department_id']
+--        local dmao_faculty_id = v['faculty_id']
+--        local dept_name = v['dept_name']
+--
+--        -- for each department collect it's projects
+--        url = populate_url(institutional_variables[inst]['pure_url'] ..
+--            extract_parameters['pure_projects']['url'] .. pure_dept_uuid,
+--            get_upp())
+--        local num_records, pure_projects =
+--            collect_from_pure(url, extract_parameters['pure_projects'])
+--        print('projects', dept_name, num_records)
+--        if num_records > 0 then
+--            local json = make_json(pure_projects,
+--                extract_parameters['pure_projects']['table_map'],
+--                {
+--                    inst_id = inst,
+--                    lead_faculty_id = dmao_faculty_id,
+--                    lead_department_id = dmao_dept_id
+--                })
+--            local r = json_loader(extract_parameters['pure_projects']['table'],
+--                extract_parameters['pure_projects']['load_url'] .. '/' .. inst,
+--                api_key,
+--                json)
+--        end
+--
+--        -- for each department collect it's datasets
+--        url = populate_url(institutional_variables[inst]['pure_url'] ..
+--            extract_parameters['pure_datasets']['url'] .. pure_dept_uuid,
+--            get_upp())
+--        local num_records, pure_datasets =
+--            collect_from_pure(url, extract_parameters['pure_datasets'])
+--        print('datasets', dept_name, num_records)
+--        if num_records > 0 then
+--            for _, dataset in pairs(pure_datasets) do
+--                local sd = {}
+--                table.insert(sd, dataset)
+--                local json = make_json(sd,
+--                    extract_parameters['pure_datasets']['table_map'],
+--                    {
+--                        inst_id = inst,
+--                        lead_faculty_id = dmao_faculty_id,
+--                        lead_department_id = dmao_dept_id
+--                    })
+--                local r = json_loader(extract_parameters['pure_datasets']['table'],
+--                    extract_parameters['pure_datasets']['load_url'] .. '/' .. inst,
+--                    api_key,
+--                    json)
+--            end
+--        end
+--
+--        -- for each department collect it's publications from 2015 on, on
+--        -- the assumption that only only stuff moving forwards might have
+--        -- an associated managed dataset
+--        url = populate_url(institutional_variables[inst]['pure_url'] ..
+--            extract_parameters['pure_publications']['url'] .. pure_dept_uuid,
+--            get_upp())
+--        local num_records, pure_publications =
+--            collect_from_pure(url, extract_parameters['pure_publications'])
+--        print('publications', dept_name, num_records)
+--        if num_records > 0 then
+--            local json = make_json(pure_publications,
+--                extract_parameters['pure_publications']['table_map'],
+--                {
+--                    inst_id = inst,
+--                    lead_faculty_id = dmao_faculty_id,
+--                    lead_department_id = dmao_dept_id
+--                })
+--            local r = json_loader(extract_parameters['pure_publications']['table'],
+--                extract_parameters['pure_publications']['load_url'] .. '/' .. inst,
+--                api_key,
+--                json)
+--        end
+--    end
+--end
 
-    -- next, extract the faculties
-    url = populate_url(institutional_variables[inst]['faculties_url'],
-        get_upp())
-    local num_records, pure_faculties =
-        collect_from_pure(url, extract_parameters['pure_faculties'])
-    local json = make_json(
-        pure_faculties,
-        extract_parameters['pure_faculties']['table_map'],
-        {
-            inst_id = inst
-        })
-    local r = json_loader(
-        extract_parameters['pure_faculties']['table'],
-        extract_parameters['pure_faculties']['load_url'] .. '/' .. inst,
-        api_key,
-        json
-    )
 
-    local json = get_json_query(inst, 'u_dmao_faculty_ids_inst_ids_map')
-    local f_map = cjson.decode(json)
-
-    -- now we have the faculties, extract departments
-    for _, v in pairs(pure_faculties) do
-        local faculty_uuid = v['uuid']
-        url = populate_url(institutional_variables[inst]['pure_url'] ..
-            extract_parameters['pure_departments']['url'], get_upp())
-        local num_records, pure_departments =
-            collect_from_pure(url, extract_parameters['pure_departments'],
-                faculty_uuid)
-        if num_records > 0 then
-            local faculty_name = v['name']
-            for k, department in pairs(pure_departments) do
-                local sd = {}
-                table.insert(sd, department)
-                local faculty_id = get_faculty_id(f_map, faculty_uuid)
-                local json = make_json(
-                    sd,
-                    extract_parameters['pure_departments']['table_map'],
-                    {
-                        inst_id = inst,
-                        faculty_id = faculty_id
-                    })
-                local r = json_loader(
-                    extract_parameters['pure_departments']['table'],
-                    extract_parameters['pure_departments']['load_url'] ..
-                        '/' .. inst,
-                    api_key,
-                    json
-                )
-            end
-        end
-    end
-    -- now for each department find projects, datasets, publications
-    -- by department
-    local json = get_json_query(inst, 'u_dmao_department_ids_faculty_ids_map')
-    local d_map = cjson.decode(json)
-    pi(d_map)
-    for k, v in ipairs(d_map) do
-        local pure_dept_uuid = v['local_department_id']
-        local dmao_dept_id = v['department_id']
-        local dmao_faculty_id = v['faculty_id']
-        local dept_name = v['dept_name']
-
-        -- for each department collect it's projects
-        url = populate_url(institutional_variables[inst]['pure_url'] ..
-            extract_parameters['pure_projects']['url'] .. pure_dept_uuid,
-            get_upp())
-        local num_records, pure_projects =
-            collect_from_pure(url, extract_parameters['pure_projects'])
-        print('projects', dept_name, num_records)
-        if num_records > 0 then
-            local json = make_json(pure_projects,
-                extract_parameters['pure_projects']['table_map'],
-                {
-                    inst_id = inst,
-                    lead_faculty_id = dmao_faculty_id,
-                    lead_department_id = dmao_dept_id
-                })
-            local r = json_loader(extract_parameters['pure_projects']['table'],
-                extract_parameters['pure_projects']['load_url'] .. '/' .. inst,
-                api_key,
-                json)
-        end
-
-        -- for each department collect it's datasets
-        url = populate_url(institutional_variables[inst]['pure_url'] ..
-            extract_parameters['pure_datasets']['url'] .. pure_dept_uuid,
-            get_upp())
-        local num_records, pure_datasets =
-            collect_from_pure(url, extract_parameters['pure_datasets'])
-        print('datasets', dept_name, num_records)
-        if num_records > 0 then
-            for _, dataset in pairs(pure_datasets) do
-                local sd = {}
-                table.insert(sd, dataset)
-                local json = make_json(sd,
-                    extract_parameters['pure_datasets']['table_map'],
-                    {
-                        inst_id = inst,
-                        lead_faculty_id = dmao_faculty_id,
-                        lead_department_id = dmao_dept_id
-                    })
-                local r = json_loader(extract_parameters['pure_datasets']['table'],
-                    extract_parameters['pure_datasets']['load_url'] .. '/' .. inst,
-                    api_key,
-                    json)
-            end
-        end
-
-        -- for each department collect it's publications from 2015 on, on
-        -- the assumption that only only stuff moving forwards might have
-        -- an associated managed dataset
-        url = populate_url(institutional_variables[inst]['pure_url'] ..
-            extract_parameters['pure_publications']['url'] .. pure_dept_uuid,
-            get_upp())
-        local num_records, pure_publications =
-            collect_from_pure(url, extract_parameters['pure_publications'])
-        print('publications', dept_name, num_records)
-        if num_records > 0 then
-            local json = make_json(pure_publications,
-                extract_parameters['pure_publications']['table_map'],
-                {
-                    inst_id = inst,
-                    lead_faculty_id = dmao_faculty_id,
-                    lead_department_id = dmao_dept_id
-                })
-            local r = json_loader(extract_parameters['pure_publications']['table'],
-                extract_parameters['pure_publications']['load_url'] .. '/' .. inst,
-                api_key,
-                json)
-        end
+-- get all datasets from birmingham, all but three are not associated with
+-- a department
+local inst = 'birmingham'
+current_institution = inst
+local api_key = get_api_key(inst)
+-- for each department collect it's datasets
+local url = populate_url(institutional_variables[inst]['pure_url'] ..
+    extract_parameters['pure_datasets']['birmingham_all_datasets_url'],
+    get_upp())
+local num_records, pure_datasets =
+    collect_from_pure(url, extract_parameters['pure_datasets'])
+if num_records > 0 then
+    for _, dataset in pairs(pure_datasets) do
+        local sd = {}
+        table.insert(sd, dataset)
+        local json = make_json(sd,
+            extract_parameters['pure_datasets']['table_map'],
+            {
+                inst_id = inst,
+            })
+        local r = json_loader(extract_parameters['pure_datasets']['table'],
+            extract_parameters['pure_datasets']['load_url'] .. '/' .. inst,
+            api_key,
+            json)
     end
 end
-
