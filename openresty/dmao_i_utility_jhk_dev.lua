@@ -19,12 +19,14 @@ function M.swallow(v)
 end
 
 
+-- retrieve the postgres connection details
 function M.get_connection_details(conn_file)
     dofile(conn_file)
     return database, user, passwd
 end
 
 
+-- opens and returns a connection to postgres
 function M.open_dmaonline_db(conn_file)
     local d
     local u
@@ -46,6 +48,7 @@ function M.open_dmaonline_db(conn_file)
 end
 
 
+-- closes a postgres connection
 function M.close_dmaonline_db(c)
     assert(c:disconnect())
 end
@@ -88,11 +91,14 @@ function M.tprint(tbl, pf, indent)
 end
 
 
+-- trim white space
 function M.trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
 
+-- retuns the institution id specified in the API call and stored in an
+-- nginx variable
 function M.get_inst()
     local inst = ngx.var.inst_id
     if not inst then
@@ -130,6 +136,8 @@ function M.log_info(m)
     M.logit(ngx.INFO, m, l, s)
 end
 
+
+-- encode a error message as JSON to return to the caller
 function M.error_to_json(e)
     local l = debug.getinfo(2).currentline
     local s = debug.getinfo(2).short_src

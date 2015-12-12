@@ -1,4 +1,7 @@
 
+-- each query against the database is described here as
+-- lua table variables. In db_ops.lua the queries are populated
+-- with necessary variables and variable clauses
 query_templates = {
     datasets = {
         columns_list = [[
@@ -25,8 +28,12 @@ query_templates = {
             location = 'and storage_location = #el_var_value#',
             filter = [[
                 where funder_id in (
-                select funder_id from funder
-                    where is_rcuk_funder = true
+                select
+                    funder_id
+                from
+                    funder
+                where
+                    is_rcuk_funder = true
                 )
             ]]
         },
@@ -50,7 +57,10 @@ query_templates = {
         group_by = '',
         output_order = '',
         query = [[
-            select #columns_list# from project_dmps_view_modifiables
+            select
+                #columns_list#
+            from
+                project_dmps_view_modifiables
         ]]
     },
     project_dmps = {
@@ -154,7 +164,10 @@ query_templates = {
         output_order = '',
         group_by = '',
         query = [[
-            select #columns_list# from storage_view_modifiables
+            select
+                #columns_list#
+            from
+                storage_view_modifiables
         ]]
     },
     storage_ispi_list = {
@@ -165,9 +178,12 @@ query_templates = {
         output_order = '',
         group_by = '',
         query = [[
-            select #columns_list#
-            from storage_ispi_list
-            where inst_id = #inst_id#
+            select
+                #columns_list#
+            from
+                storage_ispi_list
+            where
+                inst_id = #inst_id#
         ]]
     },
     storage = {
@@ -230,7 +246,12 @@ query_templates = {
             and
                 inst_id = #inst_id#
             ;
-            select * from storage_view where project_id = #project_id#
+            select
+                *
+            from
+                storage_view
+            where
+                project_id = #project_id#
             and
                 inst_storage_platform_id = #inst_storage_platform_id#
             and
@@ -313,17 +334,23 @@ query_templates = {
             faculty = [[
                 and d.dataset_id in
                     (
-                        select dataset_id
-                        from map_dataset_faculty
-                        where faculty_id = #el_var_value#
+                        select
+                            dataset_id
+                        from
+                            map_dataset_faculty
+                        where
+                            faculty_id = #el_var_value#
                     )
             ]],
             dept = [[
                 and d.dataset_id in
                     (
-                        select dataset_id
-                        from map_dept_ds
-                        where department_id = #el_var_value#
+                        select
+                            dataset_id
+                        from
+                            map_dept_ds
+                        where
+                            department_id = #el_var_value#
                     )
             ]]
         },
@@ -334,10 +361,15 @@ query_templates = {
                 #summary_clause#
             from
                 dataset_accesses d
-            where d.dataset_id in (
-                select dataset_id from map_inst_ds
-                where inst_id = #inst_id#
-            )
+            where
+                d.dataset_id in (
+                    select
+                        dataset_id
+                    from
+                        map_inst_ds
+                    where
+                        inst_id = #inst_id#
+                )
             #and_clause_1#
             #dataset_id#
             #and_clause_2#
@@ -383,31 +415,49 @@ query_templates = {
     -- utility queries for internal use
     u_dmao_faculty_ids_inst_ids_map = {
         query = [[
-            select faculty_id, inst_local_id
-            from faculty
-            where inst_id = #inst_id#
-            order by faculty_id
+            select
+                faculty_id,
+                inst_local_id
+            from
+                faculty
+            where
+                inst_id = #inst_id#
+            order by
+                faculty_id
         ]]
     },
     u_dmao_department_ids_faculty_ids_map = {
         query = [[
-            select faculty_id, department_id,
-            inst_local_id local_department_id, name dept_name
-            from department
-            where inst_id = #inst_id#
-            order by faculty_id, department_id
+            select
+                faculty_id,
+                department_id,
+                inst_local_id local_department_id,
+                name dept_name
+            from
+                department
+            where
+                inst_id = #inst_id#
+            order by
+                faculty_id, department_id
         ]]
     },
     u_api_key_for_inst = {
         query = [[
-            select api_key from institution
-            where inst_id = #inst_id#
+            select
+                api_key
+            from
+                institution
+            where
+                inst_id = #inst_id#
         ]]
     },
     -- open queries for summary information and login
     o_inst_list = {
         query = [[
-            select inst_id, name from institution
+            select
+                inst_id, name
+            from
+                institution
         ]]
     },
     o_get_api_key = {
@@ -433,58 +483,98 @@ query_templates = {
     },
     o_count_institutions = {
         query = [[
-            select count(*) from institution
+            select
+                count(*)
+            from
+                institution
         ]]
     },
     o_count_faculties = {
         query = [[
-            select count(*) from faculty
+            select
+                count(*)
+            from
+                faculty
         ]]
     },
     o_count_departments = {
         query = [[
-            select count(*) from department
+            select
+                count(*)
+            from
+                department
         ]]
     },
     o_count_dmps = {
         query = [[
-            select count(*) from dmp
+            select
+                count(*)
+            from
+                dmp
         ]]
     },
     o_count_publications = {
         query = [[
-            select count(*) from publication
+            select
+                count(*)
+            from
+                publication
         ]]
     },
     o_count_datasets = {
         query = [[
-            select count(*) from dataset
+            select
+                count(*)
+            from
+                dataset
         ]]
     },
     o_count_projects = {
         query = [[
-            select count(*) from project
+            select
+                count(*)
+            from
+                project
         ]]
     },
     o_count_dataset_accesses = {
         query = [[
-            select access_type, sum(counter) count
-            from dataset_accesses group by access_type
+            select
+                access_type,
+                sum(counter) count
+            from
+                dataset_accesses
+            group by
+                access_type
         ]]
     },
     o_empty = {
         query = [[
-            select * from institution where inst_id = 'xxx'
+            select
+                *
+            from
+                institution
+            where
+                inst_id = 'xxx'
         ]]
     },
     o_one = {
         query = [[
-            select * from institution where inst_id = 'luve_u'
+            select
+                *
+            from
+                institution
+            where
+                inst_id = 'luve_u'
         ]]
     },
     o_datacite_id = {
         query = [[
-            select inst_id, datacite_id from institution
+            select
+                inst_id,
+                datacite_id
+            from
+                institution
         ]]
     }
 }

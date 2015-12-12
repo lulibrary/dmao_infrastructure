@@ -11,14 +11,12 @@ local http = require 'socket.http'
 local lfs = require 'lfs'
 local curl = require 'cURL'
 local cjson = require 'cjson'
-util.swallow(lfs)
 
 
 local debug_flag = false
 local progress_print = true
 local save_xml = true
 local saved_xml_counter = 0
-util.swallow(saved_xml_counter)
 
 local load_port = '8070'
 -- print inspection
@@ -34,6 +32,8 @@ local function get_upp()
     return connection_pure[current_institution]
 end
 
+-- given the start and end date, create a date range string in postgres
+-- format '[start_date, end_date)'
 local function make_date_range(args)
     local start_date = args[1]
     local end_date = args[2]
@@ -138,8 +138,8 @@ local extract_parameters = {
             },
             description = {
                 xpath = extract_variables['pure']['pure_datasets']['xpcb'] ..
-                    '/stab:descriptions/' ..
-                    'extensions-core:classificationDefinedField' ..
+                    '/stab:descriptions' ..
+                    '/extensions-core:classificationDefinedField' ..
                     '/extensions-core:value/core:localizedString'
             },
             doi = {
@@ -212,8 +212,8 @@ local extract_parameters = {
             },
             description = {
                 xpath = extract_variables['pure']['pure_faculties']['xpcb'] ..
-                    '/stab1:profileInformation/' ..
-                    'extensions-core:customField' ..
+                    '/stab1:profileInformation' ..
+                    '/extensions-core:customField' ..
                     '/extensions-core:value/core:localizedString'
             }
         },
@@ -261,8 +261,8 @@ local extract_parameters = {
             },
             description = {
                 xpath = extract_variables['pure']['pure_departments']['xpcb'] ..
-                    '/stab1:profileInformation/' ..
-                    'extensions-core:customField' ..
+                    '/stab1:profileInformation' ..
+                    '/extensions-core:customField' ..
                     '/extensions-core:value/core:localizedString'
             }
         },
@@ -612,7 +612,6 @@ local function extract_field_from_content_node(
         relative_field_xpath = string.gsub(field_xpath, '^' ..
             string.gsub(content_xpath, '%-', '%%-') .. '/', '')
         split_field_xpath = split_string(relative_field_xpath, '/')
-        util.swallow(split_field_xpath)
     else
         split_field_xpath = sfxp
     end
@@ -682,7 +681,6 @@ local function collect_from_pure(url, object, arg)
         if arg == nil then
             current_fetch_url =  url .. '&window.size=' ..
                 window_size .. '&window.offset=' .. window_offset
-            util.swallow(current_fetch_url)
         else
             current_fetch_url =  url .. arg .. '&window.size=' ..
                 window_size .. '&window.offset=' .. window_offset
