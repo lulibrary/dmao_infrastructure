@@ -45,6 +45,7 @@ create or replace function encrypt_password(bytea) returns text as $$
   select encode(digest($1, 'sha224'), 'hex' )
 $$ language sql strict immutable;
 
+-- generate an API key to be used to access an institution's data
 create or replace function gen_api_key() returns text as $$
   select encode
     (
@@ -85,6 +86,8 @@ comment on column institution.pub_sys is
   'A description of the publication repository
   system in use at this institution e.g. ''Eprints''.';
 
+-- this trigger function is used throughout to set load and
+-- modification dates
 create or replace function load_date_action() returns trigger
 as $$
 begin
@@ -193,6 +196,7 @@ create trigger action_date before insert or update on funder_dmp_states
 
 -------------------------------------------------------------------
 -------------------------------------------------------------------
+-- DMP - Data Management Plan
 create table dmp (
   dmp_id serial primary key,
   dmp_source_system varchar(256),
@@ -239,6 +243,8 @@ create table inst_storage_platforms (
 );
 create index on inst_storage_platforms(inst_id);
 create index on inst_storage_platforms(inst_storage_platform_id);
+comment on table inst_storage_platforms is 'Describes the institution''s '
+  'storage management platforms';
 
 create table inst_storage_costs (
   sc_id serial primary key,

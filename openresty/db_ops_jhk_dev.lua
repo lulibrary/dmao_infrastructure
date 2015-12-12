@@ -13,7 +13,7 @@ local base_uri
 local function form_to_table()
     local form, err = upload:new(1048576)
     if not form then
-        util.log_error('failed to upload:new -  ' ..  err)
+        util.log_error('failed to create form using upload:new -  ' ..  err)
         ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
     form:set_timeout(2000) -- 2 seconds
@@ -49,6 +49,7 @@ approriate return code.
 local function do_db_operation(d, query, method)
     local return_code
     if print_sql then
+        -- return the query text rather than the query results
         return ngx.HTTP_OK, '{"query": ' .. cjson.encode(query) .. '}'
     else
         local res, err = d:query(query)
@@ -65,6 +66,8 @@ local function do_db_operation(d, query, method)
         else
             return_code = ngx.HTTP_OK
             if res[1] == nil then
+                -- an attempt to be consistent, postgres return an empty '{}'
+                -- object and we would prefer to return an empty '[]' array
                 return return_code, '[]'
             else
                 return return_code, cjson.encode(res)
@@ -76,9 +79,13 @@ end
 
 --[[
 construct a list of columns to be operated on, the values to use and
-optionally the primary key and it's value (for updates)
+optionally the primary key and it's value (for updates) and return all of those
+things. Note the use of a common lua idiom. String concatenation using .. is
+an expensive operation and to be avioded in a loop. So a data table is built
+and when complete converted to a string using table.concat().
 --]]
 local function columns_rows_maker(d, t_data)
+    -- d is the database connection
     local pkey
     local pkey_val
     local a = {'(' }
@@ -114,11 +121,11 @@ end
 
 
 --[[
-takes a variable number of paramter strings, puts them in a table and
+takes a variable number of parameter strings, puts them in a table and
 uses table.concat to make a string. It's much faster than
-string concatenation
+string concatenation, especially when used in a loop
 --]]
-local function make_sql(...)
+local function fast_concat(...)
     local t = {}
     for _, v in ipairs({...}) do
         t[#t + 1] = v
@@ -128,7 +135,7 @@ end
 
 
 -- populates the variable clauses for the query by iterating
--- through the provide arguments
+-- through the provided arguments
 local function populate_var_clauses(q, db, args, template)
     local clauses = {}
     if args then
@@ -449,7 +456,7 @@ local function db_operation(db, query_template_file)
             local data_table = form_to_table()
             local columns, values, pkey, pkey_val =
             columns_rows_maker(db, data_table)
-            query = make_sql(
+            query = fast_concat(
                 'insert into ', object, columns,
                 ' values ', values,
                 ';'
@@ -464,7 +471,7 @@ local function db_operation(db, query_template_file)
                 util.log_error(e)
                 return ngx.HTTP_BAD_REQUEST, util.error_to_json(e)
             end
-            query = make_sql(
+            query = fast_concat(
                 'update ', object,
                 ' set ', columns, ' = ', values,
                 ' where inst_id = ', db:escape_literal(inst),
@@ -474,7 +481,7 @@ local function db_operation(db, query_template_file)
             )
         elseif method == 'DELETE' then
             if k and v then
-                query = make_sql(
+                query = fast_concat(
                     'delete from ', object,
                     ' where inst_id = ', db:escape_literal(inst),
                     ' and ',
@@ -490,7 +497,7 @@ local function db_operation(db, query_template_file)
             end
         elseif method == 'GET' then
             if k and v then
-                query = make_sql(
+                query = fast_concat(
                     'select * from ', object,
                     ' where inst_id = ', db:escape_literal(inst),
                     ' and ',
@@ -498,7 +505,7 @@ local function db_operation(db, query_template_file)
                     ';'
                 )
             else
-                query = make_sql(
+                query = fast_concat(
                     'select * from ', object,
                     ' where inst_id = ', db:escape_literal(inst),
                     ';'
