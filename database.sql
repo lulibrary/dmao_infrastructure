@@ -243,8 +243,12 @@ create table inst_storage_platforms (
 );
 create index on inst_storage_platforms(inst_id);
 create index on inst_storage_platforms(inst_storage_platform_id);
-comment on table inst_storage_platforms is 'Describes the institution''s '
-  'storage management platforms';
+comment on table inst_storage_platforms is
+  'Describes the institution''s storage management platforms';
+
+create trigger action_date before insert or update
+  on inst_storage_platforms
+for each row execute procedure load_date_action();
 
 create table inst_storage_costs (
   sc_id serial primary key,
@@ -392,6 +396,7 @@ create table dataset (
   project_id integer references project(project_id)
     on delete cascade on update cascade,
   dataset_local_inst_id varchar(1024),
+  has_dataset_pid boolean default false,
   dataset_pid varchar(256),
   dataset_link varchar(8192),
   dataset_filename varchar,
@@ -408,10 +413,12 @@ create table dataset (
     on delete cascade on update cascade,
   lead_department_id integer references department(department_id)
     on delete cascade on update cascade,
+  local_override_funder_id funder_id_t references funder(funder_id),
   load_date timestamp,
   mod_date timestamp,
   check (storage_location in ('internal', 'external')),
-  check (inst_archive_status in ('archived', 'not_archived', 'unknown')),
+  check (inst_archive_status in ('archived', 'not_archived',
+                                 'unknown')),
   unique(inst_id, dataset_local_inst_id)
 );
 comment on table dataset is 'Describes datasets';
@@ -465,12 +472,12 @@ create table publication (
   lead_department_id integer references department(department_id)
     on delete cascade on update cascade,
   publication_date date,
-  data_access_statement boolean default false,
+  data_access_statement varchar(50) default 'n'
+    check (data_access_statement in
+           ('y', 'n', 'partial', 'no_fulltext')),
   data_access_statement_notes varchar(1024),
-  rcuk_funder_compliant varchar(50) default 'n'
-    check (rcuk_funder_compliant in ('y', 'n', 'partial')),
-  other_funder_compliant varchar(50) default 'n'
-    check (other_funder_compliant in ('y', 'n', 'partial')),
+  funder_compliant varchar(50) default 'n'
+    check (funder_compliant in ('y', 'n', 'partial', 'no_fulltext')),
   inst_url varchar(2048),
   inst_pub_type varchar(1024),
   inst_pub_status varchar(512),
@@ -502,12 +509,18 @@ create trigger action_date before insert or update on publication
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_pub_ds (
+  row_id serial primary key,
   publication_id integer references publication(publication_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_pub_ds is 'Maps publications to datasets.';
+
+create trigger action_date before insert or update on map_pub_ds
+for each row execute procedure load_date_action();
 
 create index on map_pub_ds(publication_id);
 create index on map_pub_ds(dataset_id);
@@ -516,12 +529,18 @@ create index on map_pub_ds(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_dept_pub (
+  row_id serial primary key,
   department_id integer references department(department_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_dept_pub is 'Maps departments to publications.';
+
+create trigger action_date before insert or update on map_dept_pub
+for each row execute procedure load_date_action();
 
 create index on map_dept_pub(department_id);
 create index on map_dept_pub(publication_id);
@@ -530,12 +549,18 @@ create index on map_dept_pub(publication_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_dept_ds (
+  row_id serial primary key,
   department_id integer references department(department_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_dept_ds is 'Maps departments to datasets.';
+
+create trigger action_date before insert or update on map_dept_ds
+for each row execute procedure load_date_action();
 
 create index on map_dept_ds(department_id);
 create index on map_dept_ds(dataset_id);
@@ -544,12 +569,18 @@ create index on map_dept_ds(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_funder_pub (
+  row_id serial primary key,
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_funder_pub is 'Maps funders to publications.';
+
+create trigger action_date before insert or update on map_funder_pub
+for each row execute procedure load_date_action();
 
 create index on map_funder_pub(funder_id);
 create index on map_funder_pub(publication_id);
@@ -558,12 +589,18 @@ create index on map_funder_pub(publication_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_funder_ds (
+  row_id serial primary key,
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_funder_ds is 'Maps funders to datasets.';
+
+create trigger action_date before insert or update on map_funder_ds
+for each row execute procedure load_date_action();
 
 create index on map_funder_ds(funder_id);
 create index on map_funder_ds(dataset_id);
@@ -573,12 +610,18 @@ create index on map_funder_ds(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_funder_project (
+  row_id serial primary key,
   funder_id funder_id_t references funder(funder_id)
     on delete cascade on update cascade not null,
   project_id integer references project(project_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_funder_project is 'Maps funders to projects.';
+
+create trigger action_date before insert or update on map_funder_project
+for each row execute procedure load_date_action();
 
 create index on map_funder_project(funder_id);
 create index on map_funder_project(project_id);
@@ -587,12 +630,18 @@ create index on map_funder_project(project_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_project_ds (
+  row_id serial primary key,
   project_id integer references project(project_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_project_ds is 'Maps projects to datasets.';
+
+create trigger action_date before insert or update on map_project_ds
+for each row execute procedure load_date_action();
 
 create index on map_project_ds(project_id);
 create index on map_project_ds(dataset_id);
@@ -602,12 +651,18 @@ create index on map_project_ds(dataset_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_project_pub (
+  row_id serial primary key,
   project_id integer references project(project_id)
     on delete cascade on update cascade not null,
   publication_id integer references publication(publication_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_project_pub is 'Maps projects to publications.';
+
+create trigger action_date before insert or update on map_project_pub
+for each row execute procedure load_date_action();
 
 create index on map_project_pub(project_id);
 create index on map_project_pub(publication_id);
@@ -616,12 +671,18 @@ create index on map_project_pub(publication_id);
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 create table map_inst_ds (
+  row_id serial primary key,
   inst_id inst_id_t references institution(inst_id)
     on delete cascade on update cascade not null,
   dataset_id integer references dataset(dataset_id)
-    on delete cascade on update cascade not null
+    on delete cascade on update cascade not null,
+  load_date timestamp,
+  mod_date timestamp
 );
 comment on table map_inst_ds is 'Maps institutions and datasets.';
+
+create trigger action_date before insert or update on map_inst_ds
+for each row execute procedure load_date_action();
 
 create index on map_inst_ds(inst_id);
 create index on map_inst_ds(dataset_id);
@@ -943,6 +1004,69 @@ create or replace view expected_project_storage_costs as
 
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
+create or replace view publications_editor as
+  select
+    pub.publication_id,
+    pub.inst_id,
+    pub.cris_id,
+    pub.inst_pub_type,
+    pub.inst_pub_status,
+    pub.lead_department_id,
+    pub.lead_faculty_id,
+    pub.project_id,
+    -- Externally funded?
+    -- RCUK Funder
+    -- Other Funder
+    ds.has_dataset_pid,
+    ds.dataset_pid,
+    pub.data_access_statement,
+    pub.data_access_statement_notes,
+    pub.funder_compliant
+  from
+    publication pub, dataset ds, map_pub_ds
+  where
+    pub.publication_id = map_pub_ds.publication_id
+  and
+    ds.dataset_id = map_pub_ds.dataset_id
+;
+
+drop table if exists publications_editor_modifiables;
+create table publications_editor_modifiables (
+  c_name varchar(128),
+  c_vals varchar(128)
+);
+
+insert into publications_editor_modifiables values
+  ('data_access_statement', 'y|n|partial|no_fulltext'),
+  ('data_access_statement_notes', 'varchar'),
+  ('funder_compliant', 'y|n|partial|no_fulltext')
+;
+
+create or replace function publications_editor_update()
+  returns trigger
+language plpgsql
+as $$
+begin
+  if TG_OP = 'UPDATE'
+  then
+    update publication set
+      data_access_statement = NEW.data_access_statement,
+      data_access_statement_notes = NEW.data_access_statement_notes,
+      funder_compliant = NEW.funder_compliant
+    where publication_id = OLD.publication_id;
+  end if;
+  return NEW;
+end;
+$$;
+
+create trigger publications_editor_update_trigger
+instead of update on
+  publications_editor
+for each row execute procedure publications_editor_update();
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
 create or replace view project_status as
   select
     project_id,
@@ -969,15 +1093,16 @@ create or replace view project_dmps_view as
     f.name         lead_faculty_name,
     d.abbreviation lead_dept_abbrev,
     d.name         lead_dept_name
-  from project p
-    join
+  from
+    project p
+  join
     faculty f
-      on
-        (p.lead_faculty_id = f.faculty_id)
-    join
+  on
+    (p.lead_faculty_id = f.faculty_id)
+  join
     department d
-      on
-        (p.lead_department_id = d.department_id);
+  on
+    (p.lead_department_id = d.department_id);
 
 drop table if exists project_dmps_view_modifiables;
 create table project_dmps_view_modifiables (
@@ -1145,6 +1270,27 @@ create or replace view datasets_view as
   order by
     d.dataset_id asc
 ;
+
+
+create or replace function datasets_view_update()
+  returns trigger
+language plpgsql
+as $$
+begin
+  if (TG_OP = 'UPDATE') then
+    update dataset set
+      local_override_funder_id = NEW.local_override_funder_id
+    where
+      dataset_id = OLD.dataset_id;
+  end if;
+  return NEW;
+end;
+$$;
+
+create trigger datasets_view_update_trigger
+instead of update or delete on
+  datasets_view
+for each row execute procedure datasets_view_update();
 
 
 ---------------------------------------------------------------------

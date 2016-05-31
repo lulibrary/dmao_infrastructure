@@ -13,7 +13,8 @@ local base_uri
 local function form_to_table()
     local form, err = upload:new(1048576)
     if not form then
-        util.log_error('failed to create form using upload:new -  ' ..  err)
+        util.log_error('failed to create form using upload:new -  '
+            ..  err)
         ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
     form:set_timeout(2000) -- 2 seconds
@@ -54,8 +55,8 @@ local function do_db_operation(d, query, method)
     else
         local res, err = d:query(query)
         if not res then
-            return ngx.HTTP_BAD_REQUEST, util.error_to_json(err .. ' query = '
-                .. query)
+            return ngx.HTTP_BAD_REQUEST, util.error_to_json(err
+                .. ' query = ' .. query)
         end
         if method == 'POST' then
             return_code = ngx.HTTP_CREATED
@@ -66,8 +67,9 @@ local function do_db_operation(d, query, method)
         else
             return_code = ngx.HTTP_OK
             if res[1] == nil then
-                -- an attempt to be consistent, postgres return an empty '{}'
-                -- object and we would prefer to return an empty '[]' array
+                -- an attempt to be consistent, postgres returns an
+                -- empty '{}' object and we would prefer to return an
+                -- empty '[]' array
                 return return_code, '[]'
             else
                 return return_code, cjson.encode(res)
@@ -78,20 +80,23 @@ end
 
 
 --[[
+
 construct a list of columns to be operated on, the values to use and
-optionally the primary key and it's value (for updates) and return all of those
-things. Note the use of a common lua idiom. String concatenation using .. is
-an expensive operation and to be avioded in a loop. So a data table is built
-and when complete converted to a string using table.concat().
+optionally the primary key and it's value (for updates) and return all
+of those things. Note the use of a common lua idiom. String
+concatenation using .. is an expensive operation and to be avioded in a
+loop. So a data table is built and when complete converted to a string
+using table.concat().
+
 --]]
 local function columns_rows_maker(d, t_data)
     -- d is the database connection
     local pkey
     local pkey_val
-    local a = {'(' }
-    local b = {}
+    local columns_table = {'(' }
+    local values_table = {}
     for i, row in pairs(t_data) do
-        b[#b + 1] = '('
+        values_table[#values_table + 1] = '('
         for column, value in pairs(row) do
             if i == 1 then
                 if string.match(column, '^pkey:') then
@@ -99,21 +104,22 @@ local function columns_rows_maker(d, t_data)
                     pkey = column
                     pkey_val = d:escape_literal(value)
                 end
-                a[#a + 1] = column
-                a[#a + 1] = ', '
+                columns_table[#columns_table + 1] = column
+                columns_table[#columns_table + 1] = ', '
             end
             if value == 'null_value' then
-                b[#b + 1] = 'null'
+                values_table[#values_table + 1] = 'null'
             else
-                b[#b + 1] = d:escape_literal(value)
+                values_table[#values_table + 1] =
+                    d:escape_literal(value)
             end
-            b[#b + 1] = ', '
+            values_table[#values_table + 1] = ', '
         end
-        b[#b + 1] = '), '
+        values_table[#values_table + 1] = '), '
     end
-    local col_list = table.concat(a)
+    local col_list = table.concat(columns_table)
     col_list = string.gsub(col_list, ', $', ')')
-    local val_list = table.concat(b)
+    local val_list = table.concat(values_table)
     val_list = string.gsub(val_list, ', %)', ')')
     val_list = string.gsub(val_list, ', $', '')
     return col_list, val_list, pkey, pkey_val
@@ -121,9 +127,11 @@ end
 
 
 --[[
+
 takes a variable number of parameter strings, puts them in a table and
-uses table.concat to make a string. It's much faster than
-string concatenation, especially when used in a loop
+uses table.concat to make a string. It's much faster than string
+concatenation, especially when used in a loop
+
 --]]
 local function fast_concat(...)
     local t = {}
@@ -198,7 +206,6 @@ local function clean_query(q)
     q = util.trim(q)
     return q
 end
-
 
 local function dataset_accesses_special(query, q, qt, args, db)
     if args['summary_totals'] == 'true' then
@@ -313,8 +320,8 @@ local function construct_c_query(db, inst, query, method, qtf)
                 if u_count > 0 then
                     c_name = ', ' .. c_name
                 end
-                q = string.gsub(q, '#set_' .. c .. '#', c_name .. ' = ' ..
-                    db:escape_literal(args[c]))
+                q = string.gsub(q, '#set_' .. c .. '#', c_name .. ' = '
+                    .. db:escape_literal(args[c]))
                 u_count = u_count + 1
             else
                 q = string.gsub(q, '#set_' .. c .. '#', '')
@@ -339,10 +346,13 @@ local function construct_c_query(db, inst, query, method, qtf)
             q = string.gsub(q, '#order_clause#', '')
             q = string.gsub(q, '#group_by_clause#', '')
         else
-            q = string.gsub(q, '#columns_list#', qt[query]['columns_list'])
+            q = string.gsub(q, '#columns_list#',
+                qt[query]['columns_list'])
             if (query ~= 'dataset_accesses') then
-                q = string.gsub(q, '#order_clause#', qt[query]['output_order'])
-                q = string.gsub(q, '#group_by_clause#', qt[query]['group_by'])
+                q = string.gsub(q, '#order_clause#',
+                    qt[query]['output_order'])
+                q = string.gsub(q, '#group_by_clause#',
+                    qt[query]['group_by'])
             end
         end
         if args['filter'] then
@@ -514,7 +524,8 @@ local function db_operation(db, query_template_file)
         else
             local e = 'No defined action for http_method = ' .. method
             util.log_error(e)
-            return ngx.HTTP_METHOD_NOT_IMPLEMENTED, util.error_to_json(e)
+            return ngx.HTTP_METHOD_NOT_IMPLEMENTED,
+                util.error_to_json(e)
         end
         local status, result = do_db_operation(db, query, method)
         if method == "POST" then
@@ -549,15 +560,18 @@ local conn_file
 local q_template_file
 
 if environment == 'jhk_dev' then
-    local host = 'localhost'
+    local host = 'centos'
     debug_flag = true
     print_sql = false
     base_uri = 'http://' .. host .. ':' .. port .. '/dmaonline/v0.3'
-    base_path = '/Users/krug/projects/dmao_infrastructure'
+    base_path = '/home/dmao_infrastructure/deploy'
+    -- package.path = package.path .. ';' .. base_path
+    --     .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks/?.lua'
     package.path = package.path .. ';' .. base_path
-        .. '/openresty/?.lua;/usr/local/lib/luarocks/rocks-5.1/?.lua'
+        .. '/openresty/?.lua'
     conn_file = base_path .. '/openresty/connection_jhk_dev.lua'
-    q_template_file = base_path .. '/openresty/query_templates_jhk_dev.lua'
+    q_template_file = base_path
+        .. '/openresty/query_templates_jhk_dev.lua'
     util = require 'dmao_i_utility_jhk_dev'
 elseif environment == 'dev' then
     local host = 'localhost'

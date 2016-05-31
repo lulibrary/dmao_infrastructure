@@ -63,6 +63,75 @@ query_templates = {
                 project_dmps_view_modifiables
         ]]
     },
+    publications_editor_modifiable = {
+        columns_list = '*',
+        variable_clauses = {
+            modifiable = ''
+        },
+        group_by = '',
+        output_order = '',
+        query = [[
+            select
+                #columns_list#
+            from
+                publications_editor_modifiables
+        ]]
+    },
+    publications_editor = {
+        columns_list = [[
+            *
+        ]],
+        group_by = '',
+        output_order = 'order by publication_id asc',
+        columns_list_count = [[
+            count(*) num_publications
+        ]],
+        variable_clauses = {
+            publication_id = 'and publications_id = #el_var_value#',
+            date = [[
+                and
+                (
+                    #var_value# >= #el_sd# and #var_value# <= #el_ed#
+                )
+            ]],
+            faculty = 'and lead_faculty_id = #el_var_value#',
+            dept = 'and lead_department_id = #el_var_value#',
+            data_access_statement = 'and data_access_statement = #el_var_value#',
+            funder_compliant = 'and funder_compliant = #el_var_value#'
+        },
+        query = [[
+            select
+                #columns_list#
+            from
+                publications_editor
+            where
+                inst_id = #inst_id#
+            #variable_clauses#
+            #group_by_clause#
+            #order_clause#
+        ]],
+        put_pkeys = {
+            'publication_id'
+        },
+        put_updateable_columns = {
+            'data_access_statement',
+            'data_access_statement_notes',
+            'funder_compliant'
+        },
+        put = [[
+            update
+                publications_editor
+            set
+                #set_data_access_statement#
+                #set_data_access_statement_notes#
+                #set_funder_compliant#
+            where
+                publication_id = #publication_id#
+            and
+                inst_id = #inst_id#
+            returning *
+        ]]
+    },
     project_dmps = {
         columns_list = [[
             *
