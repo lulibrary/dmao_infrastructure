@@ -1,6 +1,6 @@
 var frisby = require('frisby');
-var hostname = 'localhost:8070';
-//var hostname = 'lib-dmao.lancs.ac.uk:8090';
+var hostname = 'centos:8070';
+var hostname = 'lib-dmao.lancs.ac.uk:8070';
 var base_url = 'http://' + hostname +'/dmaonline/v0.3';
 var inst = 'luve_u';
 var o_tests = [
@@ -32,7 +32,7 @@ frisby.create('Test o_inst_list')
     .toss();
 
 // o_get_api_key
-var u = base_url + '/o/' + inst +'/o_get_api_key?user=krug&passwd=' +
+var u = base_url + '/o/' + inst + '/o_get_api_key?user=krug&passwd=' +
     'some_junk';
 console.log('GET ' + u);
 frisby.create('Test o_get_api_key with wrong password')
@@ -267,6 +267,26 @@ frisby.create('Test o_get_api_key')
             '&expected_storage=99';
         console.log('PUT ' + u);
         frisby.create('test storage put with no project')
+            .put(u)
+            .expectStatus(400)
+            .expectHeaderContains('content-type', 'text/html')
+            .toss();
+
+        u = base_url + '/c/' + inst + '/' + ak + '/publications_editor' +
+            '?publication_id=3&data_access_statement_notes=Hello%20World!' +
+            '&data_access_statement=y&funder_compliant=n';
+        console.log('PUT ' + u);
+        frisby.create('test publications_editor put')
+            .put(u)
+            .expectStatus(200)
+            .expectHeaderContains('content-type', 'application/json')
+            .toss();
+
+        u = base_url + '/c/' + inst + '/' + ak + '/publications_editor' +
+            '?data_access_statement_notes=Hello%20World!' +
+            '&data_access_statement=y&funder_compliant=n';
+        console.log('PUT ' + u);
+        frisby.create('test publications_editor put, no publication_id')
             .put(u)
             .expectStatus(400)
             .expectHeaderContains('content-type', 'text/html')

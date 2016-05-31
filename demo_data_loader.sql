@@ -1,31 +1,71 @@
 insert into institution values
   (
-    'luve_u', 'Lune Valley Enterprise University', 'John Krug',
-    'j.krug@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
-    'Fedora', 'Arkivum', 'GBP', '£', 'http://lancaster.ac.uk',
+    'luve_u',
+    'Lune Valley Enterprise University',
+    'John Krug',
+    'j.krug@lancaster.ac.uk',
+    '+44 1524 593099',
+    'Pure',
+    'Eprints',
+    'Fedora',
+    'Arkivum',
+    'GBP',
+    '£',
+    'http://lancaster.ac.uk',
     'The bottom university in the North West of the UK.',
-    gen_api_key(), '10.17635'
+    gen_api_key(),
+    '10.17635'
   ),
   (
-    'birmingham', 'University of Birmingham', '',
-    '', '', 'Pure', '',
-    'Fedora', 'Arkivum', 'GBP', '£', 'http://bham.ac.uk',
+    'birmingham',
+    'University of Birmingham',
     '',
-    gen_api_key(), '10.13140'
-  ),
-  (
-    'york', 'University of York', '',
-                  '', '', 'Pure', '',
-                  'Fedora', 'Archivematica', 'GBP', '£', 'http://york.ac.uk',
     '',
-    gen_api_key(), '10.15124'
+    '',
+    'Pure',
+    '',
+    'Fedora',
+    'Arkivum',
+    'GBP',
+    '£',
+    'http://bham.ac.uk',
+    '',
+    gen_api_key(),
+    '10.13140'
   ),
   (
-    'lancaster', 'Lancaster University', 'Hardy Schwamm',
-    'h.schwamm@lancaster.ac.uk', '+44 1524 593099', 'Pure', 'Eprints',
-    'Fedora', 'Archivematica', 'GBP', '£', 'http://lancaster.ac.uk',
+    'york',
+    'University of York',
+    '',
+    '',
+    '',
+    'Pure',
+    '',
+    'Fedora',
+    'Archivematica',
+    'GBP',
+    '£',
+    'http://york.ac.uk',
+    '',
+    gen_api_key(),
+    '10.15124'
+  ),
+  (
+    'lancaster',
+    'Lancaster University',
+    'Hardy Schwamm',
+    'h.schwamm@lancaster.ac.uk',
+    '+44 1524 593099',
+    'Pure',
+    'Eprints',
+    'Fedora',
+    'Archivematica',
+    'GBP',
+    '£',
+    'http://lancaster.ac.uk',
     'The top university in the North West of the UK.',
-    gen_api_key(), '10.17635'
+    gen_api_key(),
+    '10.17635'
 )
 ;
 
@@ -52,35 +92,65 @@ insert into department (inst_id, faculty_id, name, abbreviation) values
 
 
 insert into funder values
-  ('luve_u:'||'ahrc', 'Arts & Humanities Research Council', '', 'AA', true, 'luve_u'),
-  ('luve_u:'||'bbsrc', 'Biotechnology and Biological Sciences Research Council', '', 'BB', true, 'luve_u'),
-  ('luve_u:'||'epsrc', 'Engineering and Physical Sciences Research Council', '', 'BB', true, 'luve_u'),
-  ('luve_u:'||'esrc', 'Economic and Social Research Council', '', 'DD', true, 'luve_u'),
-  ('luve_u:'||'mrc', 'Medical Research Council', '', 'EE', true, 'luve_u'),
-  ('luve_u:'||'nerc', 'Natural Environment Research Council', '', 'FF', true, 'luve_u'),
-  ('luve_u:'||'stfc', 'Science and Technology Facilities Council', '', 'GG', true, 'luve_u'),
-  ('luve_u:'||'h2020', 'Horizon 2020', '', 'HH', false, 'luve_u'),
-  ('luve_u:'||'npl', 'National Physical Laboratory', '', 'II', false, 'luve_u'),
-  ('luve_u:'||'oclaro', 'Oclaro Inc', '', 'JJ', false, 'luve_u'),
-  ('luve_u:'||'none', 'Not funded', '', 'KK', false, 'luve_u')
+  ('luve_u:'||'ahrc',
+    'Arts & Humanities Research Council',
+    '', 'AA', true, 'luve_u'),
+  ('luve_u:'||'bbsrc',
+    'Biotechnology and Biological Sciences Research Council',
+    '', 'BB', true, 'luve_u'),
+  ('luve_u:'||'epsrc',
+    'Engineering and Physical Sciences Research Council',
+   '', 'BB', true, 'luve_u'),
+  ('luve_u:'||'esrc', '
+    Economic and Social Research Council',
+    '', 'DD', true, 'luve_u'),
+  ('luve_u:'||'mrc',
+    'Medical Research Council',
+    '', 'EE', true, 'luve_u'),
+  ('luve_u:'||'nerc',
+    'Natural Environment Research Council',
+    '', 'FF', true, 'luve_u'),
+  ('luve_u:'||'stfc',
+    'Science and Technology Facilities Council',
+    '', 'GG', true, 'luve_u'),
+  ('luve_u:'||'h2020',
+    'Horizon 2020',
+    '', 'HH', false, 'luve_u'),
+  ('luve_u:'||'npl',
+    'National Physical Laboratory',
+    '', 'II', false, 'luve_u'),
+  ('luve_u:'||'oclaro',
+    'Oclaro Inc',
+    '', 'JJ', false, 'luve_u'),
+  ('luve_u:'||'none',
+    'Not funded',
+    '', 'KK', false, 'luve_u')
 ;
 
 
 insert into funder_dmp_states(funder_id, funder_state_code,
                               funder_state_name)
 values
-  ('luve_u:'||'h2020', 'version1', 'DMP version 1'),
-  ('luve_u:'||'h2020', 'version2', 'DMP version 2'),
-  ('luve_u:'||'h2020', 'version3', 'DMP version 3'),
-  ('luve_u:'||'nerc', 'outline_dmp', 'Outline DMP'),
-  ('luve_u:'||'nerc', 'full_dmp', 'Full DMP'),
-  ('luve_u:'||'ahrc', 'application_dmp',  'DMP required at application stage'),
-  ('luve_u:'||'bbsrc', 'application_dmp',  'DMP required at application stage')
+  ('luve_u:'||'h2020',
+    'version1', 'DMP version 1'),
+  ('luve_u:'||'h2020',
+    'version2', 'DMP version 2'),
+  ('luve_u:'||'h2020',
+    'version3', 'DMP version 3'),
+  ('luve_u:'||'nerc',
+    'outline_dmp', 'Outline DMP'),
+  ('luve_u:'||'nerc',
+    'full_dmp', 'Full DMP'),
+  ('luve_u:'||'ahrc',
+    'application_dmp', 'DMP required at application stage'),
+  ('luve_u:'||'bbsrc',
+    'application_dmp', 'DMP required at application stage')
 ;
 
 
 insert into
-  dmp (dmp_source_system, dmp_ss_pid, dmp_state, dmp_status, author_orcid)
+  dmp (dmp_source_system, dmp_ss_pid, dmp_state,
+       dmp_status, author_orcid)
   values
     ('DMPOnline', 'gasfdasg5', 1, 'verified', 'orcid1'),
     ('Word', '', 7, 'verified', 'orcid3'),
@@ -146,7 +216,8 @@ insert into project
      1,
      '2012-12-01',
      '[2013-01-01,2017-12-31)'),
-    ('FST CASE Studentship: Design and testing of a Novel Neutron Meter',
+    ('FST CASE Studentship: Design and testing '
+     'of a Novel Neutron Meter',
      null,
      true,
      'luve_u', '2',
@@ -333,50 +404,59 @@ insert into users values
     '', encrypt_password('admin')
   ),
   (
-    'aac', 'Adrian Albin-Clark', 'luve_u', 'a.albin-clark@lancaster.ac.uk',
+    'aac', 'Adrian Albin-Clark', 'luve_u',
+    'a.albin-clark@lancaster.ac.uk',
     '+441523593099', encrypt_password('letmein')
   )
 ;
 
 
-insert into dataset (inst_id, project_id, dataset_pid, dataset_link,
+insert into dataset (inst_id,
+                     project_id,
+                     has_dataset_pid,
+                     dataset_pid,
+                     dataset_link,
                      dataset_size,
-                     dataset_name, dataset_format, dataset_notes,
-                     inst_archive_status, storage_location,
-                     lead_faculty_id, lead_department_id)
+                     dataset_name,
+                     dataset_format,
+                     dataset_notes,
+                     inst_archive_status,
+                     storage_location,
+                     lead_faculty_id,
+                     lead_department_id)
 values
-  ('luve_u', 1, '10.17635/lancaster/researchdata/2',
+  ('luve_u', 1, true, '10.17635/lancaster/researchdata/2',
    'https://dx.doi.org/10.17635/lancaster/researchdata/2', 0.00051,
    'Single Locus Variant: Data and Code for Estimating '
    'Recombination Rates', 'tgz',
    'For full details of the description of the dataset, '
    'please follow the dataset link.',
    'archived', 'internal', 2, 5),
-  ('luve_u', 2, '10.17635/lancaster/researchdata/7',
+  ('luve_u', 2, true, '10.17635/lancaster/researchdata/7',
    'https://dx.doi.org/10.17635/lancaster/researchdata/7', 0.693,
    'Neutron assay in mixed radiation fields with a 6Li-loaded '
    'plastic scintillator', 'zip',
    'Experimental data obtained at the National Physical Laboratory, '
    'Teddington, London. This work is collected under the work outlined '
    'in the title.', 'unknown', 'internal', 2, 3),
-  ('luve_u', null,'10.17635/lancaster/researchdata/1',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/1',
    'https://dx.doi.org/10.17635/lancaster/researchdata/1',0.00247,
    'AEGISS1. Syndromic surveillance of gastro-intestinal illness','txt',
    'See file AEGISS_explain.txt for information on this data-set',
    'not_archived','internal',3,6),
-  ('luve_u', 3,'10.17635/lancaster/researchdata/3',
+  ('luve_u', 3, true, '10.17635/lancaster/researchdata/3',
    'https://dx.doi.org/10.17635/lancaster/researchdata/3',0.00448,
    'Temporal relations in children''s sentence comprehension',
    'csv','Column 1= subject (participant number).','not_archived',
    'internal',2,7),
-  ('luve_u', null,'10.17635/lancaster/researchdata/4',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/4',
    'https://dx.doi.org/10.17635/lancaster/researchdata/4',0.00031,
    'Counting Neutrons from the Spontaneous Fission of 238-U using '
    'Scintillation','zip',
    'Data used in ''Counting Neutrons from the Spontaneous Fission of '
    '238-U using Scintillation Detectors and Mixed Field Analysers'', '
    'presented at Animma 2015.','unknown','internal',2,9),
-  ('luve_u', null,'10.17635/lancaster/researchdata/5',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/5',
    'https://dx.doi.org/10.17635/lancaster/researchdata/5',0.005,
    'Corrosion Behaviour of AGR SIMFUELs [Dataset]','xlsx',
    'Data for extended in-situ Raman of SIMFUEL''s, data for cyclic '
@@ -385,49 +465,57 @@ values
    'damage peak intensities, data for open circuit potential taken '
    'separately for UO2 and 43 burn-up, and also coupled.',
    'not_archived','internal',2,9),
-  ('luve_u', null,'10.17635/lancaster/researchdata/6',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/6',
    'https://dx.doi.org/10.17635/lancaster/researchdata/6',0.004,
    'Ebolavirus evolution 2013-2015','zip',
    'Data used for analysis of selection and evolutionary rate in '
    'Zaire Ebolavirus variant Makona','not_archived','internal',3,9),
-  ('luve_u', 4,'10.17635/lancaster/researchdata/8',
+  ('luve_u', 4, true, '10.17635/lancaster/researchdata/8',
    'https://dx.doi.org/10.17635/lancaster/researchdata/8',0.003167,
    'Numerical data on coulomb-corrected strong field approximation for '
    'hydrogen','zip',
    'Numerical data on coulomb-corrected strong field approximation '
    'for hydrogen','not_archived','internal',2,9),
-  ('luve_u', 5,'10.17635/lancaster/researchdata/9',
+  ('luve_u', 5, true, '10.17635/lancaster/researchdata/9',
    'https://dx.doi.org/10.17635/lancaster/researchdata/9',0.000065,
    'Data set for AIP advances 2015 on GaAs quantum dots',
    'xlsx',
    'The data set corresponds to the figures (excluding schematics and '
-   'images) in the associated publication. Data for each of the figures '
-   'are clearly labelled, and fulfil EPSRC requirements. Full details of '
+   'images) in the associated publication. '
+   'Data for each of the figures '
+   'are clearly labelled, and fulfil EPSRC requirements. ''
+   Full details of '
    'how the data was generated are given in the associated publication',
    'unknown','internal',2,9),
-  ('luve_u', null,'10.17635/lancaster/researchdata/10',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/10',
    'https://dx.doi.org/10.17635/lancaster/researchdata/10',0.000786,
    'M3 segmented monthly data','xlsx',
    'Data used for analysis of selection and evolutionary rate in Zaire '
    'Ebolavirus variant Makona','not_archived','internal',3,8),
-  ('luve_u', null,'10.17635/lancaster/researchdata/11',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/11',
    'https://dx.doi.org/10.17635/lancaster/researchdata/11',0.03,
    'Tortoise herpesvirus evolution','zip',
-   'Supplementary and raw data information for paper on TeHV3 evolution',
+   'Supplementary and raw data information for paper on '
+   'TeHV3 evolution',
    'unknown','internal',3,8),
-  ('luve_u', 6,'10.17635/lancaster/r/researchdata/12',
+  ('luve_u', 6, true, '10.17635/lancaster/r/researchdata/12',
    'https://dx.doi.org/10.17635/lancaster/researchdata/12',0.002276,
    'Dataset for Visualizing Pure Quantum Turbulence in Superfluid 3He: '
    'Andreev Reflection and its Spectral Properties','xlsx',
    'The data set corresponds to the figures (excluding schematics and '
-   'images) in the associated publication. Data for each of the figures '
-   'are clearly labelled, and fulfil EPSRC requirements. Full details of '
-   'how the data was generated are given in the associated publication.',
+   'images) in the associated publication. '
+   'Data for each of the figures '
+   'are clearly labelled, and fulfil EPSRC '
+   'requirements. Full details of '
+   'how the data was generated are given '
+   'in the associated publication.',
    'not_archived','internal',2,9),
-  ('luve_u', null,'10.17635/lancaster/researchdata/13',
+  ('luve_u', null, true, '10.17635/lancaster/researchdata/13',
    'https://dx.doi.org/10.17635/lancaster/researchdata/13',0.044,
-   'Blood flow data','zip','Blood flow data used in ''Dynamical markers '
-   'based on blood perfusion fluctuations for selecting skin melanocytic '
+   'Blood flow data','zip','Blood flow data used '
+   'in ''Dynamical markers '
+   'based on blood perfusion fluctuations '
+   'for selecting skin melanocytic '
    'lesions for biopsy''. Sci. Rep. 2015. In Press','not_archived',
    'internal',3,8)
 ;
@@ -450,7 +538,8 @@ end
 $$ language plpgsql;
 
 create or replace function
-  random_counter(dd timestamp, a integer, b integer, c integer, d integer)
+  random_counter(dd timestamp, a integer, b integer,
+    c integer, d integer)
   returns integer as $$
 begin
   return trunc(
@@ -464,7 +553,8 @@ begin
 end
 $$ language plpgsql;
 
-create or replace function populate_dataset_accesses() returns void as $$
+create or replace function populate_dataset_accesses()
+  returns void as $$
   declare
     tp varchar(50);
     a integer;
@@ -504,34 +594,36 @@ $$ language plpgsql;
 select * from populate_dataset_accesses();
 
 
-insert into publication (inst_id, project_id, cris_id, repo_id, publication_pid,
+insert into publication (inst_id, project_id, cris_id, repo_id,
+                         publication_pid,
                          funder_project_code, lead_faculty_id,
                          lead_department_id, publication_date,
-                         data_access_statement, rcuk_funder_compliant)
+                         data_access_statement, funder_compliant)
 values
   ('luve_u', 1, '68975423', '71672', '10.1214/14-AOAS795',
     'EP/K014463/1', 2, 5,
-    '2015-03-01', true, 'y'),
+    '2015-03-01', 'y', 'y'),
   ('luve_u', null, '289125', '2438', '10.1002/env.712', null, 3, 6,
-    '2008-05-01', false, 'n'),
+    '2008-05-01', 'n', 'n'),
   ('luve_u', 3, '81303601', '73749', null, null, 2, 7,
-    '2015-01-01', true, 'y'),
+    '2015-01-01', 'y', 'y'),
   ('luve_u', null, '56480293', '69441', '10.1099/vir.0.067199-0', null,
     3, 8,
-    '2014-08-01', false, 'n'),
+    '2014-08-01', 'n', 'n'),
   ('luve_u', 5, '72017672', '72289', '10.1136/ebmed-2014-110127', null,
     3, 8,
-    '2015-02-01', true, 'partial'),
+    '2015-02-01', 'partial', 'partial'),
   ('luve_u', 5, '85850308', '74419', '10.1063/1.4922950', 'PYA7943',
     2, 8,
-    '2015-06-10', false, 'n'),
-  ('luve_u', null, '41842996', '67274', '10.1016/j.jbusres.2015.03.028', null,
+    '2015-06-10', 'n', 'n'),
+  ('luve_u', null, '41842996', '67274', '10.1016/j.jbusres.2015.03.028',
+    null,
     4, 10,
-    '2015-08-01', false, 'n')
+    '2015-08-01', 'no_fulltext', 'n')
 ;
 
 
-insert into map_pub_ds values
+insert into map_pub_ds(publication_id, dataset_id) values
   (2, 3),
   (1, 2),
   (3, 4),
@@ -543,14 +635,14 @@ insert into map_pub_ds values
 
 
 
-insert into map_funder_pub values
+insert into map_funder_pub(funder_id, publication_id) values
   ('luve_u:'||'epsrc', 1),
   ('luve_u:'||'esrc', 3),
   ('luve_u:'||'epsrc', 5)
 ;
 
 
-insert into map_funder_ds
+insert into map_funder_ds(funder_id, dataset_id)
 values
   ('luve_u:'||'epsrc', 1),
   ('luve_u:'||'npl', 2),
@@ -568,7 +660,7 @@ values
 ;
 
 
-insert into map_funder_project values
+insert into map_funder_project(funder_id, project_id) values
   ('luve_u:'||'epsrc', 1),
   ('luve_u:'||'npl', 2),
   ('luve_u:'||'esrc', 3),
@@ -582,7 +674,7 @@ insert into map_funder_project values
 ;
 
 
-insert into map_inst_ds
+insert into map_inst_ds(inst_id, dataset_id)
 values
   ('luve_u', 1),
   ('luve_u', 2),
